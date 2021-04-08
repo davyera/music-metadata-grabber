@@ -1,9 +1,8 @@
 package service
 
 import com.typesafe.scalalogging.StrictLogging
-import models.{AccessToken, Backend, PageableWithNext, PageableWithTotal}
+import models.{Backend, PageableWithNext, PageableWithTotal}
 
-import java.util.concurrent.atomic.{AtomicBoolean, AtomicInteger}
 import scala.concurrent.{ExecutionContext, Future}
 
 abstract class APIRequester(implicit val authProvider: AuthTokenProvider,

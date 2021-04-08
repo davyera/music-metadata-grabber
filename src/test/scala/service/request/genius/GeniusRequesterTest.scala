@@ -19,6 +19,7 @@ class GeniusRequesterTest extends APIRequesterSpec {
         song.id should be > 0
         song.title shouldNot be ('empty)
         song.url should startWith("http")
+        println(song.url)
 
         val artist = song.primary_artist
         artist.id shouldEqual artistIdHE
