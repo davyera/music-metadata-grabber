@@ -10,6 +10,14 @@ case class GeniusAccessToken(access_token: String) extends AccessToken {
   override def expiresIn: Int = 0
 }
 
+/** GENIUS ARTIST SEARCH */
+case class GeniusSearchResponse(response: GeniusSearchHits)
+case class GeniusSearchHits(hits: Seq[GeniusSearchHit], next_page: Option[Int])
+case class GeniusSearchHit(result: GeniusSearchSong)
+case class GeniusSearchSong(id: Int, title: String, url: String, primary_artist: GeniusSearchArtist)
+case class GeniusSearchArtist(id: Int, name: String)
+
+/** GENIUS ARTIST SONGS */
 case class GeniusArtistSongsResponse(response: GeniusArtistSongs) extends PageableWithNext {
   override def getNextPage: Option[Int] = response.next_page
 }
