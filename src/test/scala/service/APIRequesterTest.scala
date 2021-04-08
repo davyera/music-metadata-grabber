@@ -1,6 +1,6 @@
 package service
 
-import models.{Backend, Pageable}
+import models.{Backend, PageableWithNext, PageableWithTotal}
 import service.request.spotify.SpotifyAuthTokenProvider
 import testutils.UnitSpec
 
@@ -13,8 +13,11 @@ class APIRequesterTest extends UnitSpec {
   implicit val authTokenProvider: SpotifyAuthTokenProvider = mock[SpotifyAuthTokenProvider]
   class TestAPIRequester extends APIRequester
 
-  class TestPageable(totalItems: Int) extends Pageable {
+  class TestPageable(totalItems: Int = 0, nextPage: Option[Int] = None)
+extends PageableWithTotal with PageableWithNext {
+
     override def getTotal: Int = totalItems
+    override def getNextPage: Option[Int] = nextPage
   }
 
   val testCounter: AtomicInteger = new AtomicInteger(0)
@@ -85,6 +88,37 @@ class APIRequesterTest extends UnitSpec {
     whenReady(request.queryPages(pageLimit, pageFunction)) { results: Seq[Future[TestPageable]] =>
       results.size shouldEqual 1
       whenReady(results.head)(_ shouldEqual pageResults.head)
+    }
+  }
+
+  private def pg(pg: Option[Int]) = new TestPageable(nextPage = pg)
+
+  "queryPagesSequential" should "create one page when nextPage is null" in {
+    val request = new TestAPIRequester
+    val pageResults = Seq(pg(None))
+    val pageFunction = getPageFunction(pageResults)
+    whenReady(request.queryPagesSequential(1, pageFunction)) { results: Seq[Future[TestPageable]] =>
+      results.size shouldEqual 1
+      whenReady(results.head)(_ shouldEqual pageResults.head)
+    }
+  }
+
+  "queryPagesSequential" should "create two page when nextPage is 1 then None" in {
+    val request = new TestAPIRequester
+    val pageResults = Seq(pg(Some(1)), pg(None))
+    val pageFunction = getPageFunction(pageResults)
+    whenReady(request.queryPagesSequential(1, pageFunction)) { results: Seq[Future[TestPageable]] =>
+      results.size shouldEqual 2
+      whenReady(results.head)(_ shouldEqual pageResults.head)
+    }
+  }
+
+  "queryPagesSequential" should "create multiple pages sequentially until nextPage is null" in {
+    val request = new TestAPIRequester
+    val pageResults = Seq(pg(Some(1)), pg(Some(2)), pg(Some(3)), pg(None))
+    val pageFunction = getPageFunction(pageResults)
+    whenReady(request.queryPagesSequential(1, pageFunction)) { results: Seq[Future[TestPageable]] =>
+      results.size shouldEqual 4
     }
   }
 }

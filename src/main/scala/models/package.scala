@@ -15,6 +15,10 @@ package object models {
 
   implicit val geniusAccessToken: Decoder[GeniusAccessToken] = deriveConfiguredDecoder
 
+  implicit val geniusArtistSongsResponse: Decoder[GeniusArtistSongsResponse] = deriveConfiguredDecoder
+  implicit val geniusArtistSongs: Decoder[GeniusArtistSongs] = deriveConfiguredDecoder
+  implicit val geniusSong: Decoder[GeniusSong] = deriveConfiguredDecoder
+
   implicit val spotifyAccessToken: Decoder[SpotifyAccessToken] = deriveConfiguredDecoder
 
   implicit val spotifyBrowseCategories: Decoder[SpotifyBrowseCategories] = deriveConfiguredDecoder

@@ -1,8 +1,9 @@
 package service
 
 import com.typesafe.scalalogging.StrictLogging
-import models.{AccessToken, Backend, Pageable}
+import models.{AccessToken, Backend, PageableWithNext, PageableWithTotal}
 
+import java.util.concurrent.atomic.{AtomicBoolean, AtomicInteger}
 import scala.concurrent.{ExecutionContext, Future}
 
 abstract class APIRequester(implicit val authProvider: AuthTokenProvider,
@@ -23,7 +24,9 @@ abstract class APIRequester(implicit val authProvider: AuthTokenProvider,
    *  Outer future is contingent on first page finishing -- as the rest of the pages depend on this result.
    *  The sequence of futures within are the expected remaining page results.
    */
-  protected[service] def queryPages[R <: Pageable](limitPerRequest: Int, pagedFunction: (Int, Int) => Future[R]): Future[Seq[Future[R]]] = {
+  protected[service] def queryPages[R <: PageableWithTotal](limitPerRequest: Int,
+                                                            pagedFunction: (Int, Int) => Future[R])
+  : Future[Seq[Future[R]]] = {
     logger.info(s"Calling paged function... limit $limitPerRequest offset 0")
     val firstResult: Future[R] = pagedFunction(limitPerRequest, 0)
     firstResult.map { firstPage: R =>
@@ -44,6 +47,26 @@ abstract class APIRequester(implicit val authProvider: AuthTokenProvider,
 
       // merge our first page (at this point much already be successful) with the newfound remaining pages
       Future.successful(firstPage) :: remainingPages
+    }
+  }
+
+  /** Returns a Future of a sequence of Future page results, queried sequentially
+   *  Each page needs to be queried before the next one can be queried
+   *  Use when the subsequent page relies on results of current page
+   */
+  protected[service] def queryPagesSequential[R <: PageableWithNext](limitPerRequest: Int,
+                                                                     pagedFunction: (Int, Int) => Future[R],
+                                                                     page: Int = 1)
+  : Future[Seq[Future[R]]] = {
+    pagedFunction(limitPerRequest, page).flatMap { page: R =>
+      val nextPages: Future[Seq[Future[R]]] = page.getNextPage match {
+        // if "nextPage" is defined in the json, we need to recursively query for it
+        case Some(nextPage) => queryPagesSequential[R](limitPerRequest, pagedFunction, nextPage)
+        // if "nextPage" is null, we have reached the end of our querying
+        case None => Future.successful(Nil)
+      }
+      // build our sequence of futures like this: appending current page to the subsequent page list
+      nextPages.map(pages => Seq(Future.successful(page)) ++ pages)
     }
   }
 }

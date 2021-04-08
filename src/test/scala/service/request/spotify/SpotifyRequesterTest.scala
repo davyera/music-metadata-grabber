@@ -1,20 +1,12 @@
 package service.request.spotify
 
-import models._
 import models.api.response._
-import sttp.client.asynchttpclient.future.AsyncHttpClientFutureBackend
-import testutils.UnitSpec
+import testutils.APIRequesterSpec
 
-import scala.concurrent.Future
+class SpotifyRequesterTest extends APIRequesterSpec {
 
-class SpotifyRequesterTest extends UnitSpec {
-
-  private implicit val backend: Backend = AsyncHttpClientFutureBackend()
   private implicit val tokenProvider: SpotifyAuthTokenProvider = new SpotifyAuthTokenProvider()
   val requester = new SpotifyRequester()
-
-  def verifyPages[R](pagedResponse: Future[Seq[Future[R]]])(assertion: R => Unit): Unit =
-    whenReady(pagedResponse)(_.foreach(whenReady(_)(assertion(_))))
 
   "requestCategories" should "return a sequence of spotify categories" in {
     val response = requester.requestCategories()

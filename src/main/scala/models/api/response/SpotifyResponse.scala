@@ -1,6 +1,6 @@
 package models.api.response
 
-import models.{AccessToken, Pageable}
+import models.{AccessToken, PageableWithTotal}
 
 private object SpotifyResponse {}
 
@@ -13,27 +13,27 @@ case class SpotifyAccessToken(access_token: String, token_type: String, expires_
 }
 
 /** SPOTIFY BROWSE CATEGORIES */
-case class SpotifyBrowseCategories(categories: SpotifyBrowseCategoriesPage) extends Pageable {
+case class SpotifyBrowseCategories(categories: SpotifyBrowseCategoriesPage) extends PageableWithTotal {
   def getTotal: Int = categories.total
 }
 case class SpotifyBrowseCategoriesPage(items: Seq[SpotifyBrowseCategory], total: Int)
 case class SpotifyBrowseCategory(id: String, name: String)
 
 /** SPOTIFY CATEGORY PLAYLISTS */
-case class SpotifyCategoryPlaylists(playlists: SpotifyCategoryPlaylistsPage) extends Pageable {
+case class SpotifyCategoryPlaylists(playlists: SpotifyCategoryPlaylistsPage) extends PageableWithTotal {
   def getTotal: Int = playlists.total
 }
 case class SpotifyCategoryPlaylistsPage(items: Seq[SpotifyPlaylistInfo], total: Int)
 
 /** SPOTIFY FEATURED PLAYLISTS */
-case class SpotifyFeaturedPlaylists(message: String, playlists: SpotifyPlaylistPage) extends Pageable {
+case class SpotifyFeaturedPlaylists(message: String, playlists: SpotifyPlaylistPage) extends PageableWithTotal {
   def getTotal: Int = playlists.total
 }
 case class SpotifyPlaylistPage(items: Seq[SpotifyPlaylistInfo], total: Int)
 case class SpotifyPlaylistInfo(name: String, id: String, description: String)
 
 /** SPOTIFY PLAYLIST TRACKS */
-case class SpotifyPlaylistTracksPage(items: Seq[SpotifyPlaylistTrackRef], total: Int) extends Pageable {
+case class SpotifyPlaylistTracksPage(items: Seq[SpotifyPlaylistTrackRef], total: Int) extends PageableWithTotal {
   def getTotal: Int = total
 }
 case class SpotifyPlaylistTrackRef(track: SpotifyTrack)
@@ -53,7 +53,7 @@ case class SpotifyArtist(id: String,
                          popularity: Int)
 
 /** SPOTIFY ARTIST ALBUMS */
-case class SpotifyArtistAlbumsPage(items: Seq[SpotifyAlbumRef], total: Int) extends Pageable {
+case class SpotifyArtistAlbumsPage(items: Seq[SpotifyAlbumRef], total: Int) extends PageableWithTotal {
   def getTotal: Int = total
 }
 
