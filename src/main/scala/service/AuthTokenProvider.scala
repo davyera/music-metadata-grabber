@@ -7,24 +7,29 @@ import utils.Configuration
 import java.util.concurrent.atomic.AtomicReference
 import scala.concurrent.{ExecutionContext, Future}
 
-abstract class AuthTokenProvider[T <: AccessToken](implicit val backend: Backend,
-                                                   implicit val context: ExecutionContext,
-                                                   implicit val config: Configuration = Configuration)
+abstract class AuthTokenProvider(implicit val backend: Backend,
+                                 implicit val context: ExecutionContext,
+                                 implicit val config: Configuration = Configuration)
   extends StrictLogging {
 
   lazy private val maxRetries = 3
   lazy private val retryWait = config.httpRequestRetryTimeMS
 
-  lazy private val tokenRef: AtomicTokenRef[T] = {
+  lazy private val tokenRef: AtomicTokenRef[AccessToken] = {
     val initToken = requestTokenWithRetries()
-    AtomicTokenRef[T](initToken, context)
+    AtomicTokenRef[AccessToken](initToken, context)
   }
 
-  protected val requestWithAuth: Request[T]
+  /** @return Valid, refreshed (if needed) Bearer Auth token string for requests
+   */
+  def getAuthTokenString: Future[String] = getAuthToken.map(_.getAccessToken)
 
-  def getAuthToken: Future[T] = getValidToken(tokenRef)
+  protected type T <: AccessToken
+  protected def requestWithAuth: Request[T]
 
-  private def getValidToken(tokenRef: AtomicTokenRef[T]): Future[T] = {
+  private def getAuthToken: Future[AccessToken] = getValidToken(tokenRef)
+
+  private def getValidToken(tokenRef: AtomicTokenRef[AccessToken]): Future[AccessToken] = {
     // check if expiration has been reached
     tokenRef.isExpired.map { expired =>
       // refresh if needed
@@ -34,11 +39,11 @@ abstract class AuthTokenProvider[T <: AccessToken](implicit val backend: Backend
     tokenRef.getToken
   }
 
-  private def requestTokenWithRetries(): Future[T] = {
+  private def requestTokenWithRetries(): Future[AccessToken] = {
     requestWithRetries(requestTokenBasicAuth(), maxRetries, retryWait)
   }
 
-  private def requestTokenBasicAuth(): Future[T] = {
+  private def requestTokenBasicAuth(): Future[AccessToken] = {
     requestWithAuth.send().map(_.body).map {
       case Right(validTokenResponse) =>
         logger.info("Valid Auth response!")
@@ -49,7 +54,7 @@ abstract class AuthTokenProvider[T <: AccessToken](implicit val backend: Backend
     }
   }
 
-  private def requestWithRetries(request: => Future[T], iteration: Int, waitMS: Int): Future[T] =
+  private def requestWithRetries(request: => Future[AccessToken], iteration: Int, waitMS: Int): Future[AccessToken] =
     Future.unit.flatMap(_ => request).recoverWith {
       case _ if iteration > 0 =>
         logger.info(s"Waiting ${waitMS}ms then retrying request... tries left: $iteration")
@@ -61,12 +66,12 @@ abstract class AuthTokenProvider[T <: AccessToken](implicit val backend: Backend
     }
 }
 
-private case class AtomicTokenRef[T <: AccessToken](private val token: Future[T],
+private case class AtomicTokenRef[T <: AccessToken](private val token: Future[AccessToken],
                                                     private implicit val context: ExecutionContext) {
 
-  private val atomicTokenRef: AtomicReference[Future[T]] = new AtomicReference(token)
+  private val atomicTokenRef: AtomicReference[Future[AccessToken]] = new AtomicReference(token)
 
-  def getToken: Future[T] = atomicTokenRef.get()
+  def getToken: Future[AccessToken] = atomicTokenRef.get()
   def isExpired: Future[Boolean] = atomicTokenRef.get().map(_.expired)
-  def refreshToken(newToken: Future[T]): Unit = atomicTokenRef.set(newToken)
+  def refreshToken(newToken: Future[AccessToken]): Unit = atomicTokenRef.set(newToken)
 }

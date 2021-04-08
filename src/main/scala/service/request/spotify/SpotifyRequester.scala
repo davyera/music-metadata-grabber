@@ -7,10 +7,10 @@ import service._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class SpotifyRequester(implicit override val authProvider: AuthTokenProvider[SpotifyAccessToken],
+class SpotifyRequester(implicit override val authProvider: AuthTokenProvider,
                        implicit override val backend: Backend,
                        implicit override val context: ExecutionContext)
-  extends APIRequester[SpotifyAccessToken] with StrictLogging {
+  extends APIRequester with StrictLogging {
 
   /** Requests categories for Spotify's browse feature (ie. "Hip Hop", "Top Lists")
    *  @return future-wrapped paginated sequence of futures of categories

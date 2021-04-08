@@ -13,7 +13,7 @@ package object models {
 
   implicit val decoder: Configuration = Configuration.default.withDefaults
 
-  implicit val geniusAccessToken: Decoder[HardcodedToken] = deriveConfiguredDecoder
+  implicit val geniusAccessToken: Decoder[GeniusAccessToken] = deriveConfiguredDecoder
 
   implicit val spotifyAccessToken: Decoder[SpotifyAccessToken] = deriveConfiguredDecoder
 

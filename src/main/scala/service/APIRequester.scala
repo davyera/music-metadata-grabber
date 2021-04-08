@@ -5,15 +5,13 @@ import models.{AccessToken, Backend, Pageable}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-abstract class APIRequester[T <: AccessToken](implicit val authProvider: AuthTokenProvider[T],
-                                              implicit val backend: Backend,
-                                              implicit val context: ExecutionContext) extends StrictLogging {
-
-//  val authProvider: AuthTokenProvider[T]
+abstract class APIRequester(implicit val authProvider: AuthTokenProvider,
+                            implicit val backend: Backend,
+                            implicit val context: ExecutionContext) extends StrictLogging {
 
   protected def get[R](request: APIGetRequest[R]): Future[R] =
-    authProvider.getAuthToken.flatMap { token: T =>
-      val requestWithAuth = request.baseRequest.auth.bearer(token.getAccessToken)
+    authProvider.getAuthTokenString.flatMap { token: String =>
+      val requestWithAuth = request.baseRequest.auth.bearer(token)
       val response = requestWithAuth.send()
       response.map(_.body).map {
         case Right(validResponse) => validResponse

@@ -1,6 +1,7 @@
 package service.request.spotify
 
 import models.Backend
+import models.api.response.SpotifyAccessToken
 import sttp.client.HttpError
 import sttp.client.asynchttpclient.future.AsyncHttpClientFutureBackend
 import testutils.UnitSpec
@@ -15,9 +16,8 @@ class SpotifyAuthTokenProviderTest extends UnitSpec {
     val provider = new SpotifyAuthTokenProvider()
     val logVerifier = getLogVerifier
     // use default params
-    whenReady(provider.getAuthToken) { token =>
-      token.access_token shouldNot equal("") // token should not be an empty string
-      token.token_type should equal("Bearer")
+    whenReady(provider.getAuthTokenString) { token =>
+      token shouldNot equal("") // token should not be an empty string
       logVerifier.assertLogged(0, "Valid Auth response!")
       logVerifier.assertLogCount(1)
     }
@@ -30,7 +30,7 @@ class SpotifyAuthTokenProviderTest extends UnitSpec {
     }
     val provider = new SpotifyAuthTokenProvider()
     val logVerifier = getLogVerifier
-    whenReady(provider.getAuthToken.failed) { error =>
+    whenReady(provider.getAuthTokenString.failed) { error =>
       error shouldBe a [HttpError]
       logVerifier.assertLogged(0, "Got invalid Auth response.")
       logVerifier.assertLogged(1, "Waiting 100ms then retrying request... tries left: 3")

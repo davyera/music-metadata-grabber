@@ -13,7 +13,7 @@ import scala.concurrent.ExecutionContext
 class SpotifyAuthTokenProvider(implicit override val backend: Backend,
                                implicit override val context: ExecutionContext,
                                implicit override val config: Configuration = Configuration)
-  extends AuthTokenProvider[SpotifyAccessToken] {
+  extends AuthTokenProvider {
 
   private val authUri = uri"https://accounts.spotify.com/api/token"
 
@@ -26,6 +26,7 @@ class SpotifyAuthTokenProvider(implicit override val backend: Backend,
     .header("Access-Control-Allow-Origin", "*")
     .body(("grant_type", "client_credentials"))
 
-  override val requestWithAuth: Request[SpotifyAccessToken] =
+  protected type T = SpotifyAccessToken
+  override def requestWithAuth: Request[SpotifyAccessToken] =
     baseRequest.auth.basic(clientId, secretId)
 }
