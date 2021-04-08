@@ -1,0 +1,362 @@
+{
+  "href": "https://api.spotify.com/v1/artists/1nEGjL7aMVdNQzsfQPKdGr/albums?offset=0&limit=20&include_groups=album&market=ES",
+  "items": [
+    {
+      "album_group": "album",
+      "album_type": "album",
+      "artists": [
+        {
+          "external_urls": {
+            "spotify": "https://open.spotify.com/artist/1nEGjL7aMVdNQzsfQPKdGr"
+          },
+          "href": "https://api.spotify.com/v1/artists/1nEGjL7aMVdNQzsfQPKdGr",
+          "id": "1nEGjL7aMVdNQzsfQPKdGr",
+          "name": "Hazel English",
+          "type": "artist",
+          "uri": "spotify:artist:1nEGjL7aMVdNQzsfQPKdGr"
+        }
+      ],
+      "external_urls": {
+        "spotify": "https://open.spotify.com/album/2A2k0MgzDEiFjW3ejlpxxV"
+      },
+      "href": "https://api.spotify.com/v1/albums/2A2k0MgzDEiFjW3ejlpxxV",
+      "id": "2A2k0MgzDEiFjW3ejlpxxV",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b2733dda680164a173c3bba09f96",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e023dda680164a173c3bba09f96",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d000048513dda680164a173c3bba09f96",
+          "width": 64
+        }
+      ],
+      "name": "Wake UP!",
+      "release_date": "2020-04-24",
+      "release_date_precision": "day",
+      "total_tracks": 10,
+      "type": "album",
+      "uri": "spotify:album:2A2k0MgzDEiFjW3ejlpxxV"
+    },
+    {
+      "album_group": "album",
+      "album_type": "album",
+      "artists": [
+        {
+          "external_urls": {
+            "spotify": "https://open.spotify.com/artist/1nEGjL7aMVdNQzsfQPKdGr"
+          },
+          "href": "https://api.spotify.com/v1/artists/1nEGjL7aMVdNQzsfQPKdGr",
+          "id": "1nEGjL7aMVdNQzsfQPKdGr",
+          "name": "Hazel English",
+          "type": "artist",
+          "uri": "spotify:artist:1nEGjL7aMVdNQzsfQPKdGr"
+        }
+      ],
+      "external_urls": {
+        "spotify": "https://open.spotify.com/album/11BOVHfjzuzqI94dPqQoSS"
+      },
+      "href": "https://api.spotify.com/v1/albums/11BOVHfjzuzqI94dPqQoSS",
+      "id": "11BOVHfjzuzqI94dPqQoSS",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b2738a00fcf39a18938818708ed1",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e028a00fcf39a18938818708ed1",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d000048518a00fcf39a18938818708ed1",
+          "width": 64
+        }
+      ],
+      "name": "Wake UP!",
+      "release_date": "2020-04-24",
+      "release_date_precision": "day",
+      "total_tracks": 10,
+      "type": "album",
+      "uri": "spotify:album:11BOVHfjzuzqI94dPqQoSS"
+    },
+    {
+      "album_group": "album",
+      "album_type": "album",
+      "artists": [
+        {
+          "external_urls": {
+            "spotify": "https://open.spotify.com/artist/1nEGjL7aMVdNQzsfQPKdGr"
+          },
+          "href": "https://api.spotify.com/v1/artists/1nEGjL7aMVdNQzsfQPKdGr",
+          "id": "1nEGjL7aMVdNQzsfQPKdGr",
+          "name": "Hazel English",
+          "type": "artist",
+          "uri": "spotify:artist:1nEGjL7aMVdNQzsfQPKdGr"
+        }
+      ],
+      "external_urls": {
+        "spotify": "https://open.spotify.com/album/2Je78SN908vN2XPy0aLOFQ"
+      },
+      "href": "https://api.spotify.com/v1/albums/2Je78SN908vN2XPy0aLOFQ",
+      "id": "2Je78SN908vN2XPy0aLOFQ",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b2736d1dbdd384cf6c4a05d81e04",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e026d1dbdd384cf6c4a05d81e04",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d000048516d1dbdd384cf6c4a05d81e04",
+          "width": 64
+        }
+      ],
+      "name": "Wake UP!",
+      "release_date": "2020-04-24",
+      "release_date_precision": "day",
+      "total_tracks": 10,
+      "type": "album",
+      "uri": "spotify:album:2Je78SN908vN2XPy0aLOFQ"
+    },
+    {
+      "album_group": "album",
+      "album_type": "album",
+      "artists": [
+        {
+          "external_urls": {
+            "spotify": "https://open.spotify.com/artist/1nEGjL7aMVdNQzsfQPKdGr"
+          },
+          "href": "https://api.spotify.com/v1/artists/1nEGjL7aMVdNQzsfQPKdGr",
+          "id": "1nEGjL7aMVdNQzsfQPKdGr",
+          "name": "Hazel English",
+          "type": "artist",
+          "uri": "spotify:artist:1nEGjL7aMVdNQzsfQPKdGr"
+        }
+      ],
+      "external_urls": {
+        "spotify": "https://open.spotify.com/album/730DVm5mCyEP4uyAgidQf2"
+      },
+      "href": "https://api.spotify.com/v1/albums/730DVm5mCyEP4uyAgidQf2",
+      "id": "730DVm5mCyEP4uyAgidQf2",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b2730c17bd0e77f4791be3b19a5a",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e020c17bd0e77f4791be3b19a5a",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d000048510c17bd0e77f4791be3b19a5a",
+          "width": 64
+        }
+      ],
+      "name": "Wake UP!",
+      "release_date": "2020-04-24",
+      "release_date_precision": "day",
+      "total_tracks": 10,
+      "type": "album",
+      "uri": "spotify:album:730DVm5mCyEP4uyAgidQf2"
+    },
+    {
+      "album_group": "album",
+      "album_type": "album",
+      "artists": [
+        {
+          "external_urls": {
+            "spotify": "https://open.spotify.com/artist/1nEGjL7aMVdNQzsfQPKdGr"
+          },
+          "href": "https://api.spotify.com/v1/artists/1nEGjL7aMVdNQzsfQPKdGr",
+          "id": "1nEGjL7aMVdNQzsfQPKdGr",
+          "name": "Hazel English",
+          "type": "artist",
+          "uri": "spotify:artist:1nEGjL7aMVdNQzsfQPKdGr"
+        }
+      ],
+      "external_urls": {
+        "spotify": "https://open.spotify.com/album/4tKnS9Q0lgN3i7SmXi4mGI"
+      },
+      "href": "https://api.spotify.com/v1/albums/4tKnS9Q0lgN3i7SmXi4mGI",
+      "id": "4tKnS9Q0lgN3i7SmXi4mGI",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b273f0a4bb4b2fc663b082f9fd9f",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e02f0a4bb4b2fc663b082f9fd9f",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d00004851f0a4bb4b2fc663b082f9fd9f",
+          "width": 64
+        }
+      ],
+      "name": "Just Give In / Never Going Home",
+      "release_date": "2017-05-26",
+      "release_date_precision": "day",
+      "total_tracks": 11,
+      "type": "album",
+      "uri": "spotify:album:4tKnS9Q0lgN3i7SmXi4mGI"
+    },
+    {
+      "album_group": "album",
+      "album_type": "album",
+      "artists": [
+        {
+          "external_urls": {
+            "spotify": "https://open.spotify.com/artist/1nEGjL7aMVdNQzsfQPKdGr"
+          },
+          "href": "https://api.spotify.com/v1/artists/1nEGjL7aMVdNQzsfQPKdGr",
+          "id": "1nEGjL7aMVdNQzsfQPKdGr",
+          "name": "Hazel English",
+          "type": "artist",
+          "uri": "spotify:artist:1nEGjL7aMVdNQzsfQPKdGr"
+        }
+      ],
+      "external_urls": {
+        "spotify": "https://open.spotify.com/album/0H8d7cZGtWYHazDp6q3i5j"
+      },
+      "href": "https://api.spotify.com/v1/albums/0H8d7cZGtWYHazDp6q3i5j",
+      "id": "0H8d7cZGtWYHazDp6q3i5j",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b273816281a1256686f517fa1095",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e02816281a1256686f517fa1095",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d00004851816281a1256686f517fa1095",
+          "width": 64
+        }
+      ],
+      "name": "Just Give In & Never Going Home",
+      "release_date": "2017-05-17",
+      "release_date_precision": "day",
+      "total_tracks": 11,
+      "type": "album",
+      "uri": "spotify:album:0H8d7cZGtWYHazDp6q3i5j"
+    },
+    {
+      "album_group": "album",
+      "album_type": "album",
+      "artists": [
+        {
+          "external_urls": {
+            "spotify": "https://open.spotify.com/artist/1nEGjL7aMVdNQzsfQPKdGr"
+          },
+          "href": "https://api.spotify.com/v1/artists/1nEGjL7aMVdNQzsfQPKdGr",
+          "id": "1nEGjL7aMVdNQzsfQPKdGr",
+          "name": "Hazel English",
+          "type": "artist",
+          "uri": "spotify:artist:1nEGjL7aMVdNQzsfQPKdGr"
+        }
+      ],
+      "external_urls": {
+        "spotify": "https://open.spotify.com/album/0WkcZDizu9ugjmFldcxO3C"
+      },
+      "href": "https://api.spotify.com/v1/albums/0WkcZDizu9ugjmFldcxO3C",
+      "id": "0WkcZDizu9ugjmFldcxO3C",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b2735f85240521f26e81fc14e10d",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e025f85240521f26e81fc14e10d",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d000048515f85240521f26e81fc14e10d",
+          "width": 64
+        }
+      ],
+      "name": "Just Give In / Never Going Home",
+      "release_date": "2017-05-12",
+      "release_date_precision": "day",
+      "total_tracks": 11,
+      "type": "album",
+      "uri": "spotify:album:0WkcZDizu9ugjmFldcxO3C"
+    },
+    {
+      "album_group": "album",
+      "album_type": "album",
+      "artists": [
+        {
+          "external_urls": {
+            "spotify": "https://open.spotify.com/artist/1nEGjL7aMVdNQzsfQPKdGr"
+          },
+          "href": "https://api.spotify.com/v1/artists/1nEGjL7aMVdNQzsfQPKdGr",
+          "id": "1nEGjL7aMVdNQzsfQPKdGr",
+          "name": "Hazel English",
+          "type": "artist",
+          "uri": "spotify:artist:1nEGjL7aMVdNQzsfQPKdGr"
+        }
+      ],
+      "external_urls": {
+        "spotify": "https://open.spotify.com/album/4IRuILZcd12uRAgVvXRPxT"
+      },
+      "href": "https://api.spotify.com/v1/albums/4IRuILZcd12uRAgVvXRPxT",
+      "id": "4IRuILZcd12uRAgVvXRPxT",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b273cc12558bc15cb85ee96cb654",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e02cc12558bc15cb85ee96cb654",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d00004851cc12558bc15cb85ee96cb654",
+          "width": 64
+        }
+      ],
+      "name": "Just Give In / Never Going Home",
+      "release_date": "2017-05-12",
+      "release_date_precision": "day",
+      "total_tracks": 11,
+      "type": "album",
+      "uri": "spotify:album:4IRuILZcd12uRAgVvXRPxT"
+    }
+  ],
+  "limit": 20,
+  "next": null,
+  "offset": 0,
+  "previous": null,
+  "total": 8
+}

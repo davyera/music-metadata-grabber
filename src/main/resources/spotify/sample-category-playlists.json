@@ -1,0 +1,84 @@
+{
+  "playlists": {
+    "href": "https://api.spotify.com/v1/browse/categories/hiphop/playlists?offset=0&limit=2",
+    "items": [
+      {
+        "collaborative": false,
+        "description": "Music from Lil Tjay, Drake and Pooh Shiesty.",
+        "external_urls": {
+          "spotify": "https://open.spotify.com/playlist/37i9dQZF1DX0XUsuxWHRQd"
+        },
+        "href": "https://api.spotify.com/v1/playlists/37i9dQZF1DX0XUsuxWHRQd",
+        "id": "37i9dQZF1DX0XUsuxWHRQd",
+        "images": [
+          {
+            "height": null,
+            "url": "https://i.scdn.co/image/ab67706f00000003b88c67fe4fa8c33a5513cb87",
+            "width": null
+          }
+        ],
+        "name": "RapCaviar",
+        "owner": {
+          "display_name": "Spotify",
+          "external_urls": {
+            "spotify": "https://open.spotify.com/user/spotify"
+          },
+          "href": "https://api.spotify.com/v1/users/spotify",
+          "id": "spotify",
+          "type": "user",
+          "uri": "spotify:user:spotify"
+        },
+        "primary_color": null,
+        "public": null,
+        "snapshot_id": "MTYxNzYzOTE5MiwwMDAwMDU2NzAwMDAwMTc4YTJjZjM5NjEwMDAwMDE3ODhlNTZjZTc0",
+        "tracks": {
+          "href": "https://api.spotify.com/v1/playlists/37i9dQZF1DX0XUsuxWHRQd/tracks",
+          "total": 50
+        },
+        "type": "playlist",
+        "uri": "spotify:playlist:37i9dQZF1DX0XUsuxWHRQd"
+      },
+      {
+        "collaborative": false,
+        "description": "When you feel like you're 100% that b****. Cover: Doja Cat",
+        "external_urls": {
+          "spotify": "https://open.spotify.com/playlist/37i9dQZF1DX6GwdWRQMQpq"
+        },
+        "href": "https://api.spotify.com/v1/playlists/37i9dQZF1DX6GwdWRQMQpq",
+        "id": "37i9dQZF1DX6GwdWRQMQpq",
+        "images": [
+          {
+            "height": null,
+            "url": "https://i.scdn.co/image/ab67706f00000003d8d1b903e32b3ff5a28972ca",
+            "width": null
+          }
+        ],
+        "name": "Feelin' Myself",
+        "owner": {
+          "display_name": "Spotify",
+          "external_urls": {
+            "spotify": "https://open.spotify.com/user/spotify"
+          },
+          "href": "https://api.spotify.com/v1/users/spotify",
+          "id": "spotify",
+          "type": "user",
+          "uri": "spotify:user:spotify"
+        },
+        "primary_color": null,
+        "public": null,
+        "snapshot_id": "MTYxNzcyNzI0OSwwMDAwMDQyNDAwMDAwMTc4YTgwZWRhZjgwMDAwMDE3ODhhMzA4ZGQ2",
+        "tracks": {
+          "href": "https://api.spotify.com/v1/playlists/37i9dQZF1DX6GwdWRQMQpq/tracks",
+          "total": 50
+        },
+        "type": "playlist",
+        "uri": "spotify:playlist:37i9dQZF1DX6GwdWRQMQpq"
+      }
+    ],
+    "limit": 2,
+    "next": "https://api.spotify.com/v1/browse/categories/hiphop/playlists?offset=2&limit=2",
+    "offset": 0,
+    "previous": null,
+    "total": 44
+  }
+}

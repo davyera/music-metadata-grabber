@@ -1,0 +1,940 @@
+{
+  "albums": [
+    {
+      "album_type": "album",
+      "artists": [
+        {
+          "external_urls": {
+            "spotify": "https://open.spotify.com/artist/1nEGjL7aMVdNQzsfQPKdGr"
+          },
+          "href": "https://api.spotify.com/v1/artists/1nEGjL7aMVdNQzsfQPKdGr",
+          "id": "1nEGjL7aMVdNQzsfQPKdGr",
+          "name": "Hazel English",
+          "type": "artist",
+          "uri": "spotify:artist:1nEGjL7aMVdNQzsfQPKdGr"
+        }
+      ],
+      "copyrights": [
+        {
+          "text": "2020 Polyvinyl Record Co. under exclusive license from Marathon Artists Limited",
+          "type": "C"
+        },
+        {
+          "text": "2020 Polyvinyl Record Co. under exclusive license from Marathon Artists Limited",
+          "type": "P"
+        }
+      ],
+      "external_ids": {
+        "upc": "644110039996"
+      },
+      "external_urls": {
+        "spotify": "https://open.spotify.com/album/2A2k0MgzDEiFjW3ejlpxxV"
+      },
+      "genres": [],
+      "href": "https://api.spotify.com/v1/albums/2A2k0MgzDEiFjW3ejlpxxV",
+      "id": "2A2k0MgzDEiFjW3ejlpxxV",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b2733dda680164a173c3bba09f96",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e023dda680164a173c3bba09f96",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d000048513dda680164a173c3bba09f96",
+          "width": 64
+        }
+      ],
+      "label": "Polyvinyl Records",
+      "name": "Wake UP!",
+      "popularity": 43,
+      "release_date": "2020-04-24",
+      "release_date_precision": "day",
+      "total_tracks": 10,
+      "tracks": {
+        "href": "https://api.spotify.com/v1/albums/2A2k0MgzDEiFjW3ejlpxxV/tracks?offset=0&limit=50&market=ES",
+        "items": [
+          {
+            "artists": [
+              {
+                "external_urls": {
+                  "spotify": "https://open.spotify.com/artist/1nEGjL7aMVdNQzsfQPKdGr"
+                },
+                "href": "https://api.spotify.com/v1/artists/1nEGjL7aMVdNQzsfQPKdGr",
+                "id": "1nEGjL7aMVdNQzsfQPKdGr",
+                "name": "Hazel English",
+                "type": "artist",
+                "uri": "spotify:artist:1nEGjL7aMVdNQzsfQPKdGr"
+              }
+            ],
+            "disc_number": 1,
+            "duration_ms": 226456,
+            "explicit": false,
+            "external_urls": {
+              "spotify": "https://open.spotify.com/track/0HUxab6NCl0JSZek8fEyre"
+            },
+            "href": "https://api.spotify.com/v1/tracks/0HUxab6NCl0JSZek8fEyre",
+            "id": "0HUxab6NCl0JSZek8fEyre",
+            "is_local": false,
+            "is_playable": true,
+            "linked_from": {
+              "external_urls": {
+                "spotify": "https://open.spotify.com/track/2Wv6JOF3gS3cbWWSdbjDBZ"
+              },
+              "href": "https://api.spotify.com/v1/tracks/2Wv6JOF3gS3cbWWSdbjDBZ",
+              "id": "2Wv6JOF3gS3cbWWSdbjDBZ",
+              "type": "track",
+              "uri": "spotify:track:2Wv6JOF3gS3cbWWSdbjDBZ"
+            },
+            "name": "Born Like",
+            "preview_url": "https://p.scdn.co/mp3-preview/6b1410f3bf449df65a7c390eb90a0e67a76bd41f?cid=774b29d4f13844c495f206cafdad9c86",
+            "track_number": 1,
+            "type": "track",
+            "uri": "spotify:track:0HUxab6NCl0JSZek8fEyre"
+          },
+          {
+            "artists": [
+              {
+                "external_urls": {
+                  "spotify": "https://open.spotify.com/artist/1nEGjL7aMVdNQzsfQPKdGr"
+                },
+                "href": "https://api.spotify.com/v1/artists/1nEGjL7aMVdNQzsfQPKdGr",
+                "id": "1nEGjL7aMVdNQzsfQPKdGr",
+                "name": "Hazel English",
+                "type": "artist",
+                "uri": "spotify:artist:1nEGjL7aMVdNQzsfQPKdGr"
+              }
+            ],
+            "disc_number": 1,
+            "duration_ms": 213297,
+            "explicit": false,
+            "external_urls": {
+              "spotify": "https://open.spotify.com/track/7lkSzRXneWTNGWOxh0Jh1u"
+            },
+            "href": "https://api.spotify.com/v1/tracks/7lkSzRXneWTNGWOxh0Jh1u",
+            "id": "7lkSzRXneWTNGWOxh0Jh1u",
+            "is_local": false,
+            "is_playable": true,
+            "linked_from": {
+              "external_urls": {
+                "spotify": "https://open.spotify.com/track/4EWLOLhgJLlfrZb4U55brm"
+              },
+              "href": "https://api.spotify.com/v1/tracks/4EWLOLhgJLlfrZb4U55brm",
+              "id": "4EWLOLhgJLlfrZb4U55brm",
+              "type": "track",
+              "uri": "spotify:track:4EWLOLhgJLlfrZb4U55brm"
+            },
+            "name": "Shaking",
+            "preview_url": "https://p.scdn.co/mp3-preview/f2c50a872b1ad2089131fb5b4f193767a8107cad?cid=774b29d4f13844c495f206cafdad9c86",
+            "track_number": 2,
+            "type": "track",
+            "uri": "spotify:track:7lkSzRXneWTNGWOxh0Jh1u"
+          },
+          {
+            "artists": [
+              {
+                "external_urls": {
+                  "spotify": "https://open.spotify.com/artist/1nEGjL7aMVdNQzsfQPKdGr"
+                },
+                "href": "https://api.spotify.com/v1/artists/1nEGjL7aMVdNQzsfQPKdGr",
+                "id": "1nEGjL7aMVdNQzsfQPKdGr",
+                "name": "Hazel English",
+                "type": "artist",
+                "uri": "spotify:artist:1nEGjL7aMVdNQzsfQPKdGr"
+              }
+            ],
+            "disc_number": 1,
+            "duration_ms": 215193,
+            "explicit": false,
+            "external_urls": {
+              "spotify": "https://open.spotify.com/track/7rFdKaHSzkEf3RRVBbyCt2"
+            },
+            "href": "https://api.spotify.com/v1/tracks/7rFdKaHSzkEf3RRVBbyCt2",
+            "id": "7rFdKaHSzkEf3RRVBbyCt2",
+            "is_local": false,
+            "is_playable": true,
+            "linked_from": {
+              "external_urls": {
+                "spotify": "https://open.spotify.com/track/33IGKqHlv7IpDAXyN4Suwv"
+              },
+              "href": "https://api.spotify.com/v1/tracks/33IGKqHlv7IpDAXyN4Suwv",
+              "id": "33IGKqHlv7IpDAXyN4Suwv",
+              "type": "track",
+              "uri": "spotify:track:33IGKqHlv7IpDAXyN4Suwv"
+            },
+            "name": "Wake UP!",
+            "preview_url": "https://p.scdn.co/mp3-preview/c2d2fd08dd2aa067659d44de7767fc377800a489?cid=774b29d4f13844c495f206cafdad9c86",
+            "track_number": 3,
+            "type": "track",
+            "uri": "spotify:track:7rFdKaHSzkEf3RRVBbyCt2"
+          },
+          {
+            "artists": [
+              {
+                "external_urls": {
+                  "spotify": "https://open.spotify.com/artist/1nEGjL7aMVdNQzsfQPKdGr"
+                },
+                "href": "https://api.spotify.com/v1/artists/1nEGjL7aMVdNQzsfQPKdGr",
+                "id": "1nEGjL7aMVdNQzsfQPKdGr",
+                "name": "Hazel English",
+                "type": "artist",
+                "uri": "spotify:artist:1nEGjL7aMVdNQzsfQPKdGr"
+              }
+            ],
+            "disc_number": 1,
+            "duration_ms": 218729,
+            "explicit": false,
+            "external_urls": {
+              "spotify": "https://open.spotify.com/track/598ht6tILZF5fseRQzAPyu"
+            },
+            "href": "https://api.spotify.com/v1/tracks/598ht6tILZF5fseRQzAPyu",
+            "id": "598ht6tILZF5fseRQzAPyu",
+            "is_local": false,
+            "is_playable": true,
+            "linked_from": {
+              "external_urls": {
+                "spotify": "https://open.spotify.com/track/788qkB441J60McUQgk0MSB"
+              },
+              "href": "https://api.spotify.com/v1/tracks/788qkB441J60McUQgk0MSB",
+              "id": "788qkB441J60McUQgk0MSB",
+              "type": "track",
+              "uri": "spotify:track:788qkB441J60McUQgk0MSB"
+            },
+            "name": "Off My Mind",
+            "preview_url": "https://p.scdn.co/mp3-preview/6a311e536794b339c2e9bd725be83f698f8026b2?cid=774b29d4f13844c495f206cafdad9c86",
+            "track_number": 4,
+            "type": "track",
+            "uri": "spotify:track:598ht6tILZF5fseRQzAPyu"
+          },
+          {
+            "artists": [
+              {
+                "external_urls": {
+                  "spotify": "https://open.spotify.com/artist/1nEGjL7aMVdNQzsfQPKdGr"
+                },
+                "href": "https://api.spotify.com/v1/artists/1nEGjL7aMVdNQzsfQPKdGr",
+                "id": "1nEGjL7aMVdNQzsfQPKdGr",
+                "name": "Hazel English",
+                "type": "artist",
+                "uri": "spotify:artist:1nEGjL7aMVdNQzsfQPKdGr"
+              }
+            ],
+            "disc_number": 1,
+            "duration_ms": 228286,
+            "explicit": false,
+            "external_urls": {
+              "spotify": "https://open.spotify.com/track/22wExEiBm8LPmObrR1N5WQ"
+            },
+            "href": "https://api.spotify.com/v1/tracks/22wExEiBm8LPmObrR1N5WQ",
+            "id": "22wExEiBm8LPmObrR1N5WQ",
+            "is_local": false,
+            "is_playable": true,
+            "linked_from": {
+              "external_urls": {
+                "spotify": "https://open.spotify.com/track/2oFcg1dEGotfeeEYFrWSqD"
+              },
+              "href": "https://api.spotify.com/v1/tracks/2oFcg1dEGotfeeEYFrWSqD",
+              "id": "2oFcg1dEGotfeeEYFrWSqD",
+              "type": "track",
+              "uri": "spotify:track:2oFcg1dEGotfeeEYFrWSqD"
+            },
+            "name": "Combat",
+            "preview_url": "https://p.scdn.co/mp3-preview/45584daca6f43f5304a68be2a21a8281ebdf351c?cid=774b29d4f13844c495f206cafdad9c86",
+            "track_number": 5,
+            "type": "track",
+            "uri": "spotify:track:22wExEiBm8LPmObrR1N5WQ"
+          },
+          {
+            "artists": [
+              {
+                "external_urls": {
+                  "spotify": "https://open.spotify.com/artist/1nEGjL7aMVdNQzsfQPKdGr"
+                },
+                "href": "https://api.spotify.com/v1/artists/1nEGjL7aMVdNQzsfQPKdGr",
+                "id": "1nEGjL7aMVdNQzsfQPKdGr",
+                "name": "Hazel English",
+                "type": "artist",
+                "uri": "spotify:artist:1nEGjL7aMVdNQzsfQPKdGr"
+              }
+            ],
+            "disc_number": 1,
+            "duration_ms": 173211,
+            "explicit": false,
+            "external_urls": {
+              "spotify": "https://open.spotify.com/track/3J2u3L4qRqn3Hljv01THso"
+            },
+            "href": "https://api.spotify.com/v1/tracks/3J2u3L4qRqn3Hljv01THso",
+            "id": "3J2u3L4qRqn3Hljv01THso",
+            "is_local": false,
+            "is_playable": true,
+            "linked_from": {
+              "external_urls": {
+                "spotify": "https://open.spotify.com/track/5ypn0mWrFJ8m2BeYBKwXec"
+              },
+              "href": "https://api.spotify.com/v1/tracks/5ypn0mWrFJ8m2BeYBKwXec",
+              "id": "5ypn0mWrFJ8m2BeYBKwXec",
+              "type": "track",
+              "uri": "spotify:track:5ypn0mWrFJ8m2BeYBKwXec"
+            },
+            "name": "Five and Dime",
+            "preview_url": "https://p.scdn.co/mp3-preview/75f7446b16011ea13a007448cb40bf0381af37df?cid=774b29d4f13844c495f206cafdad9c86",
+            "track_number": 6,
+            "type": "track",
+            "uri": "spotify:track:3J2u3L4qRqn3Hljv01THso"
+          },
+          {
+            "artists": [
+              {
+                "external_urls": {
+                  "spotify": "https://open.spotify.com/artist/1nEGjL7aMVdNQzsfQPKdGr"
+                },
+                "href": "https://api.spotify.com/v1/artists/1nEGjL7aMVdNQzsfQPKdGr",
+                "id": "1nEGjL7aMVdNQzsfQPKdGr",
+                "name": "Hazel English",
+                "type": "artist",
+                "uri": "spotify:artist:1nEGjL7aMVdNQzsfQPKdGr"
+              }
+            ],
+            "disc_number": 1,
+            "duration_ms": 244738,
+            "explicit": false,
+            "external_urls": {
+              "spotify": "https://open.spotify.com/track/0iVDI9ERYcONBoMDgjC0yd"
+            },
+            "href": "https://api.spotify.com/v1/tracks/0iVDI9ERYcONBoMDgjC0yd",
+            "id": "0iVDI9ERYcONBoMDgjC0yd",
+            "is_local": false,
+            "is_playable": true,
+            "linked_from": {
+              "external_urls": {
+                "spotify": "https://open.spotify.com/track/7gbpAC8ARNSS8MsLQ8tjE1"
+              },
+              "href": "https://api.spotify.com/v1/tracks/7gbpAC8ARNSS8MsLQ8tjE1",
+              "id": "7gbpAC8ARNSS8MsLQ8tjE1",
+              "type": "track",
+              "uri": "spotify:track:7gbpAC8ARNSS8MsLQ8tjE1"
+            },
+            "name": "Like a Drug",
+            "preview_url": "https://p.scdn.co/mp3-preview/27a57777a86a049bdf9d9ec5f18b8b834d859d94?cid=774b29d4f13844c495f206cafdad9c86",
+            "track_number": 7,
+            "type": "track",
+            "uri": "spotify:track:0iVDI9ERYcONBoMDgjC0yd"
+          },
+          {
+            "artists": [
+              {
+                "external_urls": {
+                  "spotify": "https://open.spotify.com/artist/1nEGjL7aMVdNQzsfQPKdGr"
+                },
+                "href": "https://api.spotify.com/v1/artists/1nEGjL7aMVdNQzsfQPKdGr",
+                "id": "1nEGjL7aMVdNQzsfQPKdGr",
+                "name": "Hazel English",
+                "type": "artist",
+                "uri": "spotify:artist:1nEGjL7aMVdNQzsfQPKdGr"
+              }
+            ],
+            "disc_number": 1,
+            "duration_ms": 213259,
+            "explicit": false,
+            "external_urls": {
+              "spotify": "https://open.spotify.com/track/03RbjEfqnj9FOP6WElbqkR"
+            },
+            "href": "https://api.spotify.com/v1/tracks/03RbjEfqnj9FOP6WElbqkR",
+            "id": "03RbjEfqnj9FOP6WElbqkR",
+            "is_local": false,
+            "is_playable": true,
+            "linked_from": {
+              "external_urls": {
+                "spotify": "https://open.spotify.com/track/5UNMw5KyUKGdP8fvY2oCDl"
+              },
+              "href": "https://api.spotify.com/v1/tracks/5UNMw5KyUKGdP8fvY2oCDl",
+              "id": "5UNMw5KyUKGdP8fvY2oCDl",
+              "type": "track",
+              "uri": "spotify:track:5UNMw5KyUKGdP8fvY2oCDl"
+            },
+            "name": "Waiting",
+            "preview_url": "https://p.scdn.co/mp3-preview/43f1bfec564120d2b2aef6f78394fb8be2310e0e?cid=774b29d4f13844c495f206cafdad9c86",
+            "track_number": 8,
+            "type": "track",
+            "uri": "spotify:track:03RbjEfqnj9FOP6WElbqkR"
+          },
+          {
+            "artists": [
+              {
+                "external_urls": {
+                  "spotify": "https://open.spotify.com/artist/1nEGjL7aMVdNQzsfQPKdGr"
+                },
+                "href": "https://api.spotify.com/v1/artists/1nEGjL7aMVdNQzsfQPKdGr",
+                "id": "1nEGjL7aMVdNQzsfQPKdGr",
+                "name": "Hazel English",
+                "type": "artist",
+                "uri": "spotify:artist:1nEGjL7aMVdNQzsfQPKdGr"
+              }
+            ],
+            "disc_number": 1,
+            "duration_ms": 192445,
+            "explicit": false,
+            "external_urls": {
+              "spotify": "https://open.spotify.com/track/4lIV14EWMzVVi4wbZyyqF0"
+            },
+            "href": "https://api.spotify.com/v1/tracks/4lIV14EWMzVVi4wbZyyqF0",
+            "id": "4lIV14EWMzVVi4wbZyyqF0",
+            "is_local": false,
+            "is_playable": true,
+            "linked_from": {
+              "external_urls": {
+                "spotify": "https://open.spotify.com/track/6CagexFkTmmh7FsZdyc2ak"
+              },
+              "href": "https://api.spotify.com/v1/tracks/6CagexFkTmmh7FsZdyc2ak",
+              "id": "6CagexFkTmmh7FsZdyc2ak",
+              "type": "track",
+              "uri": "spotify:track:6CagexFkTmmh7FsZdyc2ak"
+            },
+            "name": "Milk and Honey",
+            "preview_url": "https://p.scdn.co/mp3-preview/360fc1ef66bac94ba90cdceef3cc0edd0bcfa58e?cid=774b29d4f13844c495f206cafdad9c86",
+            "track_number": 9,
+            "type": "track",
+            "uri": "spotify:track:4lIV14EWMzVVi4wbZyyqF0"
+          },
+          {
+            "artists": [
+              {
+                "external_urls": {
+                  "spotify": "https://open.spotify.com/artist/1nEGjL7aMVdNQzsfQPKdGr"
+                },
+                "href": "https://api.spotify.com/v1/artists/1nEGjL7aMVdNQzsfQPKdGr",
+                "id": "1nEGjL7aMVdNQzsfQPKdGr",
+                "name": "Hazel English",
+                "type": "artist",
+                "uri": "spotify:artist:1nEGjL7aMVdNQzsfQPKdGr"
+              }
+            ],
+            "disc_number": 1,
+            "duration_ms": 273127,
+            "explicit": false,
+            "external_urls": {
+              "spotify": "https://open.spotify.com/track/7rniEDwpbwNkyYUwI24bQr"
+            },
+            "href": "https://api.spotify.com/v1/tracks/7rniEDwpbwNkyYUwI24bQr",
+            "id": "7rniEDwpbwNkyYUwI24bQr",
+            "is_local": false,
+            "is_playable": true,
+            "linked_from": {
+              "external_urls": {
+                "spotify": "https://open.spotify.com/track/3DlJzD5UEpQde9VGagV3pE"
+              },
+              "href": "https://api.spotify.com/v1/tracks/3DlJzD5UEpQde9VGagV3pE",
+              "id": "3DlJzD5UEpQde9VGagV3pE",
+              "type": "track",
+              "uri": "spotify:track:3DlJzD5UEpQde9VGagV3pE"
+            },
+            "name": "Work It Out",
+            "preview_url": "https://p.scdn.co/mp3-preview/87d64331345874dc67007c6a3ee2a7c82bf436e8?cid=774b29d4f13844c495f206cafdad9c86",
+            "track_number": 10,
+            "type": "track",
+            "uri": "spotify:track:7rniEDwpbwNkyYUwI24bQr"
+          }
+        ],
+        "limit": 50,
+        "next": null,
+        "offset": 0,
+        "previous": null,
+        "total": 10
+      },
+      "type": "album",
+      "uri": "spotify:album:2A2k0MgzDEiFjW3ejlpxxV"
+    },
+    {
+      "album_type": "album",
+      "artists": [
+        {
+          "external_urls": {
+            "spotify": "https://open.spotify.com/artist/1nEGjL7aMVdNQzsfQPKdGr"
+          },
+          "href": "https://api.spotify.com/v1/artists/1nEGjL7aMVdNQzsfQPKdGr",
+          "id": "1nEGjL7aMVdNQzsfQPKdGr",
+          "name": "Hazel English",
+          "type": "artist",
+          "uri": "spotify:artist:1nEGjL7aMVdNQzsfQPKdGr"
+        }
+      ],
+      "copyrights": [
+        {
+          "text": "2017 Polyvinyl Record Co.",
+          "type": "C"
+        },
+        {
+          "text": "2017 Polyvinyl Record Co.",
+          "type": "P"
+        }
+      ],
+      "external_ids": {
+        "upc": "644110033895"
+      },
+      "external_urls": {
+        "spotify": "https://open.spotify.com/album/4tKnS9Q0lgN3i7SmXi4mGI"
+      },
+      "genres": [],
+      "href": "https://api.spotify.com/v1/albums/4tKnS9Q0lgN3i7SmXi4mGI",
+      "id": "4tKnS9Q0lgN3i7SmXi4mGI",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b273f0a4bb4b2fc663b082f9fd9f",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e02f0a4bb4b2fc663b082f9fd9f",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d00004851f0a4bb4b2fc663b082f9fd9f",
+          "width": 64
+        }
+      ],
+      "label": "Polyvinyl Records",
+      "name": "Just Give In / Never Going Home",
+      "popularity": 49,
+      "release_date": "2017-05-26",
+      "release_date_precision": "day",
+      "total_tracks": 11,
+      "tracks": {
+        "href": "https://api.spotify.com/v1/albums/4tKnS9Q0lgN3i7SmXi4mGI/tracks?offset=0&limit=50&market=ES",
+        "items": [
+          {
+            "artists": [
+              {
+                "external_urls": {
+                  "spotify": "https://open.spotify.com/artist/1nEGjL7aMVdNQzsfQPKdGr"
+                },
+                "href": "https://api.spotify.com/v1/artists/1nEGjL7aMVdNQzsfQPKdGr",
+                "id": "1nEGjL7aMVdNQzsfQPKdGr",
+                "name": "Hazel English",
+                "type": "artist",
+                "uri": "spotify:artist:1nEGjL7aMVdNQzsfQPKdGr"
+              }
+            ],
+            "disc_number": 1,
+            "duration_ms": 181653,
+            "explicit": false,
+            "external_urls": {
+              "spotify": "https://open.spotify.com/track/6WbqUx2SUuEenmGe3atluc"
+            },
+            "href": "https://api.spotify.com/v1/tracks/6WbqUx2SUuEenmGe3atluc",
+            "id": "6WbqUx2SUuEenmGe3atluc",
+            "is_local": false,
+            "is_playable": true,
+            "linked_from": {
+              "external_urls": {
+                "spotify": "https://open.spotify.com/track/4sRQ2ht57zjOv0k4tgNJ68"
+              },
+              "href": "https://api.spotify.com/v1/tracks/4sRQ2ht57zjOv0k4tgNJ68",
+              "id": "4sRQ2ht57zjOv0k4tgNJ68",
+              "type": "track",
+              "uri": "spotify:track:4sRQ2ht57zjOv0k4tgNJ68"
+            },
+            "name": "Other Lives",
+            "preview_url": "https://p.scdn.co/mp3-preview/f06d36d739ca9a17f6a1926d1c5f8311c98be416?cid=774b29d4f13844c495f206cafdad9c86",
+            "track_number": 1,
+            "type": "track",
+            "uri": "spotify:track:6WbqUx2SUuEenmGe3atluc"
+          },
+          {
+            "artists": [
+              {
+                "external_urls": {
+                  "spotify": "https://open.spotify.com/artist/1nEGjL7aMVdNQzsfQPKdGr"
+                },
+                "href": "https://api.spotify.com/v1/artists/1nEGjL7aMVdNQzsfQPKdGr",
+                "id": "1nEGjL7aMVdNQzsfQPKdGr",
+                "name": "Hazel English",
+                "type": "artist",
+                "uri": "spotify:artist:1nEGjL7aMVdNQzsfQPKdGr"
+              }
+            ],
+            "disc_number": 1,
+            "duration_ms": 222360,
+            "explicit": false,
+            "external_urls": {
+              "spotify": "https://open.spotify.com/track/1b6GNUQPUvjjlQ6052PRre"
+            },
+            "href": "https://api.spotify.com/v1/tracks/1b6GNUQPUvjjlQ6052PRre",
+            "id": "1b6GNUQPUvjjlQ6052PRre",
+            "is_local": false,
+            "is_playable": true,
+            "linked_from": {
+              "external_urls": {
+                "spotify": "https://open.spotify.com/track/0vxn3vnXRKvw1lmvkHYhtg"
+              },
+              "href": "https://api.spotify.com/v1/tracks/0vxn3vnXRKvw1lmvkHYhtg",
+              "id": "0vxn3vnXRKvw1lmvkHYhtg",
+              "type": "track",
+              "uri": "spotify:track:0vxn3vnXRKvw1lmvkHYhtg"
+            },
+            "name": "Fix",
+            "preview_url": "https://p.scdn.co/mp3-preview/df126b5bc7c0286819c1125c44052741836263c1?cid=774b29d4f13844c495f206cafdad9c86",
+            "track_number": 2,
+            "type": "track",
+            "uri": "spotify:track:1b6GNUQPUvjjlQ6052PRre"
+          },
+          {
+            "artists": [
+              {
+                "external_urls": {
+                  "spotify": "https://open.spotify.com/artist/1nEGjL7aMVdNQzsfQPKdGr"
+                },
+                "href": "https://api.spotify.com/v1/artists/1nEGjL7aMVdNQzsfQPKdGr",
+                "id": "1nEGjL7aMVdNQzsfQPKdGr",
+                "name": "Hazel English",
+                "type": "artist",
+                "uri": "spotify:artist:1nEGjL7aMVdNQzsfQPKdGr"
+              }
+            ],
+            "disc_number": 1,
+            "duration_ms": 182293,
+            "explicit": false,
+            "external_urls": {
+              "spotify": "https://open.spotify.com/track/0eEH0YYJceTuaRN7G7vRtk"
+            },
+            "href": "https://api.spotify.com/v1/tracks/0eEH0YYJceTuaRN7G7vRtk",
+            "id": "0eEH0YYJceTuaRN7G7vRtk",
+            "is_local": false,
+            "is_playable": true,
+            "linked_from": {
+              "external_urls": {
+                "spotify": "https://open.spotify.com/track/5xIDHc3cST5eHh256MWHKS"
+              },
+              "href": "https://api.spotify.com/v1/tracks/5xIDHc3cST5eHh256MWHKS",
+              "id": "5xIDHc3cST5eHh256MWHKS",
+              "type": "track",
+              "uri": "spotify:track:5xIDHc3cST5eHh256MWHKS"
+            },
+            "name": "Birthday",
+            "preview_url": "https://p.scdn.co/mp3-preview/74c1807bd2cd9fcc2a7fb745cc7e3ea34f715e1c?cid=774b29d4f13844c495f206cafdad9c86",
+            "track_number": 3,
+            "type": "track",
+            "uri": "spotify:track:0eEH0YYJceTuaRN7G7vRtk"
+          },
+          {
+            "artists": [
+              {
+                "external_urls": {
+                  "spotify": "https://open.spotify.com/artist/1nEGjL7aMVdNQzsfQPKdGr"
+                },
+                "href": "https://api.spotify.com/v1/artists/1nEGjL7aMVdNQzsfQPKdGr",
+                "id": "1nEGjL7aMVdNQzsfQPKdGr",
+                "name": "Hazel English",
+                "type": "artist",
+                "uri": "spotify:artist:1nEGjL7aMVdNQzsfQPKdGr"
+              }
+            ],
+            "disc_number": 1,
+            "duration_ms": 210493,
+            "explicit": false,
+            "external_urls": {
+              "spotify": "https://open.spotify.com/track/0O2cmYRHMdWUuLZn0SAPsl"
+            },
+            "href": "https://api.spotify.com/v1/tracks/0O2cmYRHMdWUuLZn0SAPsl",
+            "id": "0O2cmYRHMdWUuLZn0SAPsl",
+            "is_local": false,
+            "is_playable": true,
+            "linked_from": {
+              "external_urls": {
+                "spotify": "https://open.spotify.com/track/1GWgD9WxgYfxIuNzTWc8Y3"
+              },
+              "href": "https://api.spotify.com/v1/tracks/1GWgD9WxgYfxIuNzTWc8Y3",
+              "id": "1GWgD9WxgYfxIuNzTWc8Y3",
+              "type": "track",
+              "uri": "spotify:track:1GWgD9WxgYfxIuNzTWc8Y3"
+            },
+            "name": "Love Is Dead",
+            "preview_url": "https://p.scdn.co/mp3-preview/9a31e09e21fb7e982305f62aeba6ca6d750817fe?cid=774b29d4f13844c495f206cafdad9c86",
+            "track_number": 4,
+            "type": "track",
+            "uri": "spotify:track:0O2cmYRHMdWUuLZn0SAPsl"
+          },
+          {
+            "artists": [
+              {
+                "external_urls": {
+                  "spotify": "https://open.spotify.com/artist/1nEGjL7aMVdNQzsfQPKdGr"
+                },
+                "href": "https://api.spotify.com/v1/artists/1nEGjL7aMVdNQzsfQPKdGr",
+                "id": "1nEGjL7aMVdNQzsfQPKdGr",
+                "name": "Hazel English",
+                "type": "artist",
+                "uri": "spotify:artist:1nEGjL7aMVdNQzsfQPKdGr"
+              }
+            ],
+            "disc_number": 1,
+            "duration_ms": 255573,
+            "explicit": false,
+            "external_urls": {
+              "spotify": "https://open.spotify.com/track/0jaQljERIvGSs7xCPCUzWc"
+            },
+            "href": "https://api.spotify.com/v1/tracks/0jaQljERIvGSs7xCPCUzWc",
+            "id": "0jaQljERIvGSs7xCPCUzWc",
+            "is_local": false,
+            "is_playable": true,
+            "linked_from": {
+              "external_urls": {
+                "spotify": "https://open.spotify.com/track/3ZicnKSNoOFJlVCyj8xOnH"
+              },
+              "href": "https://api.spotify.com/v1/tracks/3ZicnKSNoOFJlVCyj8xOnH",
+              "id": "3ZicnKSNoOFJlVCyj8xOnH",
+              "type": "track",
+              "uri": "spotify:track:3ZicnKSNoOFJlVCyj8xOnH"
+            },
+            "name": "More Like You",
+            "preview_url": "https://p.scdn.co/mp3-preview/5fbbd41343ccc72aa4b9e4ff5058e21a84ac00b2?cid=774b29d4f13844c495f206cafdad9c86",
+            "track_number": 5,
+            "type": "track",
+            "uri": "spotify:track:0jaQljERIvGSs7xCPCUzWc"
+          },
+          {
+            "artists": [
+              {
+                "external_urls": {
+                  "spotify": "https://open.spotify.com/artist/1nEGjL7aMVdNQzsfQPKdGr"
+                },
+                "href": "https://api.spotify.com/v1/artists/1nEGjL7aMVdNQzsfQPKdGr",
+                "id": "1nEGjL7aMVdNQzsfQPKdGr",
+                "name": "Hazel English",
+                "type": "artist",
+                "uri": "spotify:artist:1nEGjL7aMVdNQzsfQPKdGr"
+              }
+            ],
+            "disc_number": 1,
+            "duration_ms": 235906,
+            "explicit": false,
+            "external_urls": {
+              "spotify": "https://open.spotify.com/track/1ACoIKisvdebLOKPNuZCuS"
+            },
+            "href": "https://api.spotify.com/v1/tracks/1ACoIKisvdebLOKPNuZCuS",
+            "id": "1ACoIKisvdebLOKPNuZCuS",
+            "is_local": false,
+            "is_playable": true,
+            "linked_from": {
+              "external_urls": {
+                "spotify": "https://open.spotify.com/track/4iq4RFWmQc3zFgBgyrpahF"
+              },
+              "href": "https://api.spotify.com/v1/tracks/4iq4RFWmQc3zFgBgyrpahF",
+              "id": "4iq4RFWmQc3zFgBgyrpahF",
+              "type": "track",
+              "uri": "spotify:track:4iq4RFWmQc3zFgBgyrpahF"
+            },
+            "name": "Never Going Home",
+            "preview_url": "https://p.scdn.co/mp3-preview/15c3b421c850dd22f024c976adbf71ffcdb137e7?cid=774b29d4f13844c495f206cafdad9c86",
+            "track_number": 6,
+            "type": "track",
+            "uri": "spotify:track:1ACoIKisvdebLOKPNuZCuS"
+          },
+          {
+            "artists": [
+              {
+                "external_urls": {
+                  "spotify": "https://open.spotify.com/artist/1nEGjL7aMVdNQzsfQPKdGr"
+                },
+                "href": "https://api.spotify.com/v1/artists/1nEGjL7aMVdNQzsfQPKdGr",
+                "id": "1nEGjL7aMVdNQzsfQPKdGr",
+                "name": "Hazel English",
+                "type": "artist",
+                "uri": "spotify:artist:1nEGjL7aMVdNQzsfQPKdGr"
+              }
+            ],
+            "disc_number": 1,
+            "duration_ms": 182083,
+            "explicit": false,
+            "external_urls": {
+              "spotify": "https://open.spotify.com/track/0gvYFxsrizpe7lEGUubZq6"
+            },
+            "href": "https://api.spotify.com/v1/tracks/0gvYFxsrizpe7lEGUubZq6",
+            "id": "0gvYFxsrizpe7lEGUubZq6",
+            "is_local": false,
+            "is_playable": true,
+            "linked_from": {
+              "external_urls": {
+                "spotify": "https://open.spotify.com/track/0u4MEA7gCEGwkL7AYARyan"
+              },
+              "href": "https://api.spotify.com/v1/tracks/0u4MEA7gCEGwkL7AYARyan",
+              "id": "0u4MEA7gCEGwkL7AYARyan",
+              "type": "track",
+              "uri": "spotify:track:0u4MEA7gCEGwkL7AYARyan"
+            },
+            "name": "Make It Better",
+            "preview_url": "https://p.scdn.co/mp3-preview/f961619a3027320dec69e88eb35f772aa318ca0a?cid=774b29d4f13844c495f206cafdad9c86",
+            "track_number": 7,
+            "type": "track",
+            "uri": "spotify:track:0gvYFxsrizpe7lEGUubZq6"
+          },
+          {
+            "artists": [
+              {
+                "external_urls": {
+                  "spotify": "https://open.spotify.com/artist/1nEGjL7aMVdNQzsfQPKdGr"
+                },
+                "href": "https://api.spotify.com/v1/artists/1nEGjL7aMVdNQzsfQPKdGr",
+                "id": "1nEGjL7aMVdNQzsfQPKdGr",
+                "name": "Hazel English",
+                "type": "artist",
+                "uri": "spotify:artist:1nEGjL7aMVdNQzsfQPKdGr"
+              }
+            ],
+            "disc_number": 1,
+            "duration_ms": 205973,
+            "explicit": false,
+            "external_urls": {
+              "spotify": "https://open.spotify.com/track/68nVouysGOJG62Ojc0if00"
+            },
+            "href": "https://api.spotify.com/v1/tracks/68nVouysGOJG62Ojc0if00",
+            "id": "68nVouysGOJG62Ojc0if00",
+            "is_local": false,
+            "is_playable": true,
+            "linked_from": {
+              "external_urls": {
+                "spotify": "https://open.spotify.com/track/6xgLYT2sPNdr4ElBl03PK3"
+              },
+              "href": "https://api.spotify.com/v1/tracks/6xgLYT2sPNdr4ElBl03PK3",
+              "id": "6xgLYT2sPNdr4ElBl03PK3",
+              "type": "track",
+              "uri": "spotify:track:6xgLYT2sPNdr4ElBl03PK3"
+            },
+            "name": "Control",
+            "preview_url": "https://p.scdn.co/mp3-preview/872fdaee38ed25b6fd762c4e452618911703fd63?cid=774b29d4f13844c495f206cafdad9c86",
+            "track_number": 8,
+            "type": "track",
+            "uri": "spotify:track:68nVouysGOJG62Ojc0if00"
+          },
+          {
+            "artists": [
+              {
+                "external_urls": {
+                  "spotify": "https://open.spotify.com/artist/1nEGjL7aMVdNQzsfQPKdGr"
+                },
+                "href": "https://api.spotify.com/v1/artists/1nEGjL7aMVdNQzsfQPKdGr",
+                "id": "1nEGjL7aMVdNQzsfQPKdGr",
+                "name": "Hazel English",
+                "type": "artist",
+                "uri": "spotify:artist:1nEGjL7aMVdNQzsfQPKdGr"
+              }
+            ],
+            "disc_number": 1,
+            "duration_ms": 194800,
+            "explicit": false,
+            "external_urls": {
+              "spotify": "https://open.spotify.com/track/0N1QL15qdc9mWsiiIIHpq8"
+            },
+            "href": "https://api.spotify.com/v1/tracks/0N1QL15qdc9mWsiiIIHpq8",
+            "id": "0N1QL15qdc9mWsiiIIHpq8",
+            "is_local": false,
+            "is_playable": true,
+            "linked_from": {
+              "external_urls": {
+                "spotify": "https://open.spotify.com/track/0igjXN7K328XWtCt5zsSZ1"
+              },
+              "href": "https://api.spotify.com/v1/tracks/0igjXN7K328XWtCt5zsSZ1",
+              "id": "0igjXN7K328XWtCt5zsSZ1",
+              "type": "track",
+              "uri": "spotify:track:0igjXN7K328XWtCt5zsSZ1"
+            },
+            "name": "It's Not Real",
+            "preview_url": "https://p.scdn.co/mp3-preview/bfbdc3a23d46157c9b5771f2cf9dfb10ce192e7a?cid=774b29d4f13844c495f206cafdad9c86",
+            "track_number": 9,
+            "type": "track",
+            "uri": "spotify:track:0N1QL15qdc9mWsiiIIHpq8"
+          },
+          {
+            "artists": [
+              {
+                "external_urls": {
+                  "spotify": "https://open.spotify.com/artist/1nEGjL7aMVdNQzsfQPKdGr"
+                },
+                "href": "https://api.spotify.com/v1/artists/1nEGjL7aMVdNQzsfQPKdGr",
+                "id": "1nEGjL7aMVdNQzsfQPKdGr",
+                "name": "Hazel English",
+                "type": "artist",
+                "uri": "spotify:artist:1nEGjL7aMVdNQzsfQPKdGr"
+              }
+            ],
+            "disc_number": 1,
+            "duration_ms": 197106,
+            "explicit": false,
+            "external_urls": {
+              "spotify": "https://open.spotify.com/track/0dYUrmkFGewbdQ0w9bbnWM"
+            },
+            "href": "https://api.spotify.com/v1/tracks/0dYUrmkFGewbdQ0w9bbnWM",
+            "id": "0dYUrmkFGewbdQ0w9bbnWM",
+            "is_local": false,
+            "is_playable": true,
+            "linked_from": {
+              "external_urls": {
+                "spotify": "https://open.spotify.com/track/0w9BogmsQSklaERVHIF9e1"
+              },
+              "href": "https://api.spotify.com/v1/tracks/0w9BogmsQSklaERVHIF9e1",
+              "id": "0w9BogmsQSklaERVHIF9e1",
+              "type": "track",
+              "uri": "spotify:track:0w9BogmsQSklaERVHIF9e1"
+            },
+            "name": "I'm Fine",
+            "preview_url": "https://p.scdn.co/mp3-preview/4b2c5df9d653dbfa15701f4e77aed78b862d773e?cid=774b29d4f13844c495f206cafdad9c86",
+            "track_number": 10,
+            "type": "track",
+            "uri": "spotify:track:0dYUrmkFGewbdQ0w9bbnWM"
+          },
+          {
+            "artists": [
+              {
+                "external_urls": {
+                  "spotify": "https://open.spotify.com/artist/1nEGjL7aMVdNQzsfQPKdGr"
+                },
+                "href": "https://api.spotify.com/v1/artists/1nEGjL7aMVdNQzsfQPKdGr",
+                "id": "1nEGjL7aMVdNQzsfQPKdGr",
+                "name": "Hazel English",
+                "type": "artist",
+                "uri": "spotify:artist:1nEGjL7aMVdNQzsfQPKdGr"
+              }
+            ],
+            "disc_number": 1,
+            "duration_ms": 188093,
+            "explicit": false,
+            "external_urls": {
+              "spotify": "https://open.spotify.com/track/7vslVE4WSn6WjvPoNhd1iu"
+            },
+            "href": "https://api.spotify.com/v1/tracks/7vslVE4WSn6WjvPoNhd1iu",
+            "id": "7vslVE4WSn6WjvPoNhd1iu",
+            "is_local": false,
+            "is_playable": true,
+            "linked_from": {
+              "external_urls": {
+                "spotify": "https://open.spotify.com/track/6IDcZXJXQzIfhkjlvVB3Gp"
+              },
+              "href": "https://api.spotify.com/v1/tracks/6IDcZXJXQzIfhkjlvVB3Gp",
+              "id": "6IDcZXJXQzIfhkjlvVB3Gp",
+              "type": "track",
+              "uri": "spotify:track:6IDcZXJXQzIfhkjlvVB3Gp"
+            },
+            "name": "That Thing",
+            "preview_url": "https://p.scdn.co/mp3-preview/28acd148804a122ce4a3067d419d2a10e4c1907b?cid=774b29d4f13844c495f206cafdad9c86",
+            "track_number": 11,
+            "type": "track",
+            "uri": "spotify:track:7vslVE4WSn6WjvPoNhd1iu"
+          }
+        ],
+        "limit": 50,
+        "next": null,
+        "offset": 0,
+        "previous": null,
+        "total": 11
+      },
+      "type": "album",
+      "uri": "spotify:album:4tKnS9Q0lgN3i7SmXi4mGI"
+    }
+  ]
+}
