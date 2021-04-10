@@ -35,5 +35,6 @@ case class Track(id: String,
 case class Lyrics(lyrics: String,
                   trackId: Int,
                   trackName: String,
+                  artistId: Int,
                   artistName: String,
                   url: String) extends DbEntry

@@ -1,4 +1,4 @@
-package service
+package service.request
 
 import testutils.UnitSpec
 
@@ -24,6 +24,5 @@ class APIGetRequestTest extends UnitSpec {
   "requestFieldsString" should "return a valid string of fields for many nested case classes" in {
     api.requestFieldsString[D] shouldEqual "a(a,b(s,i,double)),c,json_field"
   }
-
 
 }

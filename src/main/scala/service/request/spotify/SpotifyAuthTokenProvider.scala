@@ -2,7 +2,7 @@ package service.request.spotify
 
 import models.api.response.SpotifyAccessToken
 import models.{Backend, Request}
-import service.AuthTokenProvider
+import service.request.AuthTokenProvider
 import sttp.client.UriContext
 import sttp.client.circe.asJson
 import sttp.model.MediaType

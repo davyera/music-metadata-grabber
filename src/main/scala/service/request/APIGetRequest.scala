@@ -1,13 +1,11 @@
-package service
+package service.request
 
 import io.circe.Decoder
 import models._
-import models.api.response._
-
-import scala.reflect.runtime.universe._
-import sttp.client.UriContext
 import sttp.client.circe.asJson
 import sttp.model.Uri
+
+import scala.reflect.runtime.universe._
 
 trait APIParamParseable {
 

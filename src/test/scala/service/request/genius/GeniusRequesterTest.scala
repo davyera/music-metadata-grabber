@@ -1,15 +1,15 @@
 package service.request.genius
 
-import models.api.response.{GeniusArtistSongsResponse, GeniusSearchHit, GeniusSearchResponse, GeniusSong}
+import models.api.response.{GeniusArtistSongsPage, GeniusSearchHit, GeniusSearchResponse, GeniusSong}
 import testutils.APIRequesterSpec
 
 class GeniusRequesterTest extends APIRequesterSpec {
 
-  private implicit val tokenProvider: GeniusAuthTokenProvider = new GeniusAuthTokenProvider()
-  val requester = new GeniusRequester()
+  private val tokenProvider: GeniusAuthTokenProvider = new GeniusAuthTokenProvider()
+  private val requester = new GeniusRequester(tokenProvider)
 
-  val artistIdHE = 992709
-  val artistNameHE = "Hazel English"
+  private val artistIdHE = 992709
+  private val artistNameHE = "Hazel English"
 
   "requestSearchPage" should "return valid Genius search results" in {
     val response = requester.requestSearchPage(artistNameHE, 2)
@@ -30,7 +30,7 @@ class GeniusRequesterTest extends APIRequesterSpec {
 
   "requestArtistSongs" should "return a sequence of artist tracks" in {
     val response = requester.requestArtistSongs(artistIdHE)
-    verifyPages(response) { page: GeniusArtistSongsResponse =>
+    verifyPages(response) { page: GeniusArtistSongsPage =>
       page.response.songs.foreach { song: GeniusSong =>
         song.id should be > 0
         song.title shouldNot be ('empty)

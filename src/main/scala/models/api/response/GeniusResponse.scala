@@ -18,7 +18,7 @@ case class GeniusSearchSong(id: Int, title: String, url: String, primary_artist:
 case class GeniusSearchArtist(id: Int, name: String)
 
 /** GENIUS ARTIST SONGS */
-case class GeniusArtistSongsResponse(response: GeniusArtistSongs) extends PageableWithNext {
+case class GeniusArtistSongsPage(response: GeniusArtistSongs) extends PageableWithNext {
   override def getNextPage: Option[Int] = response.next_page
 }
 case class GeniusArtistSongs(songs: Seq[GeniusSong], next_page: Option[Int])

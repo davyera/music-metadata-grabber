@@ -2,7 +2,7 @@ package service.request.genius
 
 import models.api.response.GeniusAccessToken
 import models.{Backend, Request}
-import service.AuthTokenProvider
+import service.request.AuthTokenProvider
 import sttp.client.UriContext
 import sttp.client.circe.asJson
 import sttp.model.MediaType

@@ -21,7 +21,7 @@ package object models {
   implicit val geniusSearchSong: Decoder[GeniusSearchSong] = deriveConfiguredDecoder
   implicit val geniusSearchArtist: Decoder[GeniusSearchArtist] = deriveConfiguredDecoder
 
-  implicit val geniusArtistSongsResponse: Decoder[GeniusArtistSongsResponse] = deriveConfiguredDecoder
+  implicit val geniusArtistSongsResponse: Decoder[GeniusArtistSongsPage] = deriveConfiguredDecoder
   implicit val geniusArtistSongs: Decoder[GeniusArtistSongs] = deriveConfiguredDecoder
   implicit val geniusSong: Decoder[GeniusSong] = deriveConfiguredDecoder
 

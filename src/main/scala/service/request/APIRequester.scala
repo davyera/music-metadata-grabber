@@ -1,12 +1,12 @@
-package service
+package service.request
 
 import com.typesafe.scalalogging.StrictLogging
 import models.{Backend, PageableWithNext, PageableWithTotal}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-abstract class APIRequester(implicit val authProvider: AuthTokenProvider,
-                            implicit val backend: Backend,
+abstract class APIRequester(val authProvider: AuthTokenProvider)
+                           (implicit val backend: Backend,
                             implicit val context: ExecutionContext) extends StrictLogging {
 
   protected def get[R](request: APIGetRequest[R]): Future[R] =

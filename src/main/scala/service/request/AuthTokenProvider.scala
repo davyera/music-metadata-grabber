@@ -1,4 +1,4 @@
-package service
+package service.request
 
 import com.typesafe.scalalogging.StrictLogging
 import models.{AccessToken, Backend, Request}

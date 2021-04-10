@@ -3,7 +3,7 @@ package service.request.spotify
 import io.circe.Decoder
 import models._
 import models.api.response._
-import service.APIGetRequest
+import service.request.APIGetRequest
 import sttp.client.UriContext
 import sttp.model.Uri
 

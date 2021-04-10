@@ -3,14 +3,14 @@ package service.request.spotify
 import com.typesafe.scalalogging.StrictLogging
 import models._
 import models.api.response._
-import service._
+import service.request.{APIRequester, AuthTokenProvider}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class SpotifyRequester(implicit override val authProvider: AuthTokenProvider,
-                       implicit override val backend: Backend,
+class SpotifyRequester(override val authProvider: AuthTokenProvider)
+                      (implicit override val backend: Backend,
                        implicit override val context: ExecutionContext)
-  extends APIRequester with StrictLogging {
+  extends APIRequester(authProvider) with StrictLogging {
 
   /** Requests categories for Spotify's browse feature (ie. "Hip Hop", "Top Lists")
    *  @return future-wrapped paginated sequence of futures of categories

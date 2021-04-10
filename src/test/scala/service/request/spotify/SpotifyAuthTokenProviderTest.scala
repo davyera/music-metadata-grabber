@@ -1,7 +1,6 @@
 package service.request.spotify
 
 import models.Backend
-import models.api.response.SpotifyAccessToken
 import sttp.client.HttpError
 import sttp.client.asynchttpclient.future.AsyncHttpClientFutureBackend
 import testutils.UnitSpec
@@ -43,5 +42,4 @@ class SpotifyAuthTokenProviderTest extends UnitSpec {
       logVerifier.assertLogCount(8)
     }
   }
-
 }

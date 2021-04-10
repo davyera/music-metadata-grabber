@@ -5,8 +5,8 @@ import testutils.APIRequesterSpec
 
 class SpotifyRequesterTest extends APIRequesterSpec {
 
-  private implicit val tokenProvider: SpotifyAuthTokenProvider = new SpotifyAuthTokenProvider()
-  val requester = new SpotifyRequester()
+  private val tokenProvider: SpotifyAuthTokenProvider = new SpotifyAuthTokenProvider()
+  private val requester = new SpotifyRequester(tokenProvider)
 
   "requestCategories" should "return a sequence of spotify categories" in {
     val response = requester.requestCategories()

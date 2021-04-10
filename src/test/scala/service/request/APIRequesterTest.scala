@@ -1,4 +1,4 @@
-package service
+package service.request
 
 import models.{Backend, PageableWithNext, PageableWithTotal}
 import service.request.spotify.SpotifyAuthTokenProvider
@@ -11,10 +11,10 @@ class APIRequesterTest extends UnitSpec {
 
   implicit val backend: Backend = mock[Backend]
   implicit val authTokenProvider: SpotifyAuthTokenProvider = mock[SpotifyAuthTokenProvider]
-  class TestAPIRequester extends APIRequester
+  class TestAPIRequester extends APIRequester(authTokenProvider)
 
   class TestPageable(totalItems: Int = 0, nextPage: Option[Int] = None)
-extends PageableWithTotal with PageableWithNext {
+    extends PageableWithTotal with PageableWithNext {
 
     override def getTotal: Int = totalItems
     override def getNextPage: Option[Int] = nextPage
