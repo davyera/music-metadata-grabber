@@ -13,6 +13,6 @@ object Server extends App with StrictLogging {
   implicit val backend: Backend = AsyncHttpClientFutureBackend()(context)
 
   val data = new DataJobLauncher()
-  data.launchGeniusLyricsJob("Hazel English")
+  data.orchestrateLyricsJobs("Hazel English")
 
 }

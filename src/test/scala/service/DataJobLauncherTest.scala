@@ -35,7 +35,7 @@ class DataJobLauncherTest extends UnitSpec {
     when(geniusRequester.requestSearchPage(artist, 1)).thenReturn(Future.successful(response))
 
     val job = new TestJob(gRequest = geniusRequester)
-    whenReady(job.queryGeniusArtistId(artist))(id => id shouldEqual expectedId)
+    whenReady(job.launchGeniusArtistIdJob(artist))(id => id shouldEqual expectedId)
   }
 
   "queryGeniusArtistId" should "throw an exception when there were no search hits" in {
@@ -47,9 +47,9 @@ class DataJobLauncherTest extends UnitSpec {
 
     val job = new TestJob(gRequest = geniusRequester)
 
-    whenReady(job.queryGeniusArtistId(artist).failed) { error =>
-      error shouldBe an [Exception]
-      error.getMessage shouldEqual("No search results for artist name XXX")
+    whenReady(job.launchGeniusArtistIdJob(artist).failed) { error =>
+      error shouldBe a [JobException]
+      error.getMessage shouldEqual "GENIUS: No search results for artist name XXX"
     }
   }
 
@@ -85,7 +85,7 @@ class DataJobLauncherTest extends UnitSpec {
     val argCaptor = ArgumentCaptor.forClass(classOf[DataReceiver])
 
     val job = new TestJob(scraper, geniusRequester, dReceiver = receiver)
-    job.launchGeniusLyricsJob(artist)
+    job.orchestrateLyricsJobs(artist)
 
     // verify (with some small timeout) that our 3 songs were received
     verify(receiver, Mockito.timeout(1000).times(3)).receive(argCaptor.capture())

@@ -9,6 +9,7 @@ abstract class APIRequester(val authProvider: AuthTokenProvider)
                            (implicit val backend: Backend,
                             implicit val context: ExecutionContext) extends StrictLogging {
 
+  // TODO we need some rate-limiting!
   protected def get[R](request: APIGetRequest[R]): Future[R] =
     authProvider.getAuthTokenString.flatMap { token: String =>
       val requestWithAuth = request.baseRequest.auth.bearer(token)

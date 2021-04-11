@@ -23,49 +23,74 @@ class DataJobLauncher(implicit val context: ExecutionContext) extends StrictLogg
 
   private[service] val receiver: DataReceiver = new DataReceiver()
 
-  /** Performs a full lyrics-scraping job for a given
-   *  @return number of successful payloads (songs)
+  def launchSpotifyFeaturedPlaylistsJob(): Future[Unit] = {
+    // pull featured playlists
+
+    // query each playlist for its tracks
+
+    // for each track, query the artist
+
+    // for each artist, query their albums
+
+    // for each album, query its tracks
+
+    // for each track, query its features
+    Future.successful()
+  }
+
+  /** Performs a full lyrics-scraping job for a given artist
    */
-  def launchGeniusLyricsJob(artistName: String): Future[Unit] = {
+  def orchestrateLyricsJobs(artistName: String): Future[Unit] = {
     // first, we need to query to find the artist ID
-    queryGeniusArtistId(artistName).map { artistId: Int =>
-
+    launchGeniusArtistIdJob(artistName).map { artistId: Int =>
       // then, perform a Genius request for all of the artist's songs
-      genius.requestArtistSongs(artistId).map { songsResponsePages: Seq[Future[GeniusArtistSongsPage]] =>
-
-        // iterate through each paged response
-        songsResponsePages.foreach(_.map { page: GeniusArtistSongsPage =>
-
-          // pull the set of songs from the page of results
-          val songs = page.response.songs
-          songs.foreach { song =>
-
-            // push finalized results
-            geniusLyrics.scrapeLyrics(song.url)
-              .map(handleSongLyrics(song, artistId, artistName, _))
-          }
-        })
-      }
+      launchGeniusArtistLyricsJob(artistId, artistName)
     }
   }
 
   /** Performs a Genius search request to extract an artist's ID
    *  @return Genius ID for artist (or -1 if not found)
    */
-  private[service] def queryGeniusArtistId(artistName: String): Future[Int] = {
+  private[service] def launchGeniusArtistIdJob(artistName: String): Future[Int] = {
     // initiate a search to find artist's ID -- search with one result
     genius.requestSearchPage(artistName, 1).map { searchResult: GeniusSearchResponse =>
       val hits = searchResult.response.hits
       if (hits.isEmpty)
-        throw new Exception(s"No search results for artist name $artistName") // TODO specialized exception?
-      else
-        hits.head.result.primary_artist.id
+        throw JobException(s"GENIUS: No search results for artist name $artistName")
+      else {
+        val id = hits.head.result.primary_artist.id
+        logger.info(s"GENIUS: Queried ID for artist $artistName: $id")
+        id
+      }
     }
   }
 
-  private def handleSongLyrics(song: GeniusSong, artistId: Int, artistName: String, lyrics: String): Unit = {
-    val data = Lyrics(lyrics, song.id, song.title, artistId, artistName, song.url)
-    logger.info(s"Received Data: $data")
-    receiver.receive(data)
+  /** Processes scraping all lyrics for a given artist (given an artist ID that has already been queried)
+   */
+  private def launchGeniusArtistLyricsJob(artistId: Int, artistName: String): Future[Unit] = {
+    genius.requestArtistSongs(artistId).map { songsResponsePages: Seq[Future[GeniusArtistSongsPage]] =>
+
+      // iterate through each paged response
+      songsResponsePages.foreach(_.map { page: GeniusArtistSongsPage =>
+        logger.info(s"GENIUS: Received page of ${page.response.songs.size} songs for artist $artistName ($artistId)")
+
+        // pull the set of songs from the page of results
+        val songs = page.response.songs
+        songs.foreach { song =>
+          launchGeniusSongLyricsJob(song, artistName, artistId)
+        }
+      })
+    }
+  }
+
+  /** Scrapes Genius for the given song. Requires artist and artist ID info for the data push.
+   */
+  private def launchGeniusSongLyricsJob(song: GeniusSong, artist: String, artistId: Int): Future[Unit] = {
+    geniusLyrics.scrapeLyrics(song.url).map { lyrics: String =>
+      val lyricsData = Lyrics(lyrics, song.id, song.title, artistId, artist, song.url)
+      receiver.receive(lyricsData)
+    }
   }
 }
+
+case class JobException(msg: String) extends Exception(msg)
