@@ -2,6 +2,7 @@ package service
 
 import com.typesafe.scalalogging.StrictLogging
 import models._
+import service.job.DataJobLauncher
 import sttp.client.asynchttpclient.future.AsyncHttpClientFutureBackend
 
 import scala.concurrent.ExecutionContext

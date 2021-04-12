@@ -29,7 +29,7 @@ case class Track(id: String,
                  trackNumber: Int,
                  album: String,
                  artists: Seq[String],
-                 features: Map[String, Float]) extends DbEntry
+                 features: Map[String, Float] = Map()) extends DbEntry
 
 case class Lyrics(lyrics: String,
                   trackId: Int,
