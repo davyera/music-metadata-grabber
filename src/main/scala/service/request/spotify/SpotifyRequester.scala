@@ -37,7 +37,7 @@ class SpotifyRequester(override val authProvider: AuthTokenProvider)
   /** Iterates through today's featured Spotify playlists. Paginated response.
    *  @return future-wrapped paginated sequence of futures of featured playlist references
    */
-  def requestFeaturedPlaylists(limitPerRequest: Int = 5)
+  def requestFeaturedPlaylists(limitPerRequest: Int = 25)
   : Future[Seq[Future[SpotifyFeaturedPlaylists]]] =
     queryPages(limitPerRequest, (limit, offset) =>
       requestPlaylistsPage(limit, offset))
@@ -49,7 +49,7 @@ class SpotifyRequester(override val authProvider: AuthTokenProvider)
   /** Iterates through a Spotify playlist's tracks. Paginated response
    *  @return future-wrapped paginated sequence of futures of playlist tracks
    */
-  def requestPlaylistTracks(playlistId: String, limitPerRequest: Int = 10)
+  def requestPlaylistTracks(playlistId: String, limitPerRequest: Int = 25)
   : Future[Seq[Future[SpotifyPlaylistTracksPage]]] =
     queryPages(limitPerRequest, (limit, offset) =>
       requestPlaylistTracksPage(playlistId, limit, offset))
