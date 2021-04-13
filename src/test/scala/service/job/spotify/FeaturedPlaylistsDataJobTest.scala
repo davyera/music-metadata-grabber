@@ -5,6 +5,7 @@ import models.db.{Playlist, Track}
 import org.mockito.{ArgumentCaptor, Mockito}
 import org.mockito.Mockito.{verify, when}
 import service.DataReceiver
+import service.job.JobFramework
 import service.request.spotify.SpotifyRequester
 import testutils.JobSpec
 
@@ -43,7 +44,7 @@ class FeaturedPlaylistsDataJobTest extends JobSpec {
   private val p3TrksPg1 = SpotifyPlaylistTracksPage(Seq(SpotifyPlaylistTrackRef(trk4)), 1)
 
   "doWork" should "push playlist and track data" in {
-    implicit val spotify: SpotifyRequester = mock[SpotifyRequester]
+    val spotify = mock[SpotifyRequester]
     when(spotify.requestFeaturedPlaylists())
       .thenReturn(Future(Seq(Future(fPlistPg1), Future(fPlistPg2))))
     when(spotify.requestPlaylistTracks("p1"))
@@ -53,8 +54,10 @@ class FeaturedPlaylistsDataJobTest extends JobSpec {
     when(spotify.requestPlaylistTracks("p3"))
       .thenReturn(Future(Seq(Future(p3TrksPg1))))
 
-    implicit val receiver: DataReceiver = mock[DataReceiver]
+    val receiver = mock[DataReceiver]
     val argCaptor = ArgumentCaptor.forClass(classOf[DataReceiver])
+
+    implicit val jobFramework: JobFramework = framework(sRequest = spotify, dReceiver = receiver)
 
     val result = FeaturedPlaylistsDataJob(pushTrackData = true).doWork()
 

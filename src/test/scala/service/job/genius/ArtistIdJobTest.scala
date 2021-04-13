@@ -1,17 +1,14 @@
 package service.job.genius
 
-import models.api.response.{GeniusSearchArtist, GeniusSearchHit, GeniusSearchHits, GeniusSearchResponse, GeniusSearchSong}
+import models.api.response._
 import org.mockito.Mockito.when
-import service.DataReceiver
-import service.job.JobException
+import service.job.{JobException, JobFramework}
 import service.request.genius.GeniusRequester
 import testutils.JobSpec
 
 import scala.concurrent.Future
 
 class ArtistIdJobTest extends JobSpec {
-
-  implicit val receiver: DataReceiver = mock[DataReceiver]
 
   def constructSearchResponse(hits: Seq[GeniusSearchHit]): GeniusSearchResponse =
     GeniusSearchResponse(GeniusSearchHits(hits, None))
@@ -24,10 +21,12 @@ class ArtistIdJobTest extends JobSpec {
       GeniusSearchHit(GeniusSearchSong(100, "song456", "www.genius2.com", GeniusSearchArtist(3, "zzz")))
     ))
 
-    implicit val geniusRequester: GeniusRequester = mock[GeniusRequester]
+    val geniusRequester = mock[GeniusRequester]
     when(geniusRequester.requestSearchPage(artist, 1)).thenReturn(Future.successful(response))
 
+    implicit val jobFramework: JobFramework = framework(gRequest = geniusRequester)
     val job = ArtistIdJob(artist)
+
     whenReady(job.doWork())(id => id shouldEqual expectedId)
   }
 
@@ -35,9 +34,10 @@ class ArtistIdJobTest extends JobSpec {
     val artist = "XXX"
     val response = constructSearchResponse(Nil)
 
-    implicit val geniusRequester: GeniusRequester = mock[GeniusRequester]
+    val geniusRequester = mock[GeniusRequester]
     when(geniusRequester.requestSearchPage(artist, 1)).thenReturn(Future.successful(response))
 
+    implicit val jobFramework: JobFramework = framework(gRequest = geniusRequester)
     val job = ArtistIdJob(artist)
 
     whenReady(job.doWork().failed) { error =>

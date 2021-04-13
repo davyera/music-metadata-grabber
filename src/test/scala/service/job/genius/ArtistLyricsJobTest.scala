@@ -5,6 +5,7 @@ import models.db.Lyrics
 import org.mockito.{ArgumentCaptor, Mockito}
 import org.mockito.Mockito.{verify, when}
 import service.DataReceiver
+import service.job.JobFramework
 import service.request.genius.{GeniusLyricsScraper, GeniusRequester}
 import testutils.JobSpec
 
@@ -24,18 +25,21 @@ class ArtistLyricsJobTest extends JobSpec {
 
   "doWork" should "request songs for an artist then scrape their lyrics" in {
     // mock request returning artist songs
-    implicit val geniusRequester: GeniusRequester = mock[GeniusRequester]
+    val geniusRequester = mock[GeniusRequester]
     when(geniusRequester.requestArtistSongs(artistId))
       .thenReturn(Future.successful(Seq(Future.successful(songsPg1), Future.successful(songsPg2))))
 
     // mock lyric scraping
-    implicit val scraper: GeniusLyricsScraper = mock[GeniusLyricsScraper]
+    val scraper = mock[GeniusLyricsScraper]
     when(scraper.scrapeLyrics(song1.url)).thenReturn(Future.successful(song1Data.lyrics))
     when(scraper.scrapeLyrics(song2.url)).thenReturn(Future.successful(song2Data.lyrics))
     when(scraper.scrapeLyrics(song3.url)).thenReturn(Future.successful(song3Data.lyrics))
 
-    implicit val receiver: DataReceiver = mock[DataReceiver]
+    val receiver = mock[DataReceiver]
     val argCaptor = ArgumentCaptor.forClass(classOf[DataReceiver])
+
+    implicit val jobFramework: JobFramework = framework(gRequest = geniusRequester, gScraper = scraper,
+      dReceiver = receiver)
 
     ArtistLyricsJob(artistId, artist).doWork()
 

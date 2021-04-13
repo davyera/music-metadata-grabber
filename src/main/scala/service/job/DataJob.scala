@@ -1,18 +1,24 @@
 package service.job
 
 import com.typesafe.scalalogging.StrictLogging
-import service.DataReceiver
+import service.request.genius.{GeniusLyricsScraper, GeniusRequester}
+import service.request.spotify.SpotifyRequester
 
 import scala.concurrent.duration.{DurationInt, FiniteDuration}
 import scala.concurrent.{Await, ExecutionContext, Future}
 
-abstract class DataJob[T](implicit val context: ExecutionContext,
-                          implicit val receiver: DataReceiver) extends StrictLogging {
+abstract class DataJob[T](private implicit val jobFramework: JobFramework) extends StrictLogging {
 
   private val MAX_JOB_TIMEOUT_MS: FiniteDuration = 2000.milliseconds
 
+  private[job] val spotify:       SpotifyRequester    = jobFramework.spotify
+  private[job] val genius:        GeniusRequester     = jobFramework.genius
+  private[job] val geniusScraper: GeniusLyricsScraper = jobFramework.geniusScraper
+
+  implicit private[job] val context: ExecutionContext = jobFramework.context
+
   def sendData[D](data: D): Unit = {
-    receiver.receive(data)
+    jobFramework.receiver.receive(data)
   }
 
   def doWork(): Future[T] = {
@@ -34,24 +40,19 @@ abstract class DataJob[T](implicit val context: ExecutionContext,
 
   /** Apply a function to paged results from a paged API response.
    */
-  private[job] def workOnPages[P, O](pages: Seq[Future[P]])(pageWork: P => O): Seq[Future[O]] = {
+  private[job] def workOnPages[P, O](pages: Seq[Future[P]])(pageWork: P => O): Seq[Future[O]] =
     pages.map { pageFuture: Future[P] =>
       pageFuture.map { page: P =>
         pageWork(page)
       }
     }
-  }
-
-
 }
 
-abstract class SpotifyJob[T](implicit override val context: ExecutionContext,
-                             implicit override val receiver: DataReceiver) extends DataJob[T] {
+abstract class SpotifyJob[T](implicit jobFramework: JobFramework) extends DataJob[T] {
   override val serviceName: String = "SPOTIFY"
 }
 
-abstract class GeniusJob[T](implicit override val context: ExecutionContext,
-                            implicit override val receiver: DataReceiver) extends DataJob[T] {
+abstract class GeniusJob[T](implicit jobFramework: JobFramework) extends DataJob[T] {
   override val serviceName: String = "GENIUS"
 }
 
