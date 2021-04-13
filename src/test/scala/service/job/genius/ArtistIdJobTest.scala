@@ -2,9 +2,8 @@ package service.job.genius
 
 import models.api.response._
 import org.mockito.Mockito.when
-import service.job.{JobException, JobFramework}
+import service.job.{JobException, JobFramework, JobSpec}
 import service.request.genius.GeniusRequester
-import testutils.JobSpec
 
 import scala.concurrent.Future
 

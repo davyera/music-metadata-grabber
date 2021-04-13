@@ -27,7 +27,7 @@ case class FeaturedPlaylistsDataJob(pushTrackData: Boolean = false)(implicit job
           tracksJob.doWork().map { tracks =>
             val trackIds = tracks.map(_.id)
             val playlist = Playlist(plistInfo.id, plistInfo.name, plistInfo.description, trackIds)
-            sendData(playlist)
+            pushData(playlist)
 
             // return as a tuple so we can build the map afterwards
             playlist -> tracks

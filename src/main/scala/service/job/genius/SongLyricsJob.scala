@@ -14,7 +14,7 @@ case class SongLyricsJob(song: GeniusSong, artist: String, artistId: Int)
   private[job] override def work: Future[Unit] = {
     geniusScraper.scrapeLyrics(song.url).map { lyrics: String =>
       val lyricsData = Lyrics(lyrics, song.id, song.title, artistId, artist, song.url)
-      sendData(lyricsData)
+      pushData(lyricsData)
     }
   }
 }

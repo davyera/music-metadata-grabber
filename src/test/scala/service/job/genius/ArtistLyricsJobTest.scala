@@ -5,9 +5,8 @@ import models.db.Lyrics
 import org.mockito.{ArgumentCaptor, Mockito}
 import org.mockito.Mockito.{verify, when}
 import service.DataReceiver
-import service.job.JobFramework
+import service.job.{JobFramework, JobSpec}
 import service.request.genius.{GeniusLyricsScraper, GeniusRequester}
-import testutils.JobSpec
 
 import scala.concurrent.Future
 

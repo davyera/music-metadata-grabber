@@ -3,12 +3,14 @@ package testutils
 import ch.qos.logback.classic.Logger
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.read.ListAppender
+import org.scalatest.Matchers.fail
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.time.{Seconds, Span}
 import org.scalatest.{BeforeAndAfter, FlatSpec, Matchers}
 import org.scalatestplus.mockito.MockitoSugar
 import org.slf4j.LoggerFactory
 
+import java.util
 import scala.concurrent.ExecutionContext
 
 object UnitSpec {}
@@ -32,8 +34,18 @@ class LogVerifier(private val logger: Logger) {
   listAppender.start()
   logger.addAppender(listAppender)
 
+  /** Assert msg was logged at specific log index */
   def assertLogged(logIndex: Int, msg: String): Unit =
     assert(listAppender.list.get(logIndex).getFormattedMessage.equals(msg))
+
+  /** Assert message was logged at all (ignore index) */
+  def assertLogged(msg: String): Unit = {
+    listAppender.list.forEach { logged =>
+      if (logged.getFormattedMessage.equals(msg))
+        return
+    }
+    fail(s"Expected log: $msg")
+  }
 
   def assertLogCount(count: Int): Unit =
     assert(listAppender.list.size().equals(count))

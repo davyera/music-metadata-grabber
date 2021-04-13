@@ -21,7 +21,8 @@ case class Artist(id: String,
 case class Album(id: String,
                  name: String,
                  popularity: Int,
-                 artists: Seq[String]) extends DbEntry
+                 artists: Seq[String],
+                 tracks: Seq[String]) extends DbEntry
 
 case class Track(id: String,
                  name: String,

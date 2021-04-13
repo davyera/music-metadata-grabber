@@ -16,7 +16,7 @@ case class PlaylistTracksJob(playlist: SpotifyPlaylistInfo, pushData: Boolean = 
 
   private[job] override def work: Future[Seq[Track]] = {
     spotify.requestPlaylistTracks(playlist.id).map { playlistTracksPages: Seq[Future[SpotifyPlaylistTracksPage]] =>
-      val playlistTag = s"${playlist.name} (${playlist.id})" // for logging purposes
+      val playlistTag = toTag(playlist.name, playlist.id) // for logging purposes
 
       val pagedTracks = workOnPages(playlistTracksPages) { page: SpotifyPlaylistTracksPage =>
         logInfo(s"Received page of tracks for playlist $playlistTag. Count: ${page.items.size}")
@@ -25,7 +25,7 @@ case class PlaylistTracksJob(playlist: SpotifyPlaylistInfo, pushData: Boolean = 
           val trackData = Track(trk.id, trk.name, trk.popularity, trk.track_number, trk.album.id, trk.artists.map(_.id))
           if (pushData) {
             // TODO: Pull features as well?
-            sendData(trackData)
+            pushData(trackData)
           }
           trackData
         }

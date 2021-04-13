@@ -10,6 +10,7 @@ import scala.concurrent.{Await, ExecutionContext, Future}
 abstract class DataJob[T](private implicit val jobFramework: JobFramework) extends StrictLogging {
 
   private val MAX_JOB_TIMEOUT_MS: FiniteDuration = 2000.milliseconds
+  private val PAGE_LIMIT: Int = 20
 
   private[job] val spotify:       SpotifyRequester    = jobFramework.spotify
   private[job] val genius:        GeniusRequester     = jobFramework.genius
@@ -17,7 +18,7 @@ abstract class DataJob[T](private implicit val jobFramework: JobFramework) exten
 
   implicit private[job] val context: ExecutionContext = jobFramework.context
 
-  def sendData[D](data: D): Unit = {
+  def pushData[D](data: D): Unit = {
     jobFramework.receiver.receive(data)
   }
 
@@ -33,10 +34,12 @@ abstract class DataJob[T](private implicit val jobFramework: JobFramework) exten
   private[job] val serviceName: String
 
   private[job] def logInfo(msg: String): Unit = logger.info(s"$serviceName: $msg")
+  private[job] def toTag(name: String, id: String): String = s"$name ($id)"
   private[job] def exception(msg: String): JobException = JobException(s"$serviceName: $msg")
 
   private[job] def awaitPagedResults[O](pagedResults: Seq[Future[Seq[O]]]): Seq[O] = pagedResults.flatten(awaitResult)
   private[job] def awaitResult[O](future: Future[O]): O = Await.result(future, MAX_JOB_TIMEOUT_MS)
+  private[job] val limit: Int = PAGE_LIMIT
 
   /** Apply a function to paged results from a paged API response.
    */
