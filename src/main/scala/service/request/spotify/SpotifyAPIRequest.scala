@@ -96,6 +96,16 @@ case class SpotifyAlbumsRequest(private val albumIds: Seq[String])
   override implicit val decoder: Decoder[SpotifyAlbums] = spotifyAlbums
 }
 
+case class SpotifyTracksRequest(private val trackIds: Seq[String])
+  extends APIGetRequest[SpotifyTracks] {
+
+  override val uri: Uri = uri"https://api.spotify.com/v1/tracks"
+    .param("ids", trackIds.mkString(","))
+    .param("fields", requestFieldsString[SpotifyTracks])
+
+  override implicit val decoder: Decoder[SpotifyTracks] = spotifyTracks
+}
+
 case class SpotifyAudioFeaturesRequest(private val trackIds: Seq[String])
   extends APIGetRequest[SpotifyAudioFeaturesPage] {
 

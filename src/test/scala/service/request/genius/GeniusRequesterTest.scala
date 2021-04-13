@@ -17,7 +17,7 @@ class GeniusRequesterTest extends APIRequesterSpec {
       page.response.hits.foreach { hit: GeniusSearchHit =>
         val song = hit.result
         song.id should be > 0
-        song.title shouldNot be ('empty)
+        song.title shouldNot be (empty)
         song.url should startWith("http")
         println(song.url)
 
@@ -33,7 +33,7 @@ class GeniusRequesterTest extends APIRequesterSpec {
     verifyPages(response) { page: GeniusArtistSongsPage =>
       page.response.songs.foreach { song: GeniusSong =>
         song.id should be > 0
-        song.title shouldNot be ('empty)
+        song.title shouldNot be (empty)
         song.url should startWith ("http")
       }
     }

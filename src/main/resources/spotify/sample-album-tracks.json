@@ -1,0 +1,114 @@
+{
+  "href": "https://api.spotify.com/v1/albums/2A2k0MgzDEiFjW3ejlpxxV/tracks?offset=0&limit=2",
+  "items": [
+    {
+      "artists": [
+        {
+          "external_urls": {
+            "spotify": "https://open.spotify.com/artist/1nEGjL7aMVdNQzsfQPKdGr"
+          },
+          "href": "https://api.spotify.com/v1/artists/1nEGjL7aMVdNQzsfQPKdGr",
+          "id": "1nEGjL7aMVdNQzsfQPKdGr",
+          "name": "Hazel English",
+          "type": "artist",
+          "uri": "spotify:artist:1nEGjL7aMVdNQzsfQPKdGr"
+        }
+      ],
+      "available_markets": [
+        "AG",
+        "BB",
+        "BS",
+        "BZ",
+        "CA",
+        "CR",
+        "DM",
+        "DO",
+        "GD",
+        "GT",
+        "HN",
+        "HT",
+        "JM",
+        "KN",
+        "LC",
+        "MX",
+        "NI",
+        "PA",
+        "SV",
+        "TT",
+        "US",
+        "VC"
+      ],
+      "disc_number": 1,
+      "duration_ms": 226456,
+      "explicit": false,
+      "external_urls": {
+        "spotify": "https://open.spotify.com/track/2Wv6JOF3gS3cbWWSdbjDBZ"
+      },
+      "href": "https://api.spotify.com/v1/tracks/2Wv6JOF3gS3cbWWSdbjDBZ",
+      "id": "2Wv6JOF3gS3cbWWSdbjDBZ",
+      "is_local": false,
+      "name": "Born Like",
+      "preview_url": "https://p.scdn.co/mp3-preview/abad4331d89017711df06a97e822cd071d97eab5?cid=774b29d4f13844c495f206cafdad9c86",
+      "track_number": 1,
+      "type": "track",
+      "uri": "spotify:track:2Wv6JOF3gS3cbWWSdbjDBZ"
+    },
+    {
+      "artists": [
+        {
+          "external_urls": {
+            "spotify": "https://open.spotify.com/artist/1nEGjL7aMVdNQzsfQPKdGr"
+          },
+          "href": "https://api.spotify.com/v1/artists/1nEGjL7aMVdNQzsfQPKdGr",
+          "id": "1nEGjL7aMVdNQzsfQPKdGr",
+          "name": "Hazel English",
+          "type": "artist",
+          "uri": "spotify:artist:1nEGjL7aMVdNQzsfQPKdGr"
+        }
+      ],
+      "available_markets": [
+        "AG",
+        "BB",
+        "BS",
+        "BZ",
+        "CA",
+        "CR",
+        "DM",
+        "DO",
+        "GD",
+        "GT",
+        "HN",
+        "HT",
+        "JM",
+        "KN",
+        "LC",
+        "MX",
+        "NI",
+        "PA",
+        "SV",
+        "TT",
+        "US",
+        "VC"
+      ],
+      "disc_number": 1,
+      "duration_ms": 213297,
+      "explicit": false,
+      "external_urls": {
+        "spotify": "https://open.spotify.com/track/4EWLOLhgJLlfrZb4U55brm"
+      },
+      "href": "https://api.spotify.com/v1/tracks/4EWLOLhgJLlfrZb4U55brm",
+      "id": "4EWLOLhgJLlfrZb4U55brm",
+      "is_local": false,
+      "name": "Shaking",
+      "preview_url": "https://p.scdn.co/mp3-preview/d2ce754b951e7c443a809f64884b33d2ea80b71e?cid=774b29d4f13844c495f206cafdad9c86",
+      "track_number": 2,
+      "type": "track",
+      "uri": "spotify:track:4EWLOLhgJLlfrZb4U55brm"
+    }
+  ],
+  "limit": 2,
+  "next": "https://api.spotify.com/v1/albums/2A2k0MgzDEiFjW3ejlpxxV/tracks?offset=2&limit=2",
+  "offset": 0,
+  "previous": null,
+  "total": 10
+}

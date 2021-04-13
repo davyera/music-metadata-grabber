@@ -41,9 +41,10 @@ package object models {
   implicit val spotifyPlaylistTracksPage: Decoder[SpotifyPlaylistTracksPage] = deriveConfiguredDecoder
   implicit val spotifyPlaylistTrackRef: Decoder[SpotifyPlaylistTrackRef] = deriveConfiguredDecoder
 
+  implicit val spotifyTracks: Decoder[SpotifyTracks] = deriveConfiguredDecoder
   implicit val spotifyTrack: Decoder[SpotifyTrack] = deriveConfiguredDecoder
-  implicit val spotifyArtistRef: Decoder[SpotifyArtistRef] = deriveConfiguredDecoder
 
+  implicit val spotifyArtistRef: Decoder[SpotifyArtistRef] = deriveConfiguredDecoder
   implicit val spotifyArtist: Decoder[SpotifyArtist] = deriveConfiguredDecoder
   implicit val spotifyArtistAlbumsPage: Decoder[SpotifyArtistAlbumsPage] = deriveConfiguredDecoder
   implicit val spotifyAlbumRef: Decoder[SpotifyAlbumRef] = deriveConfiguredDecoder

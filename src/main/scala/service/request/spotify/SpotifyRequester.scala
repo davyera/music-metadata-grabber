@@ -83,6 +83,12 @@ class SpotifyRequester(override val authProvider: AuthTokenProvider)
   def requestAlbums(albumIds: Seq[String]): Future[SpotifyAlbums] =
     get(SpotifyAlbumsRequest(albumIds))
 
+  /** Requests detailed info on a sequence of tracks. Results include references to artist and album.
+   *  @param trackIds MAX NUMBER OF ID's IS 50
+   */
+  def requestTracks(trackIds: Seq[String]): Future[SpotifyTracks] =
+    get(SpotifyTracksRequest(trackIds))
+
   /** Requests detailed audio features info on a sequence of tracks.
    *  @param trackIds MAX NUMBER OF ID's IS 100
    */

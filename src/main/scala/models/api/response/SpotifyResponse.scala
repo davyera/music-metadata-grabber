@@ -39,6 +39,7 @@ case class SpotifyPlaylistTracksPage(items: Seq[SpotifyPlaylistTrackRef], total:
 case class SpotifyPlaylistTrackRef(track: SpotifyTrack)
 
 /** SPOTIFY TRACK DETAILS */
+case class SpotifyTracks(tracks: Seq[SpotifyTrack])
 case class SpotifyTrack(id: String,
                         name: String,
                         artists: Seq[SpotifyArtistRef],

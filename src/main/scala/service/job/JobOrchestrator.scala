@@ -17,21 +17,15 @@ class JobOrchestrator(implicit val context: ExecutionContext) extends StrictLogg
       plistTrackMap.values.map { tracks: Seq[Track] =>
         val artistIds = tracks.map(_.artists)
       }
-      // query each playlist for its tracks
-
-      // for each track, query the artist
-
-      // for each artist, query their albums
-
-      // for each album, query its tracks
-
-      // for each track, query its features
     }
     Future.successful()
   }
 
   def orchestrateArtistTrackJobs(artistId: String): Future[Unit] = {
-    ArtistAlbumsJob(artistId).doWork()
+    ArtistAlbumsJob(artistId).doWork().map { albums =>
+      // launch track data jobs for each track
+      val tracksIds = albums.flatMap(_.tracks)
+    }
     Future.successful()
   }
 
