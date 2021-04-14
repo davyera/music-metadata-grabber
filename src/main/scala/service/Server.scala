@@ -13,5 +13,7 @@ object Server extends App with StrictLogging {
   val data = new JobOrchestrator
 //  data.orchestrateLyricsJobs("Hazel English")
 
-  data.orchestrateArtistTrackJobs("1nEGjL7aMVdNQzsfQPKdGr")
+//  data.orchestrateArtistTrackJobs("1nEGjL7aMVdNQzsfQPKdGr")
+
+  data.orchestrateTrackDataJobs(Seq("2Wv6JOF3gS3cbWWSdbjDBZ", "6dc4H1liPChJmpeXL26OGI"))
 }

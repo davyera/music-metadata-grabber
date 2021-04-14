@@ -1,6 +1,6 @@
 package service.job.spotify
 
-import models.api.response.SpotifyAlbums
+import models.api.response.{SpotifyAlbum, SpotifyAlbums}
 import models.db.Album
 import service.job.{JobFramework, SpotifyJob}
 
@@ -12,10 +12,10 @@ case class AlbumsJob(albumIds: Seq[String], albumsRequestLimit: Int = 20, pushDa
   extends SpotifyJob[Seq[Album]] {
 
   override private[job] def work: Future[Seq[Album]] = {
-    // we are bounded by Spotify's limit of albums
+    // we are bounded by Spotify's limit of albums per request
     val groupedAlbums = albumIds.grouped(albumsRequestLimit).toSeq.map { chunkedAlbumIds: Seq[String] =>
       spotify.requestAlbums(chunkedAlbumIds).map { albumsResponse: SpotifyAlbums =>
-        albumsResponse.albums.map { album =>
+        albumsResponse.albums.map { album: SpotifyAlbum =>
           logInfo(s"Received album info for ${toTag(album.name, album.id)}")
           val albumData = Album(album.id, album.name, album.popularity, album.artists.map(_.id),
             album.tracks.items.map(_.id))

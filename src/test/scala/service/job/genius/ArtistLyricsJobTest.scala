@@ -16,9 +16,9 @@ class ArtistLyricsJobTest extends JobSpec {
   private val song1Data = Lyrics("la la la", 1, "bowie song", artistId, artist, "song1Url")
   private val song2Data = Lyrics("lo lo lo", 2, "bowie song 2", artistId, artist, "song2Url")
   private val song3Data = Lyrics("ha ha ha", 3, "davy song", artistId, artist, "song3Url")
-  private val song1 = GeniusSong(1, song1Data.trackName, song1Data.url)
-  private val song2 = GeniusSong(2, song2Data.trackName, song2Data.url)
-  private val song3 = GeniusSong(3, song3Data.trackName, song3Data.url)
+  private val song1 = GeniusSong(1, song1Data.track_name, song1Data.url)
+  private val song2 = GeniusSong(2, song2Data.track_name, song2Data.url)
+  private val song3 = GeniusSong(3, song3Data.track_name, song3Data.url)
   private val songsPg1 = GeniusArtistSongsPage(GeniusArtistSongs(Seq(song1, song2), None))
   private val songsPg2 = GeniusArtistSongsPage(GeniusArtistSongs(Seq(song3), None))
 

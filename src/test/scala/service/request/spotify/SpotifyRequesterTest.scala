@@ -124,8 +124,7 @@ class SpotifyRequesterTest extends APIRequesterSpec {
     val response = requester.requestAudioFeatures(testTrackIds)
     whenReady(response)(_.audio_features.map { audioFeatures: SpotifyAudioFeatures =>
       testTrackIds should contain (audioFeatures.id)
-      audioFeatures.duration_ms should be > 0
+      audioFeatures.duration_ms > 0 shouldEqual true
     })
   }
-
 }

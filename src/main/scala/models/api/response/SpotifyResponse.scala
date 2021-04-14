@@ -71,19 +71,28 @@ case class SpotifyAlbumTrackRef(name: String, id: String, track_number: Int)
 /** SPOTIFY AUDIO FEATURES */
 case class SpotifyAudioFeaturesPage(audio_features: Seq[SpotifyAudioFeatures])
 case class SpotifyAudioFeatures(id: String,
-                                danceability: Float,
-                                energy: Float,
-                                key: Int,
-                                loudness: Float,
-                                mode: Int,
-                                speechiness: Float,
-                                acousticness: Float,
-                                instrumentalness: Float,
-                                liveness: Float,
-                                valence: Float,
-                                tempo: Float,
-                                duration_ms: Int,
-                                time_signature: Int)
+                                danceability: Float = 0,
+                                energy: Float = 0,
+                                key: Float = 0,
+                                loudness: Float = 0,
+                                mode: Float = 0,
+                                speechiness: Float = 0,
+                                acousticness: Float = 0,
+                                instrumentalness: Float = 0,
+                                liveness: Float = 0,
+                                valence: Float = 0,
+                                tempo: Float = 0,
+                                duration_ms: Float = 0,
+                                time_signature: Float = 0) {
+
+  // convert features object to a generic map from string to float
+  def toMap: Map[String, Float] = {
+    // drop the first key/value as that is just the id and not part of the features
+    val keys = getClass.getDeclaredFields.drop(1).map(_.getName)
+    val values = productIterator.drop(1).map(_.asInstanceOf[Float])
+    keys.zip(values).toMap
+  }
+}
 
 /** GENERIC REF OBJECTS */
 case class SpotifyArtistRef(name: String, id: String)

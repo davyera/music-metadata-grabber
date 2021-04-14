@@ -3,7 +3,7 @@ package service.job
 import com.typesafe.scalalogging.StrictLogging
 import models.db.Track
 import service.job.genius.{ArtistIdJob, ArtistLyricsJob}
-import service.job.spotify.{ArtistAlbumsJob, FeaturedPlaylistsDataJob}
+import service.job.spotify.{ArtistAlbumsJob, FeaturedPlaylistsDataJob, TracksJob}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -26,6 +26,11 @@ class JobOrchestrator(implicit val context: ExecutionContext) extends StrictLogg
       // launch track data jobs for each track
       val tracksIds = albums.flatMap(_.tracks)
     }
+    Future.successful()
+  }
+
+  def orchestrateTrackDataJobs(trackIds: Seq[String]): Future[Unit] = {
+    TracksJob(trackIds).doWork()
     Future.successful()
   }
 
