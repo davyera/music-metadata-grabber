@@ -43,7 +43,7 @@ abstract class APIRequester(val authProvider: AuthTokenProvider)
           )
         } catch {
           case RateLimitException(duration) =>
-            logger.info(s"Hit with rate limit. Holding off for $duration seconds...")
+            logger.info(s"Hit with rate limit, holding off (${duration}sec)")
             updateRateLimitExpiry(duration)
           case e => throw e
         }

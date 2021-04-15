@@ -50,7 +50,7 @@ class APIRequesterTest extends UnitSpec {
       artist.id shouldEqual "a1"
       artist.name shouldEqual "n"
       artist.popularity shouldEqual 10
-      logVerifier.assertLogged("Hit with rate limit. Holding off for 1 seconds...")
+      logVerifier.assertLogged("Hit with rate limit, holding off (1sec)")
     }
   }
 
