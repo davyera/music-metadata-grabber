@@ -10,10 +10,12 @@ import scala.concurrent.Future
  *  Spawns PlaylistTracksJobs and returns a Seq of all tracks found.
  *  If [[pushTrackData]] is true, will push individual track data as well.
  */
-case class FeaturedPlaylistsDataJob(pushTrackData: Boolean = false)(implicit jobEnvironment: JobEnvironment)
+case class FeaturedPlaylistsJob(pushTrackData: Boolean = false)(implicit jobEnvironment: JobEnvironment)
   extends SpotifyJob[Map[Playlist, Seq[Track]]] {
 
-  private[job] override def work: Future[Map[Playlist, Seq[Track]]] = {
+  override private[job] val jobName = "FEATURED_PLAYLISTS"
+
+  override private[job] def work: Future[Map[Playlist, Seq[Track]]] = {
     // make request to Spotify to grab all featured playlists (returned as pages)
     spotify.requestFeaturedPlaylists().map { playlistPages: Seq[Future[SpotifyFeaturedPlaylists]] =>
       val playlistTrackMaps = workOnPages(playlistPages) { page: SpotifyFeaturedPlaylists =>

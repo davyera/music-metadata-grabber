@@ -57,7 +57,7 @@ class TracksJobTest extends JobSpec {
     whenReady(result) { tracks =>
       tracks.contains(trk1fd) shouldBe true
       tracks.contains(trk2d) shouldBe true
-      logVerifier.assertLogged("SPOTIFY: Could not load audio features for tracks: t2")
+      logVerifier.assertLogged("SPOTIFY:AUDIO_FEATURES: Could not load audio features for tracks: t2")
     }
   }
 }

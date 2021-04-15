@@ -1,8 +1,8 @@
 package models
 
-import utils.Expirable
+import utils.TimeTracked
 
-abstract class AccessToken extends Expirable {
+abstract class AccessToken extends TimeTracked {
   def getAccessToken: String
   def expiresIn: Int
 

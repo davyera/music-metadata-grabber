@@ -3,7 +3,7 @@ package service.request
 import com.typesafe.scalalogging.StrictLogging
 import models.{Backend, PageableWithNext, PageableWithTotal, Response}
 import sttp.model.StatusCode
-import utils.Expirable
+import utils.TimeTracked
 
 import java.util.concurrent.atomic.AtomicLong
 import scala.concurrent.{Await, ExecutionContext, Future}
@@ -13,7 +13,7 @@ private[request] case class RateLimitException(durationS: Long) extends Exceptio
 
 abstract class APIRequester(val authProvider: AuthTokenProvider)
                            (implicit val backend: Backend,
-                            implicit val context: ExecutionContext) extends StrictLogging with Expirable {
+                            implicit val context: ExecutionContext) extends StrictLogging with TimeTracked {
 
   private val REQUEST_TIMEOUT_S = 2
   private val DEFAULT_RATE_LIMIT_WAIT_S = 5
@@ -45,7 +45,7 @@ abstract class APIRequester(val authProvider: AuthTokenProvider)
           case RateLimitException(duration) =>
             logger.info(s"Hit with rate limit, holding off (${duration}sec)")
             updateRateLimitExpiry(duration)
-          case e => throw e
+          case e: Throwable => throw e
         }
       }
       result.get

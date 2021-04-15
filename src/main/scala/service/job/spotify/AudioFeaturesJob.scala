@@ -17,6 +17,8 @@ case class AudioFeaturesJob(tracks: Seq[SpotifyTrack],
                            (implicit jobEnvironment: JobEnvironment)
   extends SpotifyJob[Seq[Track]] {
 
+  override private[job] val jobName = "AUDIO_FEATURES"
+
   override private[job] def work: Future[Seq[Track]] = {
     val tracksData = tracks.grouped(featuresRequestLimit).toSeq.map { chunkedTracks: Seq[SpotifyTrack] =>
       val ids = chunkedTracks.map(_.id)

@@ -9,7 +9,7 @@ import service.request.spotify.SpotifyRequester
 
 import scala.concurrent.Future
 
-class FeaturedPlaylistsDataJobTest extends JobSpec {
+class FeaturedPlaylistsJobTest extends JobSpec {
 
   "doWork" should "push playlist and track data" in {
     val spotify = mock[SpotifyRequester]
@@ -27,7 +27,7 @@ class FeaturedPlaylistsDataJobTest extends JobSpec {
 
     implicit val jobFramework: JobEnvironment = framework(sRequest = spotify, dReceiver = receiver)
 
-    val result = FeaturedPlaylistsDataJob(pushTrackData = true).doWork()
+    val result = FeaturedPlaylistsJob(pushTrackData = true).doWork()
 
     // want 7 invocations, 3 playlists, 4 tracks
     verify(receiver, Mockito.timeout(1000).times(7)).receive(argCaptor.capture())

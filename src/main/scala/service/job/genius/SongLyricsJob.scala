@@ -11,7 +11,9 @@ case class SongLyricsJob(song: GeniusSong, artist: String, artistId: Int)
                         (implicit jobEnvironment: JobEnvironment)
   extends GeniusJob[Unit] {
 
-  private[job] override def work: Future[Unit] = {
+  override private[job] val jobName = "SONG_LYRICS"
+
+  override private[job] def work: Future[Unit] = {
     geniusScraper.scrapeLyrics(song.url).map { lyrics: String =>
       val lyricsData = Lyrics(lyrics, song.id, song.title, artistId, artist, song.url)
       pushData(lyricsData)

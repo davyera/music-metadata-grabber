@@ -25,7 +25,7 @@ class ArtistAlbumsJobTest extends JobSpec {
       albs.contains(alb2d) shouldBe true
       albs.contains(alb3d) shouldBe true
       logVerifier.assertLogCount(4)
-      logVerifier.assertLogged("SPOTIFY: Filtered duplicate albums for artist art1. Count: 1")
+      logVerifier.assertLogged("SPOTIFY:ARTIST_ALBUMS: Filtered duplicate albums for artist art1. Count: 1")
     }
   }
 }

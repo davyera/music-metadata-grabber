@@ -10,7 +10,9 @@ import scala.concurrent.Future
  */
 case class ArtistIdJob(artistName: String)(implicit jobEnvironment: JobEnvironment) extends GeniusJob[Int] {
 
-  private[job] override def work: Future[Int] =
+  override private[job] val jobName = "ARTIST_ID"
+
+  override private[job] def work: Future[Int] =
     genius.requestSearchPage(artistName, 1).map { searchResult: GeniusSearchResponse =>
       val hits = searchResult.response.hits
       if (hits.isEmpty)

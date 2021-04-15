@@ -11,6 +11,8 @@ case class AlbumsJob(albumIds: Seq[String], albumsRequestLimit: Int = 20, pushDa
                     (implicit jobEnvironment: JobEnvironment)
   extends SpotifyJob[Seq[Album]] {
 
+  override private[job] val jobName = "ALBUMS"
+
   override private[job] def work: Future[Seq[Album]] = {
     // we are bounded by Spotify's limit of albums per request
     val groupedAlbums = albumIds.grouped(albumsRequestLimit).toSeq.map { chunkedAlbumIds: Seq[String] =>

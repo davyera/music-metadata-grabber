@@ -9,7 +9,9 @@ import scala.concurrent.Future
 case class ArtistLyricsJob(artistId: Int, artistName: String)(implicit jobEnvironment: JobEnvironment)
   extends GeniusJob[Unit] {
 
-  private[job] override def work: Future[Unit] = {
+  override private[job] val jobName = "ARTIST_LYRICS"
+
+  override private[job] def work: Future[Unit] = {
     genius.requestArtistSongs(artistId).map { songsResponsePages: Seq[Future[GeniusArtistSongsPage]] =>
       workOnPages(songsResponsePages) { page: GeniusArtistSongsPage =>
         logInfo(s"Received page of ${page.response.songs.size} songs for artist $artistName ($artistId)")

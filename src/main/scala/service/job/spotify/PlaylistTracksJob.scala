@@ -14,7 +14,9 @@ case class PlaylistTracksJob(playlist: SpotifyPlaylistInfo, pushData: Boolean = 
                             (implicit jobEnvironment: JobEnvironment)
   extends SpotifyJob[Seq[Track]] {
 
-  private[job] override def work: Future[Seq[Track]] = {
+  override private[job] val jobName: String = "PLAYLIST_TRACKS"
+
+  override private[job] def work: Future[Seq[Track]] = {
     spotify.requestPlaylistTracks(playlist.id).map { playlistTracksPages: Seq[Future[SpotifyPlaylistTracksPage]] =>
       val playlistTag = toTag(playlist.name, playlist.id) // for logging purposes
 

@@ -11,9 +11,14 @@ case class ArtistAlbumsJob(artistId: String, pushData: Boolean = true)
                           (implicit jobEnvironment: JobEnvironment)
   extends SpotifyJob[Seq[Album]] {
 
-  private[job] override def work: Future[Seq[Album]] = {
+  // Max number defined by Spotify
+  private val ALBUM_PAGE_LIMIT: Int = 20
+
+  override private[job] val jobName = "ARTIST_ALBUMS"
+
+  override private[job] def work: Future[Seq[Album]] = {
     // first, query all album IDs for the artist
-    spotify.requestArtistAlbums(artistId, limit).map { albumsPages =>
+    spotify.requestArtistAlbums(artistId, ALBUM_PAGE_LIMIT).map { albumsPages =>
       workOnPages(albumsPages) { page: SpotifyArtistAlbumsPage =>
         logInfo(s"Received page of albums for artist $artistId. Count: ${page.items.size}")
         page.items
