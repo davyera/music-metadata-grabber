@@ -1,14 +1,16 @@
+import io.circe
 import io.circe.Decoder
 import io.circe.Error
 import io.circe.generic.extras.Configuration
 import io.circe.generic.extras.semiauto.deriveConfiguredDecoder
 import models.api.response._
-import sttp.client.{Identity, NothingT, RequestT, ResponseError}
+import sttp.client.{Identity, NothingT, ResponseError}
 
 import scala.concurrent.Future
 
 package object models {
-  type Request[R] = RequestT[Identity, Either[ResponseError[Error], R], Nothing]
+  type Request[R] = sttp.client.RequestT[Identity, Either[ResponseError[Error], R], Nothing]
+  type Response[R] = sttp.client.Response[Either[ResponseError[circe.Error], R]]
   type Backend = sttp.client.SttpBackend[Future, Nothing, NothingT]
 
   implicit val decoder: Configuration = Configuration.default.withDefaults

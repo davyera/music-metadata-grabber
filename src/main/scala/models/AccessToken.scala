@@ -1,11 +1,11 @@
 package models
 
-abstract class AccessToken {
+import utils.Expirable
+
+abstract class AccessToken extends Expirable {
   def getAccessToken: String
   def expiresIn: Int
 
-  private def currentTimeSeconds = System.currentTimeMillis()/1000
-
-  private val expiresOn = currentTimeSeconds + expiresIn
-  def expired: Boolean = currentTimeSeconds >= expiresOn
+  private val expiresOn = getExpiry(expiresIn)
+  def expired: Boolean = isExpired(expiresOn)
 }

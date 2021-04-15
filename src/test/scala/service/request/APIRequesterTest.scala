@@ -1,7 +1,12 @@
 package service.request
 
+import models.api.response.SpotifyArtist
 import models.{Backend, PageableWithNext, PageableWithTotal}
-import service.request.spotify.SpotifyAuthTokenProvider
+import org.mockito.Mockito._
+import service.request.spotify.{SpotifyArtistRequest, SpotifyAuthTokenProvider}
+import sttp.client.Response
+import sttp.client.asynchttpclient.future.AsyncHttpClientFutureBackend
+import sttp.model.{Header, StatusCode}
 import testutils.UnitSpec
 
 import java.util.concurrent.atomic.AtomicInteger
@@ -11,7 +16,8 @@ class APIRequesterTest extends UnitSpec {
 
   implicit val backend: Backend = mock[Backend]
   implicit val authTokenProvider: SpotifyAuthTokenProvider = mock[SpotifyAuthTokenProvider]
-  class TestAPIRequester extends APIRequester(authTokenProvider)
+  when(authTokenProvider.getAuthTokenString).thenReturn(Future.successful(""))
+  class TestAPIRequester(b: Backend = backend) extends APIRequester(authTokenProvider)(backend = b, context)
 
   class TestPageable(totalItems: Int = 0, nextPage: Option[Int] = None)
     extends PageableWithTotal with PageableWithNext {
@@ -27,6 +33,26 @@ class APIRequesterTest extends UnitSpec {
 
   def getPageFunction(pageable: Seq[TestPageable]): (Int, Int) => Future[TestPageable] =
     (_: Int, _: Int) => Future(pageable(testCounter.getAndIncrement()))
+
+  "get" should "handle a rate-limiting response" in {
+    val request = SpotifyArtistRequest("a1")
+    val mockBackend: Backend = AsyncHttpClientFutureBackend.stub
+      .whenRequestMatches(_.uri.path.contains("a1"))
+      // first return a rate-limit response, then a successful response
+      .thenRespondCyclicResponses(
+        Response("whoops", StatusCode.TooManyRequests, "", Seq(Header("Retry-After","1")), Nil),
+        Response("""{"id":"a1","name":"n","genres":[], "popularity":10}""", StatusCode.Ok))
+
+    val logVerifier = getLogVerifier[TestAPIRequester](classOf[TestAPIRequester])
+
+    val requester = new TestAPIRequester(mockBackend)
+    whenReady(requester.get(request)) { artist: SpotifyArtist =>
+      artist.id shouldEqual "a1"
+      artist.name shouldEqual "n"
+      artist.popularity shouldEqual 10
+      logVerifier.assertLogged("Hit with rate limit. Holding off for 1 seconds...")
+    }
+  }
 
   "queryPages" should "only create one page result future when total items is less than limit" in {
     val pageLimit = 5

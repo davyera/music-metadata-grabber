@@ -1,24 +1,83 @@
 package service.request
 
 import com.typesafe.scalalogging.StrictLogging
-import models.{Backend, PageableWithNext, PageableWithTotal}
+import models.{Backend, PageableWithNext, PageableWithTotal, Response}
+import sttp.model.StatusCode
+import utils.Expirable
 
-import scala.concurrent.{ExecutionContext, Future}
+import java.util.concurrent.atomic.AtomicLong
+import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.concurrent.duration._
+
+private[request] case class RateLimitException(durationS: Long) extends Exception
 
 abstract class APIRequester(val authProvider: AuthTokenProvider)
                            (implicit val backend: Backend,
-                            implicit val context: ExecutionContext) extends StrictLogging {
+                            implicit val context: ExecutionContext) extends StrictLogging with Expirable {
 
-  // TODO we need some rate-limiting!
-  protected def get[R](request: APIGetRequest[R]): Future[R] =
+  private val REQUEST_TIMEOUT_S = 2
+  private val DEFAULT_RATE_LIMIT_WAIT_S = 5
+
+  // functionality for rate limiting: thread-safe rate limit and methods for getting, setting, and waiting for it
+  private val rateLimitExpiration = new AtomicLong(0)
+  private def rateLimited: Boolean = !isExpired(rateLimitExpiration.get())
+  private def updateRateLimitExpiry(duration: Long): Unit = rateLimitExpiration.set(getExpiry(duration))
+  private def secondsTilExpiry: Long = secondsTilExpiry(rateLimitExpiration.get())
+
+  /** Performs a get request. If we are currently rate-limited, will wait until the limit expires before */
+  private[request] def get[R](request: APIGetRequest[R]): Future[R] = {
+    Future {
+      // use var to break loop if request completed successfully
+      var result: Option[R] = None
+
+      // loop until we get a response (or a failure)
+      while (result.isEmpty) {
+
+        // if we are rate limited, just wait the appropriate amount of time
+        if (rateLimited) Thread.sleep(secondsTilExpiry * 1000)
+
+        try {
+          // try request and await result (within surrounding future)
+          result = Some(
+            Await.result(doGet(request), REQUEST_TIMEOUT_S.seconds)
+          )
+        } catch {
+          case RateLimitException(duration) =>
+            logger.info(s"Hit with rate limit. Holding off for $duration seconds...")
+            updateRateLimitExpiry(duration)
+          case e => throw e
+        }
+      }
+      result.get
+    }
+  }
+
+
+  private[request] def doGet[R](request: APIGetRequest[R]): Future[R] =
     authProvider.getAuthTokenString.flatMap { token: String =>
       val requestWithAuth = request.baseRequest.auth.bearer(token)
-      val response = requestWithAuth.send()
-      response.map(_.body).map {
-        case Right(validResponse) => validResponse
-        case Left(error) => throw error
+      requestWithAuth.send().map { response: Response[R] =>
+        response.code match {
+          case StatusCode.Ok              => handleSuccess(response)
+          case StatusCode.TooManyRequests => handleRateLimit(response)
+          case _                          => throw new Exception(s"Unexpected HTTP response:\n${response.body}")
+        }
       }
     }
+
+  private def handleSuccess[R](response: Response[R]): R =
+    response.body match {
+      case Right(validResponse) =>  validResponse
+      case Left(error) =>           throw error
+    }
+
+  private def handleRateLimit[R](response: Response[R]): Nothing = {
+    val duration = response.header("Retry-After") match {
+      case Some(duration) =>  duration.toLong
+      case None =>            DEFAULT_RATE_LIMIT_WAIT_S
+    }
+    throw RateLimitException(duration)
+  }
 
   /** Returns a Future of a sequence of Future page results.
    *  Outer future is contingent on first page finishing -- as the rest of the pages depend on this result.
