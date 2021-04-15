@@ -63,8 +63,6 @@ class SpotifyRequester(override val authProvider: AuthTokenProvider)
   def requestArtist(artistId: String): Future[SpotifyArtist] =
     get(SpotifyArtistRequest(artistId))
 
-  //TODO  handle duplicate albums? Maybe when requesting tracks per album, keep a running hash of album names and skip
-  //TODO  if already queried.
   /** Iterates through an artist's albums. Paginated response
    *  @return future-wrapped paginated sequence of futures of artist albums
    */

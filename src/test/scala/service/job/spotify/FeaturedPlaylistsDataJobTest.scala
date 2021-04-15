@@ -4,7 +4,7 @@ import models.db.{Playlist, Track}
 import org.mockito.{ArgumentCaptor, Mockito}
 import org.mockito.Mockito.{verify, when}
 import service.DataReceiver
-import service.job.{JobFramework, JobSpec}
+import service.job.{JobEnvironment, JobSpec}
 import service.request.spotify.SpotifyRequester
 
 import scala.concurrent.Future
@@ -25,7 +25,7 @@ class FeaturedPlaylistsDataJobTest extends JobSpec {
     val receiver = mock[DataReceiver]
     val argCaptor = ArgumentCaptor.forClass(classOf[DataReceiver])
 
-    implicit val jobFramework: JobFramework = framework(sRequest = spotify, dReceiver = receiver)
+    implicit val jobFramework: JobEnvironment = framework(sRequest = spotify, dReceiver = receiver)
 
     val result = FeaturedPlaylistsDataJob(pushTrackData = true).doWork()
 

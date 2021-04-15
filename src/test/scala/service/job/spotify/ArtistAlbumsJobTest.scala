@@ -1,7 +1,7 @@
 package service.job.spotify
 
 import org.mockito.Mockito._
-import service.job.{JobFramework, JobSpec}
+import service.job.{JobEnvironment, JobSpec}
 import service.request.spotify.SpotifyRequester
 
 import scala.concurrent.Future
@@ -16,7 +16,7 @@ class ArtistAlbumsJobTest extends JobSpec {
       .thenReturn(Future(albsAll))
 
     val logVerifier = getLogVerifier[ArtistAlbumsJob](classOf[ArtistAlbumsJob])
-    implicit val jobFramework: JobFramework = framework(sRequest = spotify)
+    implicit val jobFramework: JobEnvironment = framework(sRequest = spotify)
 
     val result = ArtistAlbumsJob("art1").doWork()
 

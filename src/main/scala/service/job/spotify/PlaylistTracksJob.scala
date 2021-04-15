@@ -2,7 +2,7 @@ package service.job.spotify
 
 import models.api.response.{SpotifyPlaylistInfo, SpotifyPlaylistTrackRef, SpotifyPlaylistTracksPage}
 import models.db.Track
-import service.job.{JobFramework, SpotifyJob}
+import service.job.{JobEnvironment, SpotifyJob}
 
 import scala.concurrent.Future
 
@@ -11,7 +11,7 @@ import scala.concurrent.Future
  *  @return Concatenated list of all track IDs that were found once the service.job is finished.
  */
 case class PlaylistTracksJob(playlist: SpotifyPlaylistInfo, pushData: Boolean = false)
-                            (implicit jobFramework: JobFramework)
+                            (implicit jobEnvironment: JobEnvironment)
   extends SpotifyJob[Seq[Track]] {
 
   private[job] override def work: Future[Seq[Track]] = {

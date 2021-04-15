@@ -3,7 +3,7 @@ package service.job.spotify
 import org.mockito.{ArgumentCaptor, Mockito}
 import org.mockito.Mockito._
 import service.DataReceiver
-import service.job.{JobFramework, JobSpec}
+import service.job.{JobEnvironment, JobSpec}
 import service.request.spotify.SpotifyRequester
 
 import scala.concurrent.Future
@@ -20,7 +20,7 @@ class AlbumsJobTest extends JobSpec {
     val receiver = mock[DataReceiver]
     val argCaptor = ArgumentCaptor.forClass(classOf[DataReceiver])
 
-    implicit val jobFramework: JobFramework = framework(sRequest = spotify, dReceiver = receiver)
+    implicit val jobFramework: JobEnvironment = framework(sRequest = spotify, dReceiver = receiver)
 
     val result = AlbumsJob(Seq("alb1", "alb2", "alb3"), 2).doWork() // should be grouped into 2 chunks
 

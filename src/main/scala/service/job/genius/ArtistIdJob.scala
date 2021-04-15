@@ -1,14 +1,14 @@
 package service.job.genius
 
 import models.api.response.GeniusSearchResponse
-import service.job.{GeniusJob, JobFramework}
+import service.job.{GeniusJob, JobEnvironment}
 
 import scala.concurrent.Future
 
 /** Performs a Genius search request to extract an artist's ID
  *  @return Genius ID for artist. Throws [[service.job.JobException]] if search yields no results
  */
-case class ArtistIdJob(artistName: String)(implicit jobFramework: JobFramework) extends GeniusJob[Int] {
+case class ArtistIdJob(artistName: String)(implicit jobEnvironment: JobEnvironment) extends GeniusJob[Int] {
 
   private[job] override def work: Future[Int] =
     genius.requestSearchPage(artistName, 1).map { searchResult: GeniusSearchResponse =>

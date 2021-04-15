@@ -2,13 +2,13 @@ package service.job.genius
 
 import models.api.response.GeniusSong
 import models.db.Lyrics
-import service.job.{GeniusJob, JobFramework}
+import service.job.{GeniusJob, JobEnvironment}
 
 import scala.concurrent.Future
 
 /** Scrapes Genius for the given song. Requires artist and artist ID info for the data push. */
 case class SongLyricsJob(song: GeniusSong, artist: String, artistId: Int)
-                        (implicit jobFramework: JobFramework)
+                        (implicit jobEnvironment: JobEnvironment)
   extends GeniusJob[Unit] {
 
   private[job] override def work: Future[Unit] = {

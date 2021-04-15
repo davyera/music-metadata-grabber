@@ -9,7 +9,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class JobOrchestrator(implicit val context: ExecutionContext) extends StrictLogging {
 
-  private implicit val framework: JobFramework = new JobFramework
+  private implicit val env: JobEnvironment = new JobEnvironment
 
   def orchestratePlaylistDataJobs(): Future[Unit] = {
     // pull featured playlists

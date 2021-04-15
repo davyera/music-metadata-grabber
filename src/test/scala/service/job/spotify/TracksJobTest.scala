@@ -4,7 +4,7 @@ import models.api.response.SpotifyAudioFeaturesPage
 import org.mockito.{ArgumentCaptor, Mockito}
 import org.mockito.Mockito._
 import service.DataReceiver
-import service.job.{JobFramework, JobSpec}
+import service.job.{JobEnvironment, JobSpec}
 import service.request.spotify.SpotifyRequester
 
 import scala.concurrent.Future
@@ -19,7 +19,7 @@ class TracksJobTest extends JobSpec {
     val receiver = mock[DataReceiver]
     val argCaptor = ArgumentCaptor.forClass(classOf[DataReceiver])
 
-    implicit val jobFramework: JobFramework = framework(sRequest = spotify, dReceiver = receiver)
+    implicit val jobFramework: JobEnvironment = framework(sRequest = spotify, dReceiver = receiver)
 
     val result = TracksJob(Seq("t1", "t2")).doWork()
 
@@ -44,7 +44,7 @@ class TracksJobTest extends JobSpec {
     val argCaptor = ArgumentCaptor.forClass(classOf[DataReceiver])
 
     val logVerifier = getLogVerifier[AudioFeaturesJob](classOf[AudioFeaturesJob])
-    implicit val jobFramework: JobFramework = framework(sRequest = spotify, dReceiver = receiver)
+    implicit val jobFramework: JobEnvironment = framework(sRequest = spotify, dReceiver = receiver)
 
     val result = TracksJob(Seq("t1", "t2")).doWork()
 

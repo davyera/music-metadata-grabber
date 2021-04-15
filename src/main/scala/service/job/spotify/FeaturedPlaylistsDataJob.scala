@@ -2,7 +2,7 @@ package service.job.spotify
 
 import models.api.response.{SpotifyFeaturedPlaylists, SpotifyPlaylistInfo}
 import models.db.{Playlist, Track}
-import service.job.{JobFramework, SpotifyJob}
+import service.job.{JobEnvironment, SpotifyJob}
 
 import scala.concurrent.Future
 
@@ -10,7 +10,7 @@ import scala.concurrent.Future
  *  Spawns PlaylistTracksJobs and returns a Seq of all tracks found.
  *  If [[pushTrackData]] is true, will push individual track data as well.
  */
-case class FeaturedPlaylistsDataJob(pushTrackData: Boolean = false)(implicit jobFramework: JobFramework)
+case class FeaturedPlaylistsDataJob(pushTrackData: Boolean = false)(implicit jobEnvironment: JobEnvironment)
   extends SpotifyJob[Map[Playlist, Seq[Track]]] {
 
   private[job] override def work: Future[Map[Playlist, Seq[Track]]] = {

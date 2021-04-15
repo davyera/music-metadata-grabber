@@ -2,7 +2,7 @@ package service.job.spotify
 
 import models.api.response.{SpotifyAudioFeatures, SpotifyAudioFeaturesPage, SpotifyTrack}
 import models.db.Track
-import service.job.{JobException, JobFramework, SpotifyJob}
+import service.job.{JobException, JobEnvironment, SpotifyJob}
 
 import scala.concurrent.Future
 
@@ -14,7 +14,7 @@ import scala.concurrent.Future
 case class AudioFeaturesJob(tracks: Seq[SpotifyTrack],
                             featuresRequestLimit: Int = 50,
                             pushData: Boolean = true)
-                           (implicit jobFramework: JobFramework)
+                           (implicit jobEnvironment: JobEnvironment)
   extends SpotifyJob[Seq[Track]] {
 
   override private[job] def work: Future[Seq[Track]] = {

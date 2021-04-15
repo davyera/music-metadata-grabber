@@ -7,19 +7,19 @@ import service.request.spotify.SpotifyRequester
 import scala.concurrent.duration.{DurationInt, FiniteDuration}
 import scala.concurrent.{Await, ExecutionContext, Future}
 
-abstract class DataJob[T](private implicit val jobFramework: JobFramework) extends StrictLogging {
+abstract class DataJob[T](private implicit val jobEnvironment: JobEnvironment) extends StrictLogging {
 
   private val MAX_JOB_TIMEOUT_MS: FiniteDuration = 2000.milliseconds
   private val PAGE_LIMIT: Int = 20
 
-  private[job] val spotify:       SpotifyRequester    = jobFramework.spotify
-  private[job] val genius:        GeniusRequester     = jobFramework.genius
-  private[job] val geniusScraper: GeniusLyricsScraper = jobFramework.geniusScraper
+  private[job] val spotify:       SpotifyRequester    = jobEnvironment.spotify
+  private[job] val genius:        GeniusRequester     = jobEnvironment.genius
+  private[job] val geniusScraper: GeniusLyricsScraper = jobEnvironment.geniusScraper
 
-  implicit private[job] val context: ExecutionContext = jobFramework.context
+  implicit private[job] val context: ExecutionContext = jobEnvironment.context
 
   def pushData[D](data: D): Unit = {
-    jobFramework.receiver.receive(data)
+    jobEnvironment.receiver.receive(data)
   }
 
   def doWork(): Future[T] = {
@@ -51,11 +51,11 @@ abstract class DataJob[T](private implicit val jobFramework: JobFramework) exten
     }
 }
 
-abstract class SpotifyJob[T](implicit jobFramework: JobFramework) extends DataJob[T] {
+abstract class SpotifyJob[T](implicit jobEnvironment: JobEnvironment) extends DataJob[T] {
   override val serviceName: String = "SPOTIFY"
 }
 
-abstract class GeniusJob[T](implicit jobFramework: JobFramework) extends DataJob[T] {
+abstract class GeniusJob[T](implicit jobEnvironment: JobEnvironment) extends DataJob[T] {
   override val serviceName: String = "GENIUS"
 }
 

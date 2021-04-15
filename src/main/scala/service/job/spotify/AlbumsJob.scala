@@ -2,13 +2,13 @@ package service.job.spotify
 
 import models.api.response.{SpotifyAlbum, SpotifyAlbums}
 import models.db.Album
-import service.job.{JobFramework, SpotifyJob}
+import service.job.{JobEnvironment, SpotifyJob}
 
 import scala.concurrent.Future
 
 /** Request detailed information on a set of Albums by ID */
 case class AlbumsJob(albumIds: Seq[String], albumsRequestLimit: Int = 20, pushData: Boolean = true)
-                    (implicit jobFramework: JobFramework)
+                    (implicit jobEnvironment: JobEnvironment)
   extends SpotifyJob[Seq[Album]] {
 
   override private[job] def work: Future[Seq[Album]] = {

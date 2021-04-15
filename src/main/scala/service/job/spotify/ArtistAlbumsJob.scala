@@ -2,13 +2,13 @@ package service.job.spotify
 
 import models.api.response.{SpotifyAlbumRef, SpotifyArtistAlbumsPage}
 import models.db.Album
-import service.job.{JobFramework, SpotifyJob}
+import service.job.{JobEnvironment, SpotifyJob}
 
 import scala.concurrent.Future
 
 /** Request all albums for a given artist ID. */
 case class ArtistAlbumsJob(artistId: String, pushData: Boolean = true)
-                          (implicit jobFramework: JobFramework)
+                          (implicit jobEnvironment: JobEnvironment)
   extends SpotifyJob[Seq[Album]] {
 
   private[job] override def work: Future[Seq[Album]] = {

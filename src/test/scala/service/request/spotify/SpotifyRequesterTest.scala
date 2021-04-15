@@ -39,7 +39,7 @@ class SpotifyRequesterTest extends APIRequesterSpec {
       page.message shouldNot be (empty)
       page.playlists.total should be > 0
       page.playlists.items foreach { playlist: SpotifyPlaylistInfo =>
-        playlist.description shouldNot be (empty)
+        playlist.name shouldNot be (empty)
       }
     }
   }

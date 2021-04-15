@@ -8,7 +8,7 @@ import sttp.client.asynchttpclient.future.AsyncHttpClientFutureBackend
 
 import scala.concurrent.ExecutionContext
 
-class JobFramework(implicit val context: ExecutionContext) {
+class JobEnvironment(implicit val context: ExecutionContext) {
   implicit val backend: Backend = AsyncHttpClientFutureBackend()(context)
 
   private val spotifyAuth: SpotifyAuthTokenProvider = new SpotifyAuthTokenProvider()

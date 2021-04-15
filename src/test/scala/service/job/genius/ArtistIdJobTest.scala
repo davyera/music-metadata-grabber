@@ -2,7 +2,7 @@ package service.job.genius
 
 import models.api.response._
 import org.mockito.Mockito.when
-import service.job.{JobException, JobFramework, JobSpec}
+import service.job.{JobException, JobEnvironment, JobSpec}
 import service.request.genius.GeniusRequester
 
 import scala.concurrent.Future
@@ -23,7 +23,7 @@ class ArtistIdJobTest extends JobSpec {
     val geniusRequester = mock[GeniusRequester]
     when(geniusRequester.requestSearchPage(artist, 1)).thenReturn(Future.successful(response))
 
-    implicit val jobFramework: JobFramework = framework(gRequest = geniusRequester)
+    implicit val jobFramework: JobEnvironment = framework(gRequest = geniusRequester)
     val job = ArtistIdJob(artist)
 
     whenReady(job.doWork())(id => id shouldEqual expectedId)
@@ -36,7 +36,7 @@ class ArtistIdJobTest extends JobSpec {
     val geniusRequester = mock[GeniusRequester]
     when(geniusRequester.requestSearchPage(artist, 1)).thenReturn(Future.successful(response))
 
-    implicit val jobFramework: JobFramework = framework(gRequest = geniusRequester)
+    implicit val jobFramework: JobEnvironment = framework(gRequest = geniusRequester)
     val job = ArtistIdJob(artist)
 
     whenReady(job.doWork().failed) { error =>

@@ -17,8 +17,8 @@ class JobSpec extends UnitSpec {
   def framework(sRequest: SpotifyRequester = mock[SpotifyRequester],
                 gRequest: GeniusRequester = mock[GeniusRequester],
                 gScraper: GeniusLyricsScraper = mock[GeniusLyricsScraper],
-                dReceiver: DataReceiver = mock[DataReceiver]): JobFramework = {
-    new JobFramework {
+                dReceiver: DataReceiver = mock[DataReceiver]): JobEnvironment = {
+    new JobEnvironment {
       override val context: ExecutionContext = ctx
       override val backend: Backend = mock[Backend]
       override val spotify: SpotifyRequester = sRequest

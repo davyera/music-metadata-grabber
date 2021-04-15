@@ -5,7 +5,7 @@ import models.db.Lyrics
 import org.mockito.{ArgumentCaptor, Mockito}
 import org.mockito.Mockito.{verify, when}
 import service.DataReceiver
-import service.job.{JobFramework, JobSpec}
+import service.job.{JobEnvironment, JobSpec}
 import service.request.genius.{GeniusLyricsScraper, GeniusRequester}
 
 import scala.concurrent.Future
@@ -37,7 +37,7 @@ class ArtistLyricsJobTest extends JobSpec {
     val receiver = mock[DataReceiver]
     val argCaptor = ArgumentCaptor.forClass(classOf[DataReceiver])
 
-    implicit val jobFramework: JobFramework = framework(gRequest = geniusRequester, gScraper = scraper,
+    implicit val jobFramework: JobEnvironment = framework(gRequest = geniusRequester, gScraper = scraper,
       dReceiver = receiver)
 
     ArtistLyricsJob(artistId, artist).doWork()
