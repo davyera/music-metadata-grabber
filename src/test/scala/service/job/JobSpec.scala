@@ -48,10 +48,14 @@ class JobSpec extends UnitSpec {
   lazy private[job] val trk3 = SpotifyTrack("t3", "song3", Seq(art3), alb2r, 1, 100)
   lazy private[job] val trk3d = Track("t3", "song3", 100, 1, "alb2", Seq("art3"), Map())
   lazy private[job] val trk3ar = SpotifyAlbumTrackRef("song3", "t3", 1)
+  lazy private[job] val trk3f = SpotifyAudioFeatures("t3", speechiness = 100f)
+  lazy private[job] val trk3fd = trk3d.copy(features = trk3f.toMap)
 
   lazy private[job] val trk4 = SpotifyTrack("t4", "song4", Seq(art1), alb3r, 2, 90)
   lazy private[job] val trk4d = Track("t4", "song4", 90, 2, "alb3", Seq("art1"), Map())
   lazy private[job] val trk4ar = SpotifyAlbumTrackRef("song4", "t4", 1)
+  lazy private[job] val trk4f = SpotifyAudioFeatures("t4", liveness = 2.1f)
+  lazy private[job] val trk4fd = trk4d.copy(features = trk4f.toMap)
 
   lazy private[job] val trkPg1 = SpotifyTracks(Seq(trk1, trk2))
   lazy private[job] val trkfPg1 = SpotifyAudioFeaturesPage(Seq(trk2f, trk1f))

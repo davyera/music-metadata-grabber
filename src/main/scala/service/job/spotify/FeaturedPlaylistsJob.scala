@@ -1,5 +1,6 @@
 package service.job.spotify
 
+import models.ModelTransform
 import models.api.response.{SpotifyFeaturedPlaylists, SpotifyPlaylistInfo}
 import models.db.{Playlist, Track}
 import service.job.{JobEnvironment, SpotifyJob}
@@ -27,8 +28,7 @@ case class FeaturedPlaylistsJob(pushTrackData: Boolean = false)(implicit jobEnvi
 
           // once we have finished querying all tracks, we can send the full playlist data out
           tracksJob.doWork().map { tracks =>
-            val trackIds = tracks.map(_.id)
-            val playlist = Playlist(plistInfo.id, plistInfo.name, plistInfo.description, trackIds)
+            val playlist = ModelTransform.playlist(plistInfo, tracks.map(_.id))
             pushData(playlist)
 
             // return as a tuple so we can build the map afterwards

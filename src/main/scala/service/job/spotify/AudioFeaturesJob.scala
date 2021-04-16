@@ -1,8 +1,9 @@
 package service.job.spotify
 
+import models.ModelTransform
 import models.api.response.{SpotifyAudioFeatures, SpotifyAudioFeaturesPage, SpotifyTrack}
 import models.db.Track
-import service.job.{JobException, JobEnvironment, SpotifyJob}
+import service.job.{JobEnvironment, JobException, SpotifyJob}
 
 import scala.concurrent.Future
 
@@ -28,7 +29,7 @@ case class AudioFeaturesJob(tracks: Seq[SpotifyTrack],
           val trackData = chunkedTracks.find(_.id == features.id) match {
 
             // create track data using features and input track
-            case Some(trk) => toTrackData(trk, Some(features))
+            case Some(trk) => ModelTransform.track(trk, Some(features))
 
             // if we can't back-reference the original input track, throw exception (this should be impossible)
             case None => throw JobException(s"Could not back-reference track with ID ${features.id}")
@@ -51,7 +52,7 @@ case class AudioFeaturesJob(tracks: Seq[SpotifyTrack],
 
         // create Track data objects for feature-less tracks
         val missingTracks = tracks.filter(trk => missingIds.contains(trk.id))
-        missingTracks.map(toTrackData(_))
+        missingTracks.map(ModelTransform.track(_, None))
       } else Nil
 
     // concatenate tracks with and without features
@@ -60,13 +61,5 @@ case class AudioFeaturesJob(tracks: Seq[SpotifyTrack],
     // finally, return and (optionally) push data
     if (pushData) allTracksData.foreach(pushData(_))
     Future.successful(allTracksData)
-  }
-
-  private def toTrackData(trk: SpotifyTrack, features: Option[SpotifyAudioFeatures] = None): Track = {
-    val featureMap: Map[String, Float] = features match {
-      case Some(f) => f.toMap
-      case None => Map()
-    }
-    Track(trk.id, trk.name, trk.popularity, trk.track_number, trk.album.id, trk.artists.map(_.id), featureMap)
   }
 }
