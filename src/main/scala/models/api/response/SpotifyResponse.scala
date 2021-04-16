@@ -30,7 +30,7 @@ case class SpotifyFeaturedPlaylists(message: String, playlists: SpotifyPlaylistP
   def getTotal: Int = playlists.total
 }
 case class SpotifyPlaylistPage(items: Seq[SpotifyPlaylistInfo], total: Int)
-case class SpotifyPlaylistInfo(name: String, id: String, description: String)
+case class SpotifyPlaylistInfo(id: String, name: String, description: String)
 
 /** SPOTIFY PLAYLIST TRACKS */
 case class SpotifyPlaylistTracksPage(items: Seq[SpotifyPlaylistTrackRef], total: Int) extends PageableWithTotal {
@@ -66,7 +66,7 @@ case class SpotifyAlbum(id: String,
                         tracks: SpotifyAlbumTracksPage,
                         popularity: Int)
 case class SpotifyAlbumTracksPage(items: Seq[SpotifyAlbumTrackRef])
-case class SpotifyAlbumTrackRef(name: String, id: String, track_number: Int)
+case class SpotifyAlbumTrackRef(id: String, name: String, track_number: Int)
 
 /** SPOTIFY AUDIO FEATURES */
 case class SpotifyAudioFeaturesPage(audio_features: Seq[SpotifyAudioFeatures])
@@ -95,6 +95,6 @@ case class SpotifyAudioFeatures(id: String,
 }
 
 /** GENERIC REF OBJECTS */
-case class SpotifyArtistRef(name: String, id: String)
-case class SpotifyAlbumRef(name: String, id: String)
+case class SpotifyArtistRef(id: String, name: String)
+case class SpotifyAlbumRef(id: String, name: String)
 
