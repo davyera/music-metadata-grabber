@@ -16,7 +16,8 @@ case class Playlist(id: String,
 case class Artist(id: String,
                   name: String,
                   genres: Seq[String],
-                  popularity: Int) extends DbEntry
+                  popularity: Int,
+                  albums: Seq[String]) extends DbEntry
 
 case class Album(id: String,
                  name: String,

@@ -20,7 +20,7 @@ class AlbumsJobTest extends JobSpec {
     val receiver = mock[DataReceiver]
     val argCaptor = ArgumentCaptor.forClass(classOf[DataReceiver])
 
-    implicit val jobFramework: JobEnvironment = framework(sRequest = spotify, dReceiver = receiver)
+    implicit val jobFramework: JobEnvironment = env(sRequest = spotify, dReceiver = receiver)
 
     val result = AlbumsJob(Seq("alb1", "alb2", "alb3"), 2).doWork() // should be grouped into 2 chunks
 

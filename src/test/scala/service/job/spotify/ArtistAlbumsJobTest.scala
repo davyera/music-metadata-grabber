@@ -16,7 +16,7 @@ class ArtistAlbumsJobTest extends JobSpec {
       .thenReturn(Future(albsAll))
 
     val logVerifier = getLogVerifier[ArtistAlbumsJob](classOf[ArtistAlbumsJob])
-    implicit val jobFramework: JobEnvironment = framework(sRequest = spotify)
+    implicit val jobEnv: JobEnvironment = env(sRequest = spotify)
 
     val result = ArtistAlbumsJob("art1").doWork()
 

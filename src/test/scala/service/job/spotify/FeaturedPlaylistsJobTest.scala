@@ -25,7 +25,7 @@ class FeaturedPlaylistsJobTest extends JobSpec {
     val receiver = mock[DataReceiver]
     val argCaptor = ArgumentCaptor.forClass(classOf[DataReceiver])
 
-    implicit val jobFramework: JobEnvironment = framework(sRequest = spotify, dReceiver = receiver)
+    implicit val jobEnv: JobEnvironment = env(sRequest = spotify, dReceiver = receiver)
 
     val result = FeaturedPlaylistsJob(pushTrackData = true).doWork()
 
@@ -54,7 +54,7 @@ class FeaturedPlaylistsJobTest extends JobSpec {
     val receiver = mock[DataReceiver]
     val argCaptor = ArgumentCaptor.forClass(classOf[DataReceiver])
 
-    implicit val jobFramework: JobEnvironment = framework(sRequest = spotify, dReceiver = receiver)
+    implicit val jobEnv: JobEnvironment = env(sRequest = spotify, dReceiver = receiver)
 
     val result = FeaturedPlaylistsJob().doWork()
 

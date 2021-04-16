@@ -23,7 +23,7 @@ class ArtistIdJobTest extends JobSpec {
     val geniusRequester = mock[GeniusRequester]
     when(geniusRequester.requestSearchPage(artist, 1)).thenReturn(Future.successful(response))
 
-    implicit val jobFramework: JobEnvironment = framework(gRequest = geniusRequester)
+    implicit val jobEnv: JobEnvironment = env(gRequest = geniusRequester)
     val job = ArtistIdJob(artist)
 
     whenReady(job.doWork())(id => id shouldEqual expectedId)
@@ -36,7 +36,7 @@ class ArtistIdJobTest extends JobSpec {
     val geniusRequester = mock[GeniusRequester]
     when(geniusRequester.requestSearchPage(artist, 1)).thenReturn(Future.successful(response))
 
-    implicit val jobFramework: JobEnvironment = framework(gRequest = geniusRequester)
+    implicit val jobEnv: JobEnvironment = env(gRequest = geniusRequester)
     val job = ArtistIdJob(artist)
 
     whenReady(job.doWork().failed) { error =>

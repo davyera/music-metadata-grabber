@@ -19,7 +19,7 @@ class TracksJobTest extends JobSpec {
     val receiver = mock[DataReceiver]
     val argCaptor = ArgumentCaptor.forClass(classOf[DataReceiver])
 
-    implicit val jobFramework: JobEnvironment = framework(sRequest = spotify, dReceiver = receiver)
+    implicit val jobEnv: JobEnvironment = env(sRequest = spotify, dReceiver = receiver)
 
     val result = TracksJob(Seq("t1", "t2")).doWork()
 
@@ -44,7 +44,7 @@ class TracksJobTest extends JobSpec {
     val argCaptor = ArgumentCaptor.forClass(classOf[DataReceiver])
 
     val logVerifier = getLogVerifier[AudioFeaturesJob](classOf[AudioFeaturesJob])
-    implicit val jobFramework: JobEnvironment = framework(sRequest = spotify, dReceiver = receiver)
+    implicit val jobEnv: JobEnvironment = env(sRequest = spotify, dReceiver = receiver)
 
     val result = TracksJob(Seq("t1", "t2")).doWork()
 

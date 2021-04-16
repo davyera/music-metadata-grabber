@@ -37,7 +37,7 @@ class ArtistLyricsJobTest extends JobSpec {
     val receiver = mock[DataReceiver]
     val argCaptor = ArgumentCaptor.forClass(classOf[DataReceiver])
 
-    implicit val jobFramework: JobEnvironment = framework(gRequest = geniusRequester, gScraper = scraper,
+    implicit val jobFramework: JobEnvironment = env(gRequest = geniusRequester, gScraper = scraper,
       dReceiver = receiver)
 
     ArtistLyricsJob(artistId, artist).doWork()
