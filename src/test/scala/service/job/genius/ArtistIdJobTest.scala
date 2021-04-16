@@ -41,7 +41,7 @@ class ArtistIdJobTest extends JobSpec {
 
     whenReady(job.doWork().failed) { error =>
       error shouldBe a [JobException]
-      error.getMessage shouldEqual "GENIUS: No search results for artist name XXX"
+      error.getMessage shouldEqual "No search results for artist name XXX"
     }
   }
 }

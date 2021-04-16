@@ -6,6 +6,7 @@ import service.request.genius.{GeniusAuthTokenProvider, GeniusLyricsScraper, Gen
 import service.request.spotify.{SpotifyAuthTokenProvider, SpotifyRequester}
 import sttp.client.asynchttpclient.future.AsyncHttpClientFutureBackend
 
+import scala.collection.mutable
 import scala.concurrent.ExecutionContext
 
 class JobEnvironment(implicit val context: ExecutionContext) {
@@ -19,4 +20,10 @@ class JobEnvironment(implicit val context: ExecutionContext) {
   implicit val geniusScraper: GeniusLyricsScraper = new GeniusLyricsScraper()
 
   implicit val receiver: DataReceiver = new DataReceiver()
+
+  private val jobs = mutable.Buffer[DataJob[_]]()
+
+  def registerJob(job: DataJob[_]): Unit = jobs.synchronized(jobs.addOne(job))
+  def unfinishedJobs: Seq[DataJob[_]] = jobs.synchronized(jobs.filter(!_.isComplete).toSeq)
+  def failedJobs: Seq[DataJob[_]] = jobs.synchronized(jobs.filter(_.isFailed).toSeq)
 }

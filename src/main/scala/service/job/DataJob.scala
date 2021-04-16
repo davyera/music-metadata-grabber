@@ -4,8 +4,10 @@ import com.typesafe.scalalogging.StrictLogging
 import service.request.genius.{GeniusLyricsScraper, GeniusRequester}
 import service.request.spotify.SpotifyRequester
 
+import java.util.concurrent.atomic.{AtomicBoolean, AtomicLong, AtomicReference}
 import scala.concurrent.duration.{DurationInt, FiniteDuration}
 import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.util.{Failure, Success, Try}
 
 abstract class DataJob[T](private implicit val jobEnvironment: JobEnvironment) extends StrictLogging {
 
@@ -14,17 +16,36 @@ abstract class DataJob[T](private implicit val jobEnvironment: JobEnvironment) e
   private[job] val spotify:       SpotifyRequester    = jobEnvironment.spotify
   private[job] val genius:        GeniusRequester     = jobEnvironment.genius
   private[job] val geniusScraper: GeniusLyricsScraper = jobEnvironment.geniusScraper
+
   implicit private[job] val context: ExecutionContext = jobEnvironment.context
+
+  private val startTime = new AtomicLong(0)
+  private val endTime = new AtomicLong(0)
+
+  private val futureResult = new AtomicReference[Future[T]]()
+  private val failed = new AtomicBoolean(false)
 
   def pushData[D](data: D): Unit =
     jobEnvironment.receiver.receive(data)
 
   def doWork(): Future[T] = {
+    start()
+    jobEnvironment.registerJob(this)
 
-    // TODO: pre-work stuff: start a timer? Set as pending? Register work being started?
-    val workFuture = work
-    // TODO: post-work stuff. finish timer? Set as completed? Successful? Failed?
-    workFuture
+    futureResult.set {
+      val futureWorkResult = work
+
+      // on completion, we want to record the end time and whether or not it failed (if we want to re-run later)
+      futureWorkResult.onComplete {
+        case Success(_)     => finish()
+        case Failure(error) => finish()
+          logError(error.getMessage)
+          failed.set(true)
+      }
+      futureWorkResult
+    }
+
+    futureResult.get()
   }
 
   /** Override with service.job workload -- should not be called (use [[doWork()]]) */
@@ -32,9 +53,13 @@ abstract class DataJob[T](private implicit val jobEnvironment: JobEnvironment) e
   private[job] val serviceName: String
   private[job] val jobName: String
 
-  private[job] def logInfo(msg: String): Unit = logger.info(s"$serviceName:$jobName: $msg")
+  private lazy val jobTag = s"$serviceName:$jobName"
+
+  private[job] def logInfo(msg: String): Unit = logger.info(s"$jobTag: $msg")
+  private[job] def logError(msg: String): Unit = logger.error(s"ERROR IN $jobTag: $msg")
+  private[job] def exception(msg: String): JobException = JobException(msg)
+
   private[job] def toTag(name: String, id: String): String = s"$name ($id)"
-  private[job] def exception(msg: String): JobException = JobException(s"$serviceName: $msg")
 
   private[job] def awaitPagedResults[O](pagedResults: Seq[Future[Seq[O]]]): Seq[O] = pagedResults.flatten(awaitResult)
   private[job] def awaitResult[O](future: Future[O]): O = Await.result(future, MAX_JOB_TIMEOUT_MS)
@@ -47,6 +72,22 @@ abstract class DataJob[T](private implicit val jobEnvironment: JobEnvironment) e
         pageWork(page)
       }
     }
+
+  private def start(): Unit = startTime.set(System.currentTimeMillis())
+  private def finish(): Unit = endTime.set(System.currentTimeMillis())
+
+  private[job] def isComplete: Boolean = endTime.get() > 0
+  private[job] def isFailed: Boolean = failed.get()
+  private[job] def timeElapsed: Long = {
+    val start: Long = startTime.get()
+    // if complete, time elapsed should be (end time - start time)
+    if (isComplete) endTime.get() - start
+    else
+      // if we have started but not completed, return current running time of job
+      if (start > 0) System.currentTimeMillis() - start
+      // otherwise, job has not started, so just return 0
+      else 0
+  }
 }
 
 abstract class SpotifyJob[T](implicit jobEnvironment: JobEnvironment) extends DataJob[T] {
