@@ -21,7 +21,7 @@ class TracksJobTest extends JobSpec {
 
     implicit val jobEnv: JobEnvironment = env(sRequest = spotify, dReceiver = receiver)
 
-    val result = TracksJob(Seq("t1", "t2")).doWork()
+    val result = TracksJob(Seq("t1", "t2"), pushData = true).doWork()
 
     verify(receiver, Mockito.timeout(1000).times(2)).receive(argCaptor.capture())
     val capturedTracks = argCaptor.getAllValues
@@ -46,7 +46,7 @@ class TracksJobTest extends JobSpec {
     val logVerifier = getLogVerifier[AudioFeaturesJob](classOf[AudioFeaturesJob])
     implicit val jobEnv: JobEnvironment = env(sRequest = spotify, dReceiver = receiver)
 
-    val result = TracksJob(Seq("t1", "t2")).doWork()
+    val result = TracksJob(Seq("t1", "t2"), pushData = true).doWork()
 
     verify(receiver, Mockito.timeout(1000).times(2)).receive(argCaptor.capture())
     val capturedTracks = argCaptor.getAllValues

@@ -13,8 +13,8 @@ import scala.concurrent.Future
  *  @return Seq of completed [[Track]] data objects with audio features
  */
 case class AudioFeaturesJob(tracks: Seq[SpotifyTrack],
-                            featuresRequestLimit: Int = 50,
-                            pushData: Boolean = true)
+                            pushData: Boolean,
+                            featuresRequestLimit: Int = 50)
                            (implicit jobEnvironment: JobEnvironment)
   extends SpotifyJob[Seq[Track]] {
 
@@ -56,10 +56,10 @@ case class AudioFeaturesJob(tracks: Seq[SpotifyTrack],
       } else Nil
 
     // concatenate tracks with and without features
-    val allTracksData = tracksWithFeatures ++ tracksWithoutFeatures
+    val allTracks = tracksWithFeatures ++ tracksWithoutFeatures
 
     // finally, return and (optionally) push data
-    if (pushData) allTracksData.foreach(pushData(_))
-    Future.successful(allTracksData)
+    if (pushData) allTracks.foreach(pushData(_))
+    Future.successful(allTracks)
   }
 }

@@ -11,8 +11,8 @@ import scala.concurrent.Future
  *  @return completed seq of [[Track]] data, including Features
  */
 case class TracksJob(trackIds: Seq[String],
-                     tracksRequestLimit: Int = 50,
-                     pushData: Boolean = true)
+                     pushData: Boolean,
+                     tracksRequestLimit: Int = 50)
                     (implicit jobEnvironment: JobEnvironment)
   extends SpotifyJob[Seq[Track]] {
 
@@ -29,6 +29,6 @@ case class TracksJob(trackIds: Seq[String],
 
     // block for completion of track requests so we can push the set into the features job for completion
     val tracks: Seq[SpotifyTrack] = awaitPagedResults(groupedTracks)
-    AudioFeaturesJob(tracks, tracksRequestLimit, pushData).doWork()
+    AudioFeaturesJob(tracks, pushData, tracksRequestLimit).doWork()
   }
 }

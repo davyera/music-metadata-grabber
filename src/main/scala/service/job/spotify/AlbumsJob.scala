@@ -8,7 +8,7 @@ import service.job.{JobEnvironment, SpotifyJob}
 import scala.concurrent.Future
 
 /** Request detailed information on a set of Albums by ID */
-case class AlbumsJob(albumIds: Seq[String], albumsRequestLimit: Int = 20, pushData: Boolean = true)
+case class AlbumsJob(albumIds: Seq[String], albumsRequestLimit: Int = 20, pushData: Boolean)
                     (implicit jobEnvironment: JobEnvironment)
   extends SpotifyJob[Seq[Album]] {
 
@@ -21,15 +21,12 @@ case class AlbumsJob(albumIds: Seq[String], albumsRequestLimit: Int = 20, pushDa
         albumsResponse.albums.map { album: SpotifyAlbum =>
           logInfo(s"Received album info for ${toTag(album.name, album.id)}")
           val albumData = ModelTransform.album(album)
-          if (pushData) {
-            pushData(albumData)
-          }
+          if (pushData) pushData(albumData)
           albumData
         }
       }
     }
-
-    // block on waiting for the underlying sequences of albums to return the complete set
-    Future.successful(awaitPagedResults(groupedAlbums))
+    // flatten seq[future[seq[...]]] into future[seq[...]]
+    Future.sequence(groupedAlbums).map(_.flatten)
   }
 }

@@ -1,5 +1,6 @@
 package service.job.spotify
 
+import models.db.{Album, Artist}
 import org.mockito.{ArgumentCaptor, Mockito}
 import org.mockito.Mockito._
 import service.DataReceiver
@@ -21,15 +22,17 @@ class ArtistJobTest extends JobSpec {
     val argCaptor = ArgumentCaptor.forClass(classOf[DataReceiver])
     implicit val jobEnv: JobEnvironment = env(sRequest = spotify, dReceiver = receiver)
 
-    val result = new ArtistJob("art1").doWork()
+    val result = ArtistJob("art1", pushData = true).doWork()
 
     verify(receiver, Mockito.timeout(1000).times(3)).receive(argCaptor.capture())
     val capturedArgs = argCaptor.getAllValues
     capturedArgs.contains(art1d) shouldBe true
     capturedArgs.contains(alb1d) shouldBe true
     capturedArgs.contains(alb2d) shouldBe true
-    whenReady(result) { art =>
+    whenReady(result) { case (art: Artist, albums: Seq[Album]) =>
       art shouldEqual art1d
+      albums.contains(alb1d) shouldBe true
+      albums.contains(alb2d) shouldBe true
       logVerifier.assertLogged("SPOTIFY:ARTIST: Received full artist data for artist artist1 (art1)")
     }
   }

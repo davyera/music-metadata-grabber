@@ -2,7 +2,6 @@ package service.job
 
 import com.typesafe.scalalogging.StrictLogging
 import models.db.Track
-import service.job.genius.{ArtistIdJob, ArtistLyricsJob}
 import service.job.spotify.{ArtistAlbumsJob, FeaturedPlaylistsJob, TracksJob}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -22,7 +21,7 @@ class JobOrchestrator(implicit val context: ExecutionContext) extends StrictLogg
   }
 
   def orchestrateArtistTrackJobs(artistId: String): Future[Unit] = {
-    ArtistAlbumsJob(artistId).doWork().map { albums =>
+    ArtistAlbumsJob(artistId, pushData = true).doWork().map { albums =>
       // launch track data jobs for each track
       val tracksIds = albums.flatMap(_.tracks)
     }
@@ -30,17 +29,7 @@ class JobOrchestrator(implicit val context: ExecutionContext) extends StrictLogg
   }
 
   def orchestrateTrackDataJobs(trackIds: Seq[String]): Future[Unit] = {
-    TracksJob(trackIds).doWork()
+    TracksJob(trackIds, pushData = true).doWork()
     Future.successful()
-  }
-
-  /** Performs a full lyrics-scraping service.job for a given artist
-   */
-  def orchestrateLyricsJobs(artistName: String): Future[Unit] = {
-    // first, we need to query to find the artist ID
-    ArtistIdJob(artistName).doWork().map { artistId: Int =>
-      // then, perform a Genius request for all of the artist's songs
-      ArtistLyricsJob(artistId, artistName).doWork()
-    }
   }
 }

@@ -22,7 +22,7 @@ class AlbumsJobTest extends JobSpec {
 
     implicit val jobFramework: JobEnvironment = env(sRequest = spotify, dReceiver = receiver)
 
-    val result = AlbumsJob(Seq("alb1", "alb2", "alb3"), 2).doWork() // should be grouped into 2 chunks
+    val result = AlbumsJob(Seq("alb1", "alb2", "alb3"), 2, pushData = true).doWork() // should be grouped into 2 chunks
 
     verify(receiver, Mockito.timeout(1000).times(3)).receive(argCaptor.capture())
     val capturedAlbums = argCaptor.getAllValues

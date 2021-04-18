@@ -7,7 +7,7 @@ import service.job.{JobEnvironment, SpotifyJob}
 import scala.concurrent.Future
 
 /** Request all albums for a given artist ID. */
-case class ArtistAlbumsJob(artistId: String, pushData: Boolean = true)
+case class ArtistAlbumsJob(artistId: String, pushData: Boolean)
                           (implicit jobEnvironment: JobEnvironment)
   extends SpotifyJob[Seq[Album]] {
 
@@ -35,7 +35,7 @@ case class ArtistAlbumsJob(artistId: String, pushData: Boolean = true)
         logInfo(s"Filtered duplicate albums for artist $artistId. Count: $numFiltered")
 
       // launch AlbumInfo jobs with the now-unique IDs
-      AlbumsJob(uniqueAlbumIds).doWork()
+      AlbumsJob(uniqueAlbumIds, pushData = pushData).doWork()
     }
   }
 }

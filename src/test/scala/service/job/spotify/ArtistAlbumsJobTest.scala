@@ -18,7 +18,7 @@ class ArtistAlbumsJobTest extends JobSpec {
     val logVerifier = getLogVerifier[ArtistAlbumsJob](classOf[ArtistAlbumsJob])
     implicit val jobEnv: JobEnvironment = env(sRequest = spotify)
 
-    val result = ArtistAlbumsJob("art1").doWork()
+    val result = ArtistAlbumsJob("art1", pushData = true).doWork()
 
     whenReady(result) { albs =>
       albs.contains(alb1d) shouldBe true

@@ -11,7 +11,8 @@ import scala.concurrent.Future
  *  Optionally pushes Track data, which requires launch of [[AudioFeaturesJob]]
  *  @return Concatenated list of all track IDs that were found once the service.job is finished.
  */
-case class PlaylistTracksJob(playlist: SpotifyPlaylistInfo, pushTrackData: Boolean = false)
+case class PlaylistTracksJob(playlist: SpotifyPlaylistInfo,
+                             pushTrackData: Boolean)
                             (implicit jobEnvironment: JobEnvironment)
   extends SpotifyJob[Seq[Track]] {
 
@@ -25,7 +26,7 @@ case class PlaylistTracksJob(playlist: SpotifyPlaylistInfo, pushTrackData: Boole
         logInfo(s"Received page of tracks for playlist $playlistTag. Count: ${page.items.size}")
         val sTrks = page.items.map(_.track)
         if (pushTrackData)
-          awaitResult(AudioFeaturesJob(sTrks).doWork())
+          awaitResult(AudioFeaturesJob(sTrks, pushTrackData).doWork())
         else
           sTrks.map(ModelTransform.track(_, None)) // no features map, no worries
       }

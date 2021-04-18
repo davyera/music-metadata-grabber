@@ -28,6 +28,26 @@ class JobSpec extends UnitSpec {
     }
   }
 
+  def mkGeniusSearchResponse(hits: Seq[GeniusSearchHit]): GeniusSearchResponse =
+    GeniusSearchResponse(GeniusSearchHits(hits, None))
+
+  /** GENIUS TEST DATA */
+
+  private[job] val gArt1 = GeniusSearchArtist(0, "artist1")
+  private[job] val gArt2 = GeniusSearchArtist(10, "artist2")
+  private[job] val gSrchHt1 = GeniusSearchHit(GeniusSearchSong(1, "song1", "url1", gArt1))
+  private[job] val gSrchHt2 = GeniusSearchHit(GeniusSearchSong(100, "song2", "url2", gArt2))
+
+  private[job] val gTrk1 = GeniusSong(1, "song1", "url1")
+  private[job] val gTrk1Lyrics = "lyrics1"
+  private[job] val gTrk2 = GeniusSong(2, "song2", "url2")
+  private[job] val gTrk2Lyrics = "lyrics2"
+  private[job] val gTrk3 = GeniusSong(3, "song3", "url3")
+  private[job] val gTrk3Lyrics = "lyrics3"
+
+  private[job] val gTrkPg1 = GeniusArtistSongsPage(GeniusArtistSongs(Seq(gTrk1, gTrk2), None))
+  private[job] val gTrkPg2 = GeniusArtistSongsPage(GeniusArtistSongs(Seq(gTrk3), None))
+
   /** SPOTIFY TEST DATA */
   private[job] val art1 = SpotifyArtist("art1", "artist1", Seq("pop", "hiphop"), 100)
   private[job] val art1d = Artist("art1", "artist1", Seq("pop", "hiphop"), 100, Seq("alb1", "alb2"))
