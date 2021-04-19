@@ -43,7 +43,7 @@ class APIRequesterTest extends UnitSpec {
         Response("whoops", StatusCode.TooManyRequests, "", Seq(Header("Retry-After","1")), Nil),
         Response("""{"id":"a1","name":"n","genres":[], "popularity":10}""", StatusCode.Ok))
 
-    val logVerifier = getLogVerifier[TestAPIRequester](classOf[TestAPIRequester])
+    val logVerifier = getLogVerifier[TestAPIRequester]
 
     val requester = new TestAPIRequester(mockBackend)
     whenReady(requester.get(request)) { artist: SpotifyArtist =>

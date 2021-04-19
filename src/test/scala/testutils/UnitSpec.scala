@@ -11,6 +11,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import org.slf4j.LoggerFactory
 
 import scala.concurrent.ExecutionContext
+import scala.reflect.{ClassTag, classTag}
 
 object UnitSpec {}
 
@@ -18,8 +19,8 @@ trait UnitSpec extends FlatSpec with Matchers with MockitoSugar with ScalaFuture
   implicit val context: ExecutionContext = ExecutionContext.Implicits.global
   implicit val patience: PatienceConfig = PatienceConfig(Span(2, Seconds), Span(0.5, Seconds))
 
-  protected def getLogVerifier[T](forClass: Class[T]): LogVerifier = {
-    val logger = LoggerFactory.getLogger(forClass).asInstanceOf[Logger]
+  protected def getLogVerifier[T: ClassTag]: LogVerifier = {
+    val logger = LoggerFactory.getLogger(classTag[T].runtimeClass).asInstanceOf[Logger]
     new LogVerifier(logger)
   }
 

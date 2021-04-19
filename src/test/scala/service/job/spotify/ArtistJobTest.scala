@@ -17,7 +17,7 @@ class ArtistJobTest extends JobSpec {
     when(spotify.requestArtistAlbums("art1", 20)).thenReturn(Future(Seq(Future(artAlbPg0))))
     when(spotify.requestAlbums(Seq("alb1", "alb2"))).thenReturn(Future(albs1))
 
-    val logVerifier = getLogVerifier[ArtistJob](classOf[ArtistJob])
+    val logVerifier = getLogVerifier[ArtistJob]
     val receiver = mock[DataReceiver]
     val argCaptor = ArgumentCaptor.forClass(classOf[DataReceiver])
     implicit val jobEnv: JobEnvironment = env(sRequest = spotify, dReceiver = receiver)

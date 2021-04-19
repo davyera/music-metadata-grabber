@@ -9,7 +9,7 @@ import utils.Configuration
 class SpotifyAuthTokenProviderTest extends UnitSpec {
   private implicit val backend: Backend = AsyncHttpClientFutureBackend()
 
-  private def getLogVerifier = getLogVerifier[SpotifyAuthTokenProvider](classOf[SpotifyAuthTokenProvider])
+  private def getLogVerifier = getLogVerifier[SpotifyAuthTokenProvider]
 
   "getSpotifyAuthToken" should "retrieve a valid Token" in {
     val provider = new SpotifyAuthTokenProvider()

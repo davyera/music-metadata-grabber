@@ -6,14 +6,13 @@ import org.mockito.Mockito._
 import service.DataReceiver
 
 import scala.concurrent.Future
-import scala.util.Failure
 
 class TrackLyricsCombinationJobTest extends JobSpec {
 
   "handleResultImbalance" should "log imbalance between Spotify and Genius results" in {
     implicit val jobEnv: JobEnvironment = mock[JobEnvironment]
     val job = TrackLyricsCombinationJob(Future(Nil), Future(Map()), pushData = false)
-    val logVerifier = getLogVerifier[TrackLyricsCombinationJob](classOf[TrackLyricsCombinationJob])
+    val logVerifier = getLogVerifier[TrackLyricsCombinationJob]
     val sTrks = Seq("a", "b", "d")
     val gTrks = Seq("b", "c")
     job.handleResultImbalance(sTrks, gTrks)
@@ -28,7 +27,7 @@ class TrackLyricsCombinationJobTest extends JobSpec {
     val argCaptor = ArgumentCaptor.forClass(classOf[DataReceiver])
 
     implicit val jobEnv: JobEnvironment = env(dReceiver = receiver)
-    val logVerifier = getLogVerifier[TrackLyricsCombinationJob](classOf[TrackLyricsCombinationJob])
+    val logVerifier = getLogVerifier[TrackLyricsCombinationJob]
 
     val sTracks = Future(Seq(trk1fd, trk2fd, trk3fd, trk4fd))
     // song 3 should log a failure, song 4 should be missing

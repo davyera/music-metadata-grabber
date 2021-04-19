@@ -43,7 +43,7 @@ class TracksJobTest extends JobSpec {
     val receiver = mock[DataReceiver]
     val argCaptor = ArgumentCaptor.forClass(classOf[DataReceiver])
 
-    val logVerifier = getLogVerifier[AudioFeaturesJob](classOf[AudioFeaturesJob])
+    val logVerifier = getLogVerifier[AudioFeaturesJob]
     implicit val jobEnv: JobEnvironment = env(sRequest = spotify, dReceiver = receiver)
 
     val result = TracksJob(Seq("t1", "t2"), pushData = true).doWork()
