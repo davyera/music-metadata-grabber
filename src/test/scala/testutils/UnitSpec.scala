@@ -10,7 +10,6 @@ import org.scalatest.{BeforeAndAfter, FlatSpec, Matchers}
 import org.scalatestplus.mockito.MockitoSugar
 import org.slf4j.LoggerFactory
 
-import java.util
 import scala.concurrent.ExecutionContext
 
 object UnitSpec {}

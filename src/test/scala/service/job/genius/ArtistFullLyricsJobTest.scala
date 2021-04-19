@@ -23,7 +23,7 @@ class ArtistFullLyricsJobTest extends JobSpec {
     when(scraper.scrapeLyrics("url2")).thenReturn(Future(gTrk2Lyrics))
     when(scraper.scrapeLyrics("url3")).thenReturn(Future(gTrk3Lyrics))
 
-    implicit val jobFramework: JobEnvironment = env(gRequest = genius, gScraper = scraper)
+    implicit val jobEnv: JobEnvironment = env(gRequest = genius, gScraper = scraper)
 
     val result = ArtistFullLyricsJob("art1").doWork()
 

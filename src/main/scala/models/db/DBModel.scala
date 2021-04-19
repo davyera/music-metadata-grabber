@@ -31,11 +31,7 @@ case class Track(id: String,
                  track_number: Int,
                  album: String,
                  artists: Seq[String],
-                 features: Map[String, Float] = Map()) extends DbEntry
-
-case class Lyrics(lyrics: String,
-                  track_id: Int,
-                  track_name: String,
-                  artist_id: Int,
-                  artist_name: String,
-                  url: String) extends DbEntry
+                 features: Map[String, Float] = Map(),
+                 lyrics: String = "") extends DbEntry {
+  def addLyrics(lyrics: String): Track = this.copy(lyrics = lyrics)
+}

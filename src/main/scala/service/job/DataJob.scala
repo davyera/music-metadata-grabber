@@ -56,6 +56,7 @@ abstract class DataJob[T](private implicit val jobEnvironment: JobEnvironment) e
   private lazy val jobTag = s"$serviceName:$jobName"
 
   private[job] def logInfo(msg: String): Unit = logger.info(s"$jobTag: $msg")
+  private[job] def logWarn(msg: String): Unit = logger.warn(s"$jobTag: $msg")
   private[job] def logError(msg: String): Unit = logger.error(s"ERROR IN $jobTag: $msg")
   private[job] def exception(msg: String): JobException = JobException(msg)
 
