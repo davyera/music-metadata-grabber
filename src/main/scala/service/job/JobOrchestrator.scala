@@ -4,7 +4,7 @@ import com.typesafe.scalalogging.StrictLogging
 import models.ArtistSummary
 import models.db.{Album, Artist, Track}
 import service.job.genius.ArtistFullLyricsJob
-import service.job.spotify.{ArtistJob, FeaturedPlaylistsJob, TracksJob}
+import service.job.spotify.{ArtistJob, FeaturedPlaylistsJob, SpotifyArtistIdJob, TracksJob}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -13,7 +13,7 @@ class JobOrchestrator(implicit val context: ExecutionContext) extends StrictLogg
   private implicit val env: JobEnvironment = new JobEnvironment
 
   /** Requests all featured Spotify playlists and their tracks.
-   *  For each track, will
+   *  For each track, will launch a full data job for its artists.
    */
   def launchPlaylistArtistJobs(): Future[Seq[ArtistSummary]] = {
     // pull featured playlists
@@ -25,18 +25,21 @@ class JobOrchestrator(implicit val context: ExecutionContext) extends StrictLogg
     // for each artistId, we'll pull every album and its tracks
     artistIdsFuture.map { artistIds: Seq[String] =>
       val artistSummaries = artistIds.map { artistId =>
-        orchestrateArtistDataJobs(artistId)
+        launchArtistDataJobs(artistId)
       }
       Future.sequence(artistSummaries)
     }.flatten
   }
 
-  private def orchestrateArtistDataJobsForName(artistName: String): Future[Unit] = {
-    // TODO
-    Future.successful()
+  /** Requests all data (Artist, Album, Track) for a given artist, given their name. */
+  def launchArtistDataJobsForName(artistName: String): Future[ArtistSummary] = {
+    SpotifyArtistIdJob(artistName).doWork().map { artistId =>
+      launchArtistDataJobs(artistId)
+    }.flatten
   }
 
-  private def orchestrateArtistDataJobs(artistId: String): Future[ArtistSummary] = {
+  /** Requests all data (Artist, Album, Track) for a given artist, given their ID. */
+  private def launchArtistDataJobs(artistId: String): Future[ArtistSummary] = {
     // ArtistJob will give us Artist and Album info
     ArtistJob(artistId, pushData = true).doWork().map { case (artist: Artist, albums: Seq[Album]) =>
       val trackIds = albums.flatMap(_.tracks)

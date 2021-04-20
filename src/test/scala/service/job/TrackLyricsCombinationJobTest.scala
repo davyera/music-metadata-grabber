@@ -9,17 +9,29 @@ import scala.concurrent.Future
 
 class TrackLyricsCombinationJobTest extends JobSpec {
 
+  private def emptyJob =
+    TrackLyricsCombinationJob(Future(Nil), Future(Map()), pushData = false)(mock[JobEnvironment])
+
+  "normalizeTrackTitle" should "remove special characters and uppercase from string" in {
+    emptyJob.normalizeTrackTitle(" It's Not Real?? (alt title!) _-* ") shouldEqual "itsnotrealalttitle"
+  }
+
+  "normalizeLyricsMap" should "replace the map keys with normalized versions" in {
+    val lMap = Map("aaa" -> "", "!x---8_7_6" -> "", "" -> "", "USA 1989" -> "")
+    val nMap = Map("aaa" -> "", "x876" -> "", "" -> "", "usa1989" -> "")
+    emptyJob.normalizeLyricsMap(lMap) shouldEqual nMap
+  }
+
   "handleResultImbalance" should "log imbalance between Spotify and Genius results" in {
-    implicit val jobEnv: JobEnvironment = mock[JobEnvironment]
-    val job = TrackLyricsCombinationJob(Future(Nil), Future(Map()), pushData = false)
+    val job = emptyJob
     val logVerifier = getLogVerifier[TrackLyricsCombinationJob]
-    val sTrks = Seq("a", "b", "d")
-    val gTrks = Seq("b", "c")
+    val sTrks = Seq("song 1", "SONG NUMBER 2! (number 2)", "=unique song=", "___Song 3___", "spotify song")
+    val gTrks = Seq("song 1", "song number 2 - number 2", "-song3-", "genius song", "genius song 2")
     job.handleResultImbalance(sTrks, gTrks)
     logVerifier.assertLogged(0,
-      "FINALIZATION:TRACK_LYRICS: Spotify tracks without Genius lyrics result: a, d")
+      "FINALIZATION:TRACK_LYRICS: Spotify tracks without Genius lyrics result: =unique song=, spotify song")
     logVerifier.assertLogged(1,
-      "FINALIZATION:TRACK_LYRICS: Genius lyrics result without Spotify track: c")
+      "FINALIZATION:TRACK_LYRICS: Genius lyrics result without Spotify track: genius song, genius song 2")
   }
 
   "doWork" should "match Spotify Tracks to their Genius lyrics result counterpart" in {
