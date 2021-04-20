@@ -3,14 +3,32 @@ package service.request.spotify
 import com.typesafe.scalalogging.StrictLogging
 import models._
 import models.api.response._
+import service.request.spotify.SpotifySearchType.SpotifySearchType
 import service.request.{APIRequester, AuthTokenProvider}
 
 import scala.concurrent.{ExecutionContext, Future}
+
+object SpotifySearchType {
+  type SpotifySearchType = String
+  val Tracks   = "track"
+  val Artists  = "artist"
+  val All      = "track,artist"
+}
 
 class SpotifyRequester(override val authProvider: AuthTokenProvider)
                       (implicit override val backend: Backend,
                        implicit override val context: ExecutionContext)
   extends APIRequester(authProvider) with StrictLogging {
+
+  /** Perform a Spotify search for artists, tracks or both */
+  def search(query: String, searchType: SpotifySearchType, limitPerPage: Int = 25)
+  : Future[Seq[Future[SpotifySearch]]] =
+    queryPages(limitPerPage, (limit, offset) =>
+      searchPage(query, searchType, limit, offset))
+
+  def searchPage(query: String, searchType: SpotifySearchType, limit: Int, offset: Int = 0)
+  : Future[SpotifySearch] =
+    get(SpotifySearchRequest(query, searchType, limit, offset))
 
   /** Requests categories for Spotify's browse feature (ie. "Hip Hop", "Top Lists")
    *  @return future-wrapped paginated sequence of futures of categories

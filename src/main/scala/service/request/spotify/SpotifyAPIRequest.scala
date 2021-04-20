@@ -9,6 +9,23 @@ import sttp.model.Uri
 
 private object SpotifyAPIRequest {}
 
+case class SpotifySearchRequest(private val query: String,
+                                private val searchType: String,
+                                private val limit: Int = 25,
+                                private val offset: Int = 0,
+                                private val country: String = "US")
+  extends APIGetRequest[SpotifySearch] {
+
+  override val uri: Uri = uri"https://api.spotify.com/v1/search"
+    .param("q", query)
+    .param("type", searchType)
+    .param("limit", limit.toString)
+    .param("offset", offset.toString)
+    .param("country", country)
+
+  override implicit val decoder: Decoder[SpotifySearch] = spotifySearch
+}
+
 case class SpotifyCategoriesRequest(private val limit: Int = 25,
                                     private val offset: Int = 0,
                                     private val country: String = "US")

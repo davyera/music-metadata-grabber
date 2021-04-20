@@ -11,7 +11,9 @@ import scala.concurrent.Future
  *  Spawns PlaylistTracksJobs and returns a Seq of all tracks found.
  *  If [[pushTrackData]] is true, will push individual track data as well.
  */
-case class FeaturedPlaylistsJob(pushTrackData: Boolean = false)(implicit jobEnvironment: JobEnvironment)
+case class FeaturedPlaylistsJob(pushPlaylistData: Boolean,
+                                pushTrackData: Boolean)
+                               (implicit jobEnvironment: JobEnvironment)
   extends SpotifyJob[Map[Playlist, Seq[Track]]] {
 
   override private[job] val jobName = "FEATURED_PLAYLISTS"
@@ -29,7 +31,7 @@ case class FeaturedPlaylistsJob(pushTrackData: Boolean = false)(implicit jobEnvi
           // once we have finished querying all tracks, we can send the full playlist data out
           tracksJob.doWork().map { tracks =>
             val playlist = ModelTransform.playlist(plistInfo, tracks.map(_.id))
-            pushData(playlist)
+            if (pushPlaylistData) pushData(playlist)
 
             // return as a tuple so we can build the map afterwards
             playlist -> tracks

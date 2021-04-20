@@ -27,7 +27,7 @@ class FeaturedPlaylistsJobTest extends JobSpec {
 
     implicit val jobEnv: JobEnvironment = env(sRequest = spotify, dReceiver = receiver)
 
-    val result = FeaturedPlaylistsJob(pushTrackData = true).doWork()
+    val result = FeaturedPlaylistsJob(pushPlaylistData = true, pushTrackData = true).doWork()
 
     // want 7 invocations, 3 playlists, 4 tracks
     verify(receiver, Mockito.timeout(1000).times(7)).receive(argCaptor.capture())
@@ -56,7 +56,7 @@ class FeaturedPlaylistsJobTest extends JobSpec {
 
     implicit val jobEnv: JobEnvironment = env(sRequest = spotify, dReceiver = receiver)
 
-    val result = FeaturedPlaylistsJob().doWork()
+    val result = FeaturedPlaylistsJob(pushPlaylistData = true, pushTrackData = false).doWork()
 
     // want 3 invocations, 3 playlists, 4 tracks (without features)
     verify(receiver, Mockito.timeout(1000).times(3)).receive(argCaptor.capture())

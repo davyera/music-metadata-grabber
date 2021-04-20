@@ -10,10 +10,10 @@ object Server extends App with StrictLogging {
 
   implicit val context: ExecutionContext = ExecutionContext.Implicits.global
 
-  val data = new JobOrchestrator
+  val worker = new JobOrchestrator
 //  data.orchestrateLyricsJobs("Hazel English")
 
 //  data.orchestrateArtistTrackJobs("1nEGjL7aMVdNQzsfQPKdGr")
 
-  data.orchestrateTrackDataJobs(Seq("2Wv6JOF3gS3cbWWSdbjDBZ", "6dc4H1liPChJmpeXL26OGI"))
+  worker.launchPlaylistArtistJobs()
 }

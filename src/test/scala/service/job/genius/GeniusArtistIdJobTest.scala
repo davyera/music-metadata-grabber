@@ -6,7 +6,7 @@ import service.request.genius.GeniusRequester
 
 import scala.concurrent.Future
 
-class ArtistIdJobTest extends JobSpec {
+class GeniusArtistIdJobTest extends JobSpec {
 
   "doWork" should "return a successful future of an ID when successful" in {
     val response = mkGeniusSearchResponse(Seq(gSrchHt1, gSrchHt2))
@@ -15,7 +15,7 @@ class ArtistIdJobTest extends JobSpec {
     when(geniusRequester.requestSearchPage("artist1", 1)).thenReturn(Future.successful(response))
 
     implicit val jobEnv: JobEnvironment = env(gRequest = geniusRequester)
-    val result = ArtistIdJob("artist1").doWork()
+    val result = GeniusArtistIdJob("artist1").doWork()
 
     whenReady(result)(_ shouldEqual 0)
   }
@@ -28,7 +28,7 @@ class ArtistIdJobTest extends JobSpec {
     when(geniusRequester.requestSearchPage(artist, 1)).thenReturn(Future.successful(response))
 
     implicit val jobEnv: JobEnvironment = env(gRequest = geniusRequester)
-    val result = ArtistIdJob(artist).doWork()
+    val result = GeniusArtistIdJob(artist).doWork()
 
     whenReady(result.failed) { error =>
       error shouldBe a [JobException]

@@ -12,6 +12,18 @@ case class SpotifyAccessToken(access_token: String, token_type: String, expires_
   override def expiresIn: Int = expires_in
 }
 
+/** SPOTIFY SEARCH RESPONSE */
+case class SpotifySearch(tracks: Option[SpotifyTracksSearchPage],
+                         artists: Option[SpotifyArtistsSearchPage]) extends PageableWithTotal {
+  def getTotal: Int = {
+    val tracksTotal = if (tracks.isDefined) tracks.get.total else 0
+    val artistsTotal = if (artists.isDefined) artists.get.total else 0
+    math.max(tracksTotal, artistsTotal)
+  }
+}
+case class SpotifyTracksSearchPage(items: Seq[SpotifyTrack], total: Int)
+case class SpotifyArtistsSearchPage(items: Seq[SpotifyArtist], total: Int)
+
 /** SPOTIFY BROWSE CATEGORIES */
 case class SpotifyBrowseCategories(categories: SpotifyBrowseCategoriesPage) extends PageableWithTotal {
   def getTotal: Int = categories.total

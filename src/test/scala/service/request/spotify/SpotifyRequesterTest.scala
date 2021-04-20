@@ -8,6 +8,27 @@ class SpotifyRequesterTest extends APIRequesterSpec {
   private val tokenProvider: SpotifyAuthTokenProvider = new SpotifyAuthTokenProvider()
   private val requester = new SpotifyRequester(tokenProvider)
 
+  "search" should "return search results" in {
+    val response = requester.search("hazel english", SpotifySearchType.All)
+    verifyPages(response) { searchPage: SpotifySearch =>
+      searchPage.artists.isDefined shouldEqual true
+      val artists = searchPage.artists.get
+      artists.total should be > 0
+      artists.items.foreach { artist =>
+        artist.id should not be empty
+        artist.name should not be empty
+      }
+
+      searchPage.tracks.isDefined shouldEqual true
+      val tracks = searchPage.tracks.get
+      tracks.total should be > 20
+      tracks.items.foreach { track =>
+        track.id should not be empty
+        track.name should not be empty
+      }
+    }
+  }
+
   "requestCategories" should "return a sequence of spotify categories" in {
     val response = requester.requestCategories()
     verifyPages(response) { page: SpotifyBrowseCategories =>

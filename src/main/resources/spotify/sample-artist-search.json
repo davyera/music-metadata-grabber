@@ -1,0 +1,48 @@
+{
+  "artists": {
+    "href": "https://api.spotify.com/v1/search?query=hazel+english&type=artist&offset=0&limit=1",
+    "items": [
+      {
+        "external_urls": {
+          "spotify": "https://open.spotify.com/artist/1nEGjL7aMVdNQzsfQPKdGr"
+        },
+        "followers": {
+          "href": null,
+          "total": 63217
+        },
+        "genres": [
+          "indie rock",
+          "oakland indie"
+        ],
+        "href": "https://api.spotify.com/v1/artists/1nEGjL7aMVdNQzsfQPKdGr",
+        "id": "1nEGjL7aMVdNQzsfQPKdGr",
+        "images": [
+          {
+            "height": 640,
+            "url": "https://i.scdn.co/image/4ab0431ffd4dd0bb6962df690e20dcd97601d597",
+            "width": 640
+          },
+          {
+            "height": 320,
+            "url": "https://i.scdn.co/image/19cf128edb8cfa592eec7f148435de5f9cf4f030",
+            "width": 320
+          },
+          {
+            "height": 160,
+            "url": "https://i.scdn.co/image/cbf2f480a6c51061d119a723e7f5f48a20dae03c",
+            "width": 160
+          }
+        ],
+        "name": "Hazel English",
+        "popularity": 49,
+        "type": "artist",
+        "uri": "spotify:artist:1nEGjL7aMVdNQzsfQPKdGr"
+      }
+    ],
+    "limit": 1,
+    "next": null,
+    "offset": 0,
+    "previous": null,
+    "total": 1
+  }
+}

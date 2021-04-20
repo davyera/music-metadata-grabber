@@ -8,7 +8,7 @@ import scala.concurrent.Future
 /** Performs a Genius search request to extract an artist's ID
  *  @return Genius ID for artist. Throws [[service.job.JobException]] if search yields no results
  */
-case class ArtistIdJob(artistName: String)(implicit jobEnvironment: JobEnvironment) extends GeniusJob[Int] {
+case class GeniusArtistIdJob(artistName: String)(implicit jobEnvironment: JobEnvironment) extends GeniusJob[Int] {
 
   override private[job] val jobName = "ARTIST_ID"
 

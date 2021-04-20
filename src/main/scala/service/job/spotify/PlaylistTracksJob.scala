@@ -31,7 +31,7 @@ case class PlaylistTracksJob(playlist: SpotifyPlaylistInfo,
           sTrks.map(ModelTransform.track(_, None)) // no features map, no worries
       }
 
-      // Here we block for the jobs to finish -- and flatten the sequences of track objects to return to the parent service.job
+      // Block for the jobs to finish so we can send track objects parent job
       val tracks = awaitPagedResults(pagedTracks)
       logInfo(s"Gathered ${tracks.size} tracks for playlist $playlistTag")
       tracks
