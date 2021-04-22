@@ -4,13 +4,12 @@ version := "0.1"
 
 scalaVersion := "2.13.5"
 
-val akkaVersion         = "2.5.26"
-val akkaHttpVersion     = "10.1.11"
 val circeVersion        = "0.13.0"
 val configVersion       = "1.4.1"
 val jodaTimeVersion     = "2.10.10"
 val jsoupVersion        = "1.13.1"
 val logbackVersion      = "1.2.3"
+val mongoDbVersion      = "2.8.0"
 val playVersion         = "4.0.0"
 val scalajVersion       = "2.4.2"
 val scalaLoggingVersion = "3.9.3"
@@ -33,6 +32,7 @@ libraryDependencies ++= Seq(
   "io.circe"                      %%  "circe-generic-extras"              % circeVersion,
   "joda-time"                     %   "joda-time"                         % jodaTimeVersion,
   "org.jsoup"                     %   "jsoup"                             % jsoupVersion,
+  "org.mongodb.scala"             %%  "mongo-scala-driver"                % mongoDbVersion,
 
   "org.mockito"                   %   "mockito-core"                      % mockitoCoreVersion  % Test,
   "org.scalatest"                 %%  "scalatest"                         % scalatestVersion    % Test

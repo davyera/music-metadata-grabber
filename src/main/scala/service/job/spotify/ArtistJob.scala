@@ -22,7 +22,7 @@ case class ArtistJob(artistId: String, pushData: Boolean)
       val sArtist = awaitResult(sArtistFuture)
       logInfo(s"Received full artist data for artist ${toTag(sArtist.name, sArtist.id)}")
       val artist = ModelTransform.artist(sArtist, albums.map(_.id))
-      if (pushData) pushData(artist)
+      if (pushData) receiver.receive(artist)
       (artist, albums)
     }
   }

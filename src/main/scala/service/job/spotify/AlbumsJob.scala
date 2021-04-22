@@ -21,7 +21,7 @@ case class AlbumsJob(albumIds: Seq[String], albumsRequestLimit: Int = 20, pushDa
         albumsResponse.albums.map { album: SpotifyAlbum =>
           logInfo(s"Received album info for ${toTag(album.name, album.id)}")
           val albumData = ModelTransform.album(album)
-          if (pushData) pushData(albumData)
+          if (pushData) receiver.receive(albumData)
           albumData
         }
       }

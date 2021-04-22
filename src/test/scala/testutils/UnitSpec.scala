@@ -6,7 +6,7 @@ import ch.qos.logback.core.read.ListAppender
 import org.scalatest.Matchers.fail
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.time.{Seconds, Span}
-import org.scalatest.{BeforeAndAfter, FlatSpec, Matchers}
+import org.scalatest.{BeforeAndAfter, BeforeAndAfterAll, FlatSpec, Matchers}
 import org.scalatestplus.mockito.MockitoSugar
 import org.slf4j.LoggerFactory
 
@@ -15,7 +15,9 @@ import scala.reflect.{ClassTag, classTag}
 
 object UnitSpec {}
 
-trait UnitSpec extends FlatSpec with Matchers with MockitoSugar with ScalaFutures with BeforeAndAfter {
+trait UnitSpec extends FlatSpec with Matchers with MockitoSugar with ScalaFutures with BeforeAndAfter
+  with BeforeAndAfterAll {
+
   implicit val context: ExecutionContext = ExecutionContext.Implicits.global
   implicit val patience: PatienceConfig = PatienceConfig(Span(2, Seconds), Span(0.5, Seconds))
 

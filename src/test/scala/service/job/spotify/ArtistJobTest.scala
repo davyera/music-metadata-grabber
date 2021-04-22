@@ -3,7 +3,7 @@ package service.job.spotify
 import models.db.{Album, Artist}
 import org.mockito.{ArgumentCaptor, Mockito}
 import org.mockito.Mockito._
-import service.DataReceiver
+import service.data.DataReceiver
 import service.job.{JobEnvironment, JobSpec}
 import service.request.spotify.SpotifyRequester
 
@@ -18,17 +18,22 @@ class ArtistJobTest extends JobSpec {
     when(spotify.requestAlbums(Seq("alb1", "alb2"))).thenReturn(Future(albs1))
 
     val logVerifier = getLogVerifier[ArtistJob]
-    val receiver = mock[DataReceiver]
-    val argCaptor = ArgumentCaptor.forClass(classOf[DataReceiver])
+    val receiver = mock[DataReceiver[_]]
+    val albCaptor: ArgumentCaptor[Album] = ArgumentCaptor.forClass(classOf[Album])
+    val artCaptor: ArgumentCaptor[Artist] = ArgumentCaptor.forClass(classOf[Artist])
     implicit val jobEnv: JobEnvironment = env(sRequest = spotify, dReceiver = receiver)
 
     val result = ArtistJob("art1", pushData = true).doWork()
 
-    verify(receiver, Mockito.timeout(1000).times(3)).receive(argCaptor.capture())
-    val capturedArgs = argCaptor.getAllValues
-    capturedArgs.contains(art1d) shouldBe true
-    capturedArgs.contains(alb1d) shouldBe true
-    capturedArgs.contains(alb2d) shouldBe true
+    verify(receiver, Mockito.timeout(1000).times(1)).receive(artCaptor.capture())
+    val capturedArtists = artCaptor.getAllValues
+    capturedArtists.contains(art1d) shouldBe true
+
+    verify(receiver, Mockito.timeout(1000).times(2)).receive(albCaptor.capture())
+    val capturedAlbums = albCaptor.getAllValues
+    capturedAlbums.contains(alb1d) shouldBe true
+    capturedAlbums.contains(alb2d) shouldBe true
+
     whenReady(result) { case (art: Artist, albums: Seq[Album]) =>
       art shouldEqual art1d
       albums.contains(alb1d) shouldBe true

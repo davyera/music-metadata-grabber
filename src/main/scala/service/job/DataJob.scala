@@ -1,13 +1,14 @@
 package service.job
 
 import com.typesafe.scalalogging.StrictLogging
+import service.data.DataReceiver
 import service.request.genius.{GeniusLyricsScraper, GeniusRequester}
 import service.request.spotify.SpotifyRequester
 
 import java.util.concurrent.atomic.{AtomicBoolean, AtomicLong, AtomicReference}
 import scala.concurrent.duration.{DurationInt, FiniteDuration}
 import scala.concurrent.{Await, ExecutionContext, Future}
-import scala.util.{Failure, Success, Try}
+import scala.util.{Failure, Success}
 
 abstract class DataJob[T](private implicit val jobEnvironment: JobEnvironment) extends StrictLogging {
 
@@ -16,6 +17,7 @@ abstract class DataJob[T](private implicit val jobEnvironment: JobEnvironment) e
   private[job] val spotify:       SpotifyRequester    = jobEnvironment.spotify
   private[job] val genius:        GeniusRequester     = jobEnvironment.genius
   private[job] val geniusScraper: GeniusLyricsScraper = jobEnvironment.geniusScraper
+  private[job] val receiver:      DataReceiver[_]     = jobEnvironment.receiver
 
   implicit private[job] val context: ExecutionContext = jobEnvironment.context
 
@@ -24,9 +26,6 @@ abstract class DataJob[T](private implicit val jobEnvironment: JobEnvironment) e
 
   private val futureResult = new AtomicReference[Future[T]]()
   private val failed = new AtomicBoolean(false)
-
-  def pushData[D](data: D): Unit =
-    jobEnvironment.receiver.receive(data)
 
   def doWork(): Future[T] = {
     start()

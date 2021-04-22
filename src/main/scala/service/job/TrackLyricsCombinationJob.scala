@@ -46,7 +46,7 @@ case class TrackLyricsCombinationJob(tracksFuture: Future[Seq[Track]],
               Success(track)
           }.map { track: Track =>
           // finally, if we need to push the data, then push it.
-            if (pushData) pushData(track)
+            if (pushData) receiver.receive(track)
             track
           }
         }

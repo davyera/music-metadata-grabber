@@ -1,8 +1,9 @@
 package service.job.spotify
 
+import models.db.Album
 import org.mockito.{ArgumentCaptor, Mockito}
 import org.mockito.Mockito._
-import service.DataReceiver
+import service.data.DataReceiver
 import service.job.{JobEnvironment, JobSpec}
 import service.request.spotify.SpotifyRequester
 
@@ -17,8 +18,8 @@ class AlbumsJobTest extends JobSpec {
     when(spotify.requestAlbums(Seq("alb3")))
       .thenReturn(Future(albs2))
 
-    val receiver = mock[DataReceiver]
-    val argCaptor = ArgumentCaptor.forClass(classOf[DataReceiver])
+    val receiver = mock[DataReceiver[_]]
+    val argCaptor: ArgumentCaptor[Album] = ArgumentCaptor.forClass(classOf[Album])
 
     implicit val jobEnv: JobEnvironment = env(sRequest = spotify, dReceiver = receiver)
 

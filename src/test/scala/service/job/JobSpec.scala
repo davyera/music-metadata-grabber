@@ -3,7 +3,7 @@ package service.job
 import models.Backend
 import models.api.response._
 import models.db._
-import service.DataReceiver
+import service.data.DataReceiver
 import service.request.genius.{GeniusLyricsScraper, GeniusRequester}
 import service.request.spotify.SpotifyRequester
 import testutils.UnitSpec
@@ -17,14 +17,14 @@ class JobSpec extends UnitSpec {
   def env(sRequest: SpotifyRequester = mock[SpotifyRequester],
           gRequest: GeniusRequester = mock[GeniusRequester],
           gScraper: GeniusLyricsScraper = mock[GeniusLyricsScraper],
-          dReceiver: DataReceiver = mock[DataReceiver]): JobEnvironment = {
+          dReceiver: DataReceiver[_] = mock[DataReceiver[_]]): JobEnvironment = {
     new JobEnvironment {
       override val context: ExecutionContext = ctx
       override val backend: Backend = mock[Backend]
       override val spotify: SpotifyRequester = sRequest
       override val genius: GeniusRequester = gRequest
       override val geniusScraper: GeniusLyricsScraper = gScraper
-      override val receiver: DataReceiver = dReceiver
+      override val receiver: DataReceiver[_] = dReceiver
     }
   }
 

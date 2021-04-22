@@ -1,7 +1,7 @@
 package service.job
 
 import models.Backend
-import service.DataReceiver
+import service.data.{DbPersistence, DataReceiver}
 import service.request.genius.{GeniusAuthTokenProvider, GeniusLyricsScraper, GeniusRequester}
 import service.request.spotify.{SpotifyAuthTokenProvider, SpotifyRequester}
 import sttp.client.asynchttpclient.future.AsyncHttpClientFutureBackend
@@ -19,7 +19,7 @@ class JobEnvironment(implicit val context: ExecutionContext) {
   implicit val genius: GeniusRequester = new GeniusRequester(geniusAuth)
   implicit val geniusScraper: GeniusLyricsScraper = new GeniusLyricsScraper()
 
-  implicit val receiver: DataReceiver = new DataReceiver()
+  implicit val receiver: DataReceiver[_] = new DbPersistence()
 
   private val jobs = mutable.Buffer[DataJob[_]]()
 

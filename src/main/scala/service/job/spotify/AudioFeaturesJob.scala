@@ -59,7 +59,7 @@ case class AudioFeaturesJob(tracks: Seq[SpotifyTrack],
     val allTracks = tracksWithFeatures ++ tracksWithoutFeatures
 
     // finally, return and (optionally) push data
-    if (pushData) allTracks.foreach(pushData(_))
+    if (pushData) allTracks.foreach(receiver.receive)
     Future.successful(allTracks)
   }
 }

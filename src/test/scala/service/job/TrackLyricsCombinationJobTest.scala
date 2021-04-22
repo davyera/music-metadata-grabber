@@ -1,9 +1,10 @@
 package service.job
 
 
+import models.db.Track
 import org.mockito.{ArgumentCaptor, Mockito}
 import org.mockito.Mockito._
-import service.DataReceiver
+import service.data.DataReceiver
 
 import scala.concurrent.Future
 
@@ -35,8 +36,8 @@ class TrackLyricsCombinationJobTest extends JobSpec {
   }
 
   "doWork" should "match Spotify Tracks to their Genius lyrics result counterpart" in {
-    val receiver = mock[DataReceiver]
-    val argCaptor = ArgumentCaptor.forClass(classOf[DataReceiver])
+    val receiver = mock[DataReceiver[_]]
+    val argCaptor: ArgumentCaptor[Track] = ArgumentCaptor.forClass(classOf[Track])
 
     implicit val jobEnv: JobEnvironment = env(dReceiver = receiver)
     val logVerifier = getLogVerifier[TrackLyricsCombinationJob]

@@ -17,4 +17,8 @@ class Configuration {
   lazy val geniusAuthToken: String = config.getString("genius_auth_token")
 
   lazy val httpRequestRetryTimeMS: Int = config.getInt("http_request_retry_time_ms")
+
+  lazy val mongoDbEndpoint: String = config.getString("mongo_db_endpoint")
+  lazy val mongoDbUsername: String = config.getString("mongo_db_username")
+  lazy val mongoDbPassword: String = config.getString("mongo_db_password")
 }
