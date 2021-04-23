@@ -34,7 +34,7 @@ case class AudioFeaturesJob(tracks: Seq[SpotifyTrack],
             // if we can't back-reference the original input track, throw exception (this should be impossible)
             case None => throw JobException(s"Could not back-reference track with ID ${features.id}")
           }
-          logInfo(s"Received audio features for track ${toTag(trackData.name, trackData.id)}")
+          logInfo(s"Received audio features for track ${toTag(trackData.name, trackData._id)}")
           trackData
         }
       }
@@ -47,7 +47,7 @@ case class AudioFeaturesJob(tracks: Seq[SpotifyTrack],
     val tracksWithoutFeatures: Seq[Track] =
       if (tracksWithFeatures.size < tracks.size) {
         // do set operation to find the missing track IDs
-        val missingIds = tracks.map(_.id).toSet &~ tracksWithFeatures.map(_.id).toSet
+        val missingIds = tracks.map(_.id).toSet &~ tracksWithFeatures.map(_._id).toSet
         logInfo(s"Could not load audio features for tracks: ${missingIds.mkString(",")}")
 
         // create Track data objects for feature-less tracks

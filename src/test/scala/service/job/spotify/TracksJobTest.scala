@@ -17,7 +17,7 @@ class TracksJobTest extends JobSpec {
     when(spotify.requestTracks(Seq("t1", "t2"))).thenReturn(Future(trkPg1))
     when(spotify.requestAudioFeatures(Seq("t1", "t2"))).thenReturn(Future(trkfPg1))
 
-    val receiver = mock[DataReceiver[_]]
+    val receiver = mock[DataReceiver]
     val argCaptor: ArgumentCaptor[Track] = ArgumentCaptor.forClass(classOf[Track])
 
     implicit val jobEnv: JobEnvironment = env(sRequest = spotify, dReceiver = receiver)
@@ -41,7 +41,7 @@ class TracksJobTest extends JobSpec {
     when(spotify.requestTracks(Seq("t1", "t2"))).thenReturn(Future(trkPg1))
     when(spotify.requestAudioFeatures(Seq("t1", "t2"))).thenReturn(Future(trkPg1Feature))
 
-    val receiver = mock[DataReceiver[_]]
+    val receiver = mock[DataReceiver]
     val argCaptor: ArgumentCaptor[Track] = ArgumentCaptor.forClass(classOf[Track])
 
     val logVerifier = getLogVerifier[AudioFeaturesJob]

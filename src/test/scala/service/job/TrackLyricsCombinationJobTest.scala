@@ -36,7 +36,7 @@ class TrackLyricsCombinationJobTest extends JobSpec {
   }
 
   "doWork" should "match Spotify Tracks to their Genius lyrics result counterpart" in {
-    val receiver = mock[DataReceiver[_]]
+    val receiver = mock[DataReceiver]
     val argCaptor: ArgumentCaptor[Track] = ArgumentCaptor.forClass(classOf[Track])
 
     implicit val jobEnv: JobEnvironment = env(dReceiver = receiver)

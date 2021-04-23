@@ -3,9 +3,9 @@ package service.data
 import com.typesafe.scalalogging.StrictLogging
 import models.db._
 
-abstract class DataReceiver[R] extends StrictLogging {
-  def receive(playlist: Playlist): R
-  def receive(artist: Artist): R
-  def receive(album: Album): R
-  def receive(track: Track): R
+abstract class DataReceiver extends StrictLogging {
+  def receive(playlist: Playlist): Unit
+  def receive(artist: Artist): Unit
+  def receive(album: Album): Unit
+  def receive(track: Track): Unit
 }

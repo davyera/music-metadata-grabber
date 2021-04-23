@@ -22,7 +22,7 @@ class FeaturedPlaylistsJobTest extends JobSpec {
   when(spotify.requestAudioFeatures(Seq("t4"))).thenReturn(Future(SpotifyAudioFeaturesPage(Seq(trk4f))))
 
   "doWork" should "push playlist and track data" in {
-    val receiver = mock[DataReceiver[_]]
+    val receiver = mock[DataReceiver]
     val trkCaptor: ArgumentCaptor[Track] = ArgumentCaptor.forClass(classOf[Track])
     val plistCaptor: ArgumentCaptor[Playlist] = ArgumentCaptor.forClass(classOf[Playlist])
 
@@ -55,7 +55,7 @@ class FeaturedPlaylistsJobTest extends JobSpec {
   }
 
   "doWork" should "push playlist data but not push track data or request audio features if pushData arg is false" in {
-    val receiver = mock[DataReceiver[_]]
+    val receiver = mock[DataReceiver]
     val trkCaptor: ArgumentCaptor[Track] = ArgumentCaptor.forClass(classOf[Track])
     val plistCaptor: ArgumentCaptor[Playlist] = ArgumentCaptor.forClass(classOf[Playlist])
 

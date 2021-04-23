@@ -17,14 +17,14 @@ class JobSpec extends UnitSpec {
   def env(sRequest: SpotifyRequester = mock[SpotifyRequester],
           gRequest: GeniusRequester = mock[GeniusRequester],
           gScraper: GeniusLyricsScraper = mock[GeniusLyricsScraper],
-          dReceiver: DataReceiver[_] = mock[DataReceiver[_]]): JobEnvironment = {
+          dReceiver: DataReceiver = mock[DataReceiver]): JobEnvironment = {
     new JobEnvironment {
       override val context: ExecutionContext = ctx
       override val backend: Backend = mock[Backend]
       override val spotify: SpotifyRequester = sRequest
       override val genius: GeniusRequester = gRequest
       override val geniusScraper: GeniusLyricsScraper = gScraper
-      override val receiver: DataReceiver[_] = dReceiver
+      override val receiver: DataReceiver = dReceiver
     }
   }
 

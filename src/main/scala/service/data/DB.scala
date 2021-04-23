@@ -41,6 +41,7 @@ class DB(dbName: String = "musicdb", config: Configuration = Configuration) exte
   private[data] val artists: MongoCollection[Artist] = database.getCollection("Artists")
   private[data] val albums: MongoCollection[Album] = database.getCollection("Albums")
   private[data] val tracks: MongoCollection[Track] = database.getCollection("Tracks")
+
   private[data] val collections = Seq(playlists, artists, albums, tracks)
 
   def apply(config: Configuration): Unit =
@@ -48,7 +49,7 @@ class DB(dbName: String = "musicdb", config: Configuration = Configuration) exte
       logger.info(s"Initializing id and name indexes for collection ${collection.namespace}")
       collection.createIndexes(
         Seq(
-          IndexModel(Indexes.ascending("id"),
+          IndexModel(Indexes.ascending("_id"),
             IndexOptions().background(false).unique(true)),
           IndexModel(Indexes.ascending("name"),
             IndexOptions().background(false).unique(false))

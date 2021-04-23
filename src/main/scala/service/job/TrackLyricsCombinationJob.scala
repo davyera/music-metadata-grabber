@@ -27,7 +27,7 @@ case class TrackLyricsCombinationJob(tracksFuture: Future[Seq[Track]],
         val lyricsMap = normalizeLyricsMap(unNormalizedLyricsMap)
 
         val finalTracks = tracks.map { track =>
-          val trkTag = toTag(track.name, track.id)
+          val trkTag = toTag(track.name, track._id)
           // first we handle whether or not the lyricsMap even has an entry for the track
           val normalizedTrackName = normalizeTrackTitle(track.name)
           (lyricsMap.get(normalizedTrackName) match {
@@ -39,7 +39,7 @@ case class TrackLyricsCombinationJob(tracksFuture: Future[Seq[Track]],
           // then we handle the Future result
             case Success(lyrics)  =>
               // if we were able to find lyrics, add them
-              Success(track.addLyrics(lyrics))
+              Success(track.copy(lyrics = lyrics))
             case Failure(error)   =>
               // otherwise, keep track as-is but log an error
               logError(s"Could not load lyrics for track $trkTag. Error:\n${error.getMessage}")

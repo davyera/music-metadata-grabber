@@ -21,7 +21,7 @@ case class ArtistJob(artistId: String, pushData: Boolean)
     ArtistAlbumsJob(artistId, pushData).doWork().map { albums =>
       val sArtist = awaitResult(sArtistFuture)
       logInfo(s"Received full artist data for artist ${toTag(sArtist.name, sArtist.id)}")
-      val artist = ModelTransform.artist(sArtist, albums.map(_.id))
+      val artist = ModelTransform.artist(sArtist, albums.map(_._id))
       if (pushData) receiver.receive(artist)
       (artist, albums)
     }

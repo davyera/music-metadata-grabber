@@ -30,7 +30,7 @@ case class FeaturedPlaylistsJob(pushPlaylistData: Boolean,
 
           // once we have finished querying all tracks, we can send the full playlist data out
           tracksJob.doWork().map { tracks =>
-            val playlist = ModelTransform.playlist(plistInfo, tracks.map(_.id))
+            val playlist = ModelTransform.playlist(plistInfo, tracks.map(_._id))
             if (pushPlaylistData) receiver.receive(playlist)
 
             // return as a tuple so we can build the map afterwards

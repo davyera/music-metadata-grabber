@@ -17,7 +17,7 @@ abstract class DataJob[T](private implicit val jobEnvironment: JobEnvironment) e
   private[job] val spotify:       SpotifyRequester    = jobEnvironment.spotify
   private[job] val genius:        GeniusRequester     = jobEnvironment.genius
   private[job] val geniusScraper: GeniusLyricsScraper = jobEnvironment.geniusScraper
-  private[job] val receiver:      DataReceiver[_]     = jobEnvironment.receiver
+  private[job] val receiver:      DataReceiver        = jobEnvironment.receiver
 
   implicit private[job] val context: ExecutionContext = jobEnvironment.context
 

@@ -19,7 +19,7 @@ class JobEnvironment(implicit val context: ExecutionContext) {
   implicit val genius: GeniusRequester = new GeniusRequester(geniusAuth)
   implicit val geniusScraper: GeniusLyricsScraper = new GeniusLyricsScraper()
 
-  implicit val receiver: DataReceiver[_] = new DbPersistence()
+  implicit val receiver: DataReceiver = new DbPersistence()
 
   private val jobs = mutable.Buffer[DataJob[_]]()
 
