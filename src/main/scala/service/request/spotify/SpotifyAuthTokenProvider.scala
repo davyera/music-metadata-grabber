@@ -1,6 +1,6 @@
 package service.request.spotify
 
-import models.api.response.SpotifyAccessToken
+import models.api.resources.spotify.SpotifyAccessToken
 import models.{Backend, Request}
 import service.request.AuthTokenProvider
 import sttp.client.UriContext

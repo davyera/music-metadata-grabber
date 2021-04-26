@@ -1,8 +1,10 @@
 package service.job
 
 import models.Backend
-import models.api.response._
-import models.db._
+import models.api.db.{Album, Artist, Playlist, Track}
+import models.api.resources._
+import models.api.resources.genius.{GeniusArtistSongs, GeniusArtistSongsPage, GeniusSearchArtist, GeniusSearchHit, GeniusSearchHits, GeniusSearchResponse, GeniusSearchSong, GeniusSong}
+import models.api.resources.spotify.{SpotifyAlbum, SpotifyAlbumRef, SpotifyAlbumTrackRef, SpotifyAlbumTracksPage, SpotifyAlbums, SpotifyArtist, SpotifyArtistAlbumsPage, SpotifyArtistRef, SpotifyArtistsSearchPage, SpotifyAudioFeatures, SpotifyAudioFeaturesPage, SpotifyFeaturedPlaylists, SpotifyPlaylistInfo, SpotifyPlaylistPage, SpotifyPlaylistTrackRef, SpotifyPlaylistTracksPage, SpotifyTrack, SpotifyTracks}
 import service.data.DataReceiver
 import service.request.genius.{GeniusLyricsScraper, GeniusRequester}
 import service.request.spotify.SpotifyRequester

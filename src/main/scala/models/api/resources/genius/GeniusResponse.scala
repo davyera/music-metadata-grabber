@@ -1,4 +1,4 @@
-package models.api.response
+package models.api.resources.genius
 
 import models.{AccessToken, PageableWithNext}
 

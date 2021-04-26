@@ -1,7 +1,7 @@
 package service.data
 
 import com.mongodb.BasicDBObject
-import models.db.{Album, Artist, Playlist, Track}
+import models.api.db.{Album, Artist, Playlist, Track}
 import org.mongodb.scala.MongoCollection
 import service.job.JobSpec
 

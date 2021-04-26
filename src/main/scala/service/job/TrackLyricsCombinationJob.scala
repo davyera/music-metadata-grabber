@@ -1,6 +1,6 @@
 package service.job
 
-import models.db.Track
+import models.api.db.Track
 
 import scala.concurrent.Future
 import scala.util.{Failure, Success}

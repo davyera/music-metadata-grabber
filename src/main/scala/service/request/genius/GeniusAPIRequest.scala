@@ -4,7 +4,8 @@ import io.circe.Decoder
 import sttp.client.UriContext
 import sttp.model.Uri
 import models._
-import models.api.response._
+import models.api.resources._
+import models.api.resources.genius.{GeniusArtistSongsPage, GeniusSearchResponse}
 import service.request.APIGetRequest
 
 private object GeniusAPIRequest {}

@@ -1,6 +1,6 @@
 package service.job.genius
 
-import models.api.response.GeniusArtistSongsPage
+import models.api.resources.genius.GeniusArtistSongsPage
 import service.job.{GeniusJob, JobEnvironment}
 
 import scala.concurrent.Future

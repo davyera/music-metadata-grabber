@@ -3,7 +3,8 @@ import io.circe.Decoder
 import io.circe.Error
 import io.circe.generic.extras.Configuration
 import io.circe.generic.extras.semiauto.deriveConfiguredDecoder
-import models.api.response._
+import models.api.resources.genius._
+import models.api.resources.spotify._
 import sttp.client.{Identity, NothingT, ResponseError}
 
 import scala.concurrent.Future

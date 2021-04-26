@@ -1,7 +1,7 @@
 package service.job.spotify
 
-import models.api.response.SpotifyAudioFeaturesPage
-import models.db.Track
+import models.api.db.Track
+import models.api.resources.spotify.SpotifyAudioFeaturesPage
 import org.mockito.{ArgumentCaptor, Mockito}
 import org.mockito.Mockito._
 import service.data.DataReceiver

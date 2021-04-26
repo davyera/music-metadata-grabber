@@ -1,6 +1,6 @@
 package service.request.genius
 
-import models.api.response.GeniusAccessToken
+import models.api.resources.genius.GeniusAccessToken
 import models.{Backend, Request}
 import service.request.AuthTokenProvider
 import sttp.client.UriContext

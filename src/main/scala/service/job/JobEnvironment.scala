@@ -2,7 +2,6 @@ package service.job
 
 import com.typesafe.scalalogging.StrictLogging
 import models.Backend
-import service.SimpleScheduledTask
 import service.data.{DataReceiver, DbPersistence}
 import service.request.genius.{GeniusAuthTokenProvider, GeniusLyricsScraper, GeniusRequester}
 import service.request.spotify.{SpotifyAuthTokenProvider, SpotifyRequester}
@@ -27,6 +26,8 @@ class JobEnvironment(implicit val context: ExecutionContext) extends StrictLoggi
   private val jobs = new JobHistory()
 
   def registerJob(job: DataJob[_]): Unit = jobs.add(job)
+  def getJob(id: String): DataJob[_] = jobs.get(id)
+  def getJobs: Seq[DataJob[_]] = jobs.get
   def unfinishedJobs: Seq[DataJob[_]] = jobs.get.filterNot(_.isComplete)
   def successfulJobs: Seq[DataJob[_]] = jobs.get.filter(job => job.isComplete && !job.isFailed)
   def failedJobs: Seq[DataJob[_]] = jobs.get.filter(_.isFailed)
@@ -49,4 +50,5 @@ private class JobHistory() {
   def add(job: DataJob[_]): Unit = jobs.put(job, ())
   def remove(job: DataJob[_]): Unit = jobs.remove(job)
   def get: Seq[DataJob[_]] = jobs.keys.asScala.toSeq
+  def get(id: String): DataJob[_] = jobs.keys.asScala.toSeq.filter(_._id == id).head
 }

@@ -1,4 +1,4 @@
-package models.db
+package models.api.db
 
 private object DbModel {}
 

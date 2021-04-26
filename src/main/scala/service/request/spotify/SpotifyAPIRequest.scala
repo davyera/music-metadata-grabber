@@ -2,7 +2,8 @@ package service.request.spotify
 
 import io.circe.Decoder
 import models._
-import models.api.response._
+import models.api.resources._
+import models.api.resources.spotify.{SpotifyAlbums, SpotifyArtist, SpotifyArtistAlbumsPage, SpotifyAudioFeaturesPage, SpotifyBrowseCategories, SpotifyCategoryPlaylists, SpotifyFeaturedPlaylists, SpotifyPlaylistTracksPage, SpotifySearch, SpotifyTracks}
 import service.request.APIGetRequest
 import sttp.client.UriContext
 import sttp.model.Uri

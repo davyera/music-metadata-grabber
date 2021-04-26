@@ -1,7 +1,6 @@
 package service.job
 
-
-import models.db.Track
+import models.api.db.Track
 import org.mockito.{ArgumentCaptor, Mockito}
 import org.mockito.Mockito._
 import service.data.DataReceiver

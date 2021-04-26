@@ -1,7 +1,7 @@
 package service.data
 
 import com.typesafe.scalalogging.StrictLogging
-import models.db._
+import models.api.db.{Album, Artist, Playlist, Track}
 
 abstract class DataReceiver extends StrictLogging {
   def receive(playlist: Playlist): Unit

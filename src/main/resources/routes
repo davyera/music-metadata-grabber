@@ -1,0 +1,2 @@
+GET         /jobs                           webapp.MainController.getJobs
+POST        /pull_artist_data               webapp.MainController.requestArtistData

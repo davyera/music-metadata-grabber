@@ -2,7 +2,7 @@ package service.request.genius
 
 import com.typesafe.scalalogging.StrictLogging
 import models.Backend
-import models.api.response.{GeniusArtistSongsPage, GeniusSearchResponse}
+import models.api.resources.genius.{GeniusArtistSongsPage, GeniusSearchResponse}
 import service.request.{APIRequester, AuthTokenProvider}
 
 import scala.concurrent.{ExecutionContext, Future}

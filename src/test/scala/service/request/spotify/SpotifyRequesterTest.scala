@@ -1,6 +1,7 @@
 package service.request.spotify
 
-import models.api.response._
+import models.api.resources._
+import models.api.resources.spotify.{SpotifyAlbum, SpotifyAlbumRef, SpotifyAlbumTrackRef, SpotifyAlbums, SpotifyArtist, SpotifyArtistAlbumsPage, SpotifyArtistRef, SpotifyAudioFeatures, SpotifyBrowseCategories, SpotifyBrowseCategory, SpotifyCategoryPlaylists, SpotifyFeaturedPlaylists, SpotifyPlaylistInfo, SpotifyPlaylistTracksPage, SpotifySearch, SpotifyTrack, SpotifyTracks}
 import testutils.APIRequesterSpec
 
 class SpotifyRequesterTest extends APIRequesterSpec {

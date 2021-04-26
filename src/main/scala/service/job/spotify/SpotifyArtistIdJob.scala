@@ -1,6 +1,6 @@
 package service.job.spotify
 
-import models.api.response.SpotifySearch
+import models.api.resources.spotify.SpotifySearch
 import service.job.{JobEnvironment, JobException, SpotifyJob}
 import service.request.spotify.SpotifySearchType
 

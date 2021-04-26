@@ -1,6 +1,6 @@
 package service.job.spotify
 
-import models.api.response.{SpotifyArtistsSearchPage, SpotifySearch}
+import models.api.resources.spotify.{SpotifyArtistsSearchPage, SpotifySearch}
 import org.mockito.Mockito._
 import service.job.{JobEnvironment, JobException, JobSpec}
 import service.request.spotify.{SpotifyRequester, SpotifySearchType}

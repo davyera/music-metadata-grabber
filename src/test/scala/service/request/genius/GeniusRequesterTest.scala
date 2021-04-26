@@ -1,6 +1,6 @@
 package service.request.genius
 
-import models.api.response.{GeniusArtistSongsPage, GeniusSearchHit, GeniusSearchResponse, GeniusSong}
+import models.api.resources.genius._
 import testutils.APIRequesterSpec
 
 class GeniusRequesterTest extends APIRequesterSpec {

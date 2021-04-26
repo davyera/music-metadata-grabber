@@ -1,6 +1,7 @@
 package service.job
 
 import com.typesafe.scalalogging.StrictLogging
+import models.api.webapp.JobSummary
 import service.data.DataReceiver
 import service.request.genius.{GeniusLyricsScraper, GeniusRequester}
 import service.request.spotify.SpotifyRequester
@@ -26,6 +27,7 @@ abstract class DataJob[T](private implicit val jobEnvironment: JobEnvironment) e
 
   private val futureResult = new AtomicReference[Future[T]]()
   private val failed = new AtomicBoolean(false)
+  private val failureMsg = new AtomicReference[String]("")
 
   def doWork(): Future[T] = {
     start()
@@ -40,6 +42,7 @@ abstract class DataJob[T](private implicit val jobEnvironment: JobEnvironment) e
         case Failure(error) => finish()
           logError(error.getMessage)
           failed.set(true)
+          failureMsg.set(error.getMessage)
       }
       futureWorkResult
     }
@@ -49,6 +52,7 @@ abstract class DataJob[T](private implicit val jobEnvironment: JobEnvironment) e
 
   /** Override with service.job workload -- should not be called (use [[doWork()]]) */
   private[job] def work: Future[T]
+  private[job] val _id: String = java.util.UUID.randomUUID.toString
   private[job] val serviceName: String
   private[job] val jobName: String
 
@@ -88,6 +92,8 @@ abstract class DataJob[T](private implicit val jobEnvironment: JobEnvironment) e
       // otherwise, job has not started, so just return 0
       else 0
   }
+
+  def summarize: JobSummary = JobSummary(_id, serviceName, jobName, isComplete, isFailed, failureMsg.get(), timeElapsed)
 }
 
 abstract class SpotifyJob[T](implicit jobEnvironment: JobEnvironment) extends DataJob[T] {

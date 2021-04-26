@@ -2,15 +2,15 @@ package service.job
 
 import com.typesafe.scalalogging.StrictLogging
 import models.ArtistSummary
-import models.db.{Album, Artist, Track}
+import models.api.db.{Album, Artist, Track}
 import service.job.genius.ArtistFullLyricsJob
 import service.job.spotify.{ArtistJob, FeaturedPlaylistsJob, SpotifyArtistIdJob, TracksJob}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class JobOrchestrator(implicit val context: ExecutionContext) extends StrictLogging {
+class JobOrchestrator(private implicit val context: ExecutionContext) extends StrictLogging {
 
-  private implicit val env: JobEnvironment = new JobEnvironment
+  implicit val environment: JobEnvironment = new JobEnvironment
 
   /** Requests all featured Spotify playlists and their tracks.
    *  For each track, will launch a full data job for its artists.

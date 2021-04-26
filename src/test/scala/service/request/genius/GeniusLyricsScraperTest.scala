@@ -1,6 +1,6 @@
 package service.request.genius
 
-import models.api.response.GeniusSong
+import models.api.resources.genius.GeniusSong
 import testutils.UnitSpec
 
 class GeniusLyricsScraperTest extends UnitSpec {

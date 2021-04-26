@@ -1,4 +1,4 @@
-package models.api.response
+package models.api.resources.spotify
 
 import models.{AccessToken, PageableWithTotal}
 

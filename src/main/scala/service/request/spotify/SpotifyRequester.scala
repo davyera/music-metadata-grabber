@@ -2,7 +2,8 @@ package service.request.spotify
 
 import com.typesafe.scalalogging.StrictLogging
 import models._
-import models.api.response._
+import models.api.resources._
+import models.api.resources.spotify.{SpotifyAlbums, SpotifyArtist, SpotifyArtistAlbumsPage, SpotifyAudioFeaturesPage, SpotifyBrowseCategories, SpotifyCategoryPlaylists, SpotifyFeaturedPlaylists, SpotifyPlaylistTracksPage, SpotifySearch, SpotifyTracks}
 import service.request.spotify.SpotifySearchType.SpotifySearchType
 import service.request.{APIRequester, AuthTokenProvider}
 

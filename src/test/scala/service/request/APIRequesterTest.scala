@@ -1,6 +1,6 @@
 package service.request
 
-import models.api.response.SpotifyArtist
+import models.api.resources.spotify.SpotifyArtist
 import models.{Backend, PageableWithNext, PageableWithTotal}
 import org.mockito.Mockito._
 import service.request.spotify.{SpotifyArtistRequest, SpotifyAuthTokenProvider}

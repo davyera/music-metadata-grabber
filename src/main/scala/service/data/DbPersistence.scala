@@ -1,7 +1,7 @@
 package service.data
 
 import com.typesafe.scalalogging.StrictLogging
-import models.db.{Album, Artist, Playlist, Track}
+import models.api.db.{Album, Artist, Playlist, Track}
 import org.mongodb.scala.{Completed, MongoCollection}
 import service.SimpleScheduledTask
 

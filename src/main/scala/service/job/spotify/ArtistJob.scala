@@ -1,7 +1,7 @@
 package service.job.spotify
 
 import models.ModelTransform
-import models.db.{Album, Artist}
+import models.api.db.{Album, Artist}
 import service.job.{JobEnvironment, SpotifyJob}
 
 import scala.concurrent.Future

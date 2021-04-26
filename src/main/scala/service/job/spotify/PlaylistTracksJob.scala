@@ -1,8 +1,8 @@
 package service.job.spotify
 
 import models.ModelTransform
-import models.api.response.{SpotifyPlaylistInfo, SpotifyPlaylistTracksPage}
-import models.db.Track
+import models.api.db.Track
+import models.api.resources.spotify.{SpotifyPlaylistInfo, SpotifyPlaylistTracksPage}
 import service.job.{JobEnvironment, SpotifyJob}
 
 import scala.concurrent.Future

@@ -1,7 +1,8 @@
 package models
 
-import models.db._
-import models.api.response._
+import models.api.db.{Album, Artist, Playlist, Track}
+import models.api.resources._
+import models.api.resources.spotify.{SpotifyAlbum, SpotifyArtist, SpotifyAudioFeatures, SpotifyPlaylistInfo, SpotifyTrack}
 
 /** Plumbing methods for converting various Spotify API JSON response objets to our DB schema */
 object ModelTransform {

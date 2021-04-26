@@ -1,5 +1,6 @@
-package models.api.response
+package models.api.resources
 
+import models.api.resources.spotify.SpotifyAudioFeatures
 import testutils.UnitSpec
 
 class SpotifyResponseTest extends UnitSpec {

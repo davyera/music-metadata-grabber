@@ -1,6 +1,6 @@
 package service.job.spotify
 
-import models.db.{Album, Track}
+import models.api.db.{Album, Track}
 import service.job.{JobEnvironment, SpotifyJob}
 
 import scala.concurrent.Future

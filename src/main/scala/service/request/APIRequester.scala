@@ -96,7 +96,7 @@ abstract class APIRequester(val authProvider: AuthTokenProvider)
       val numPagesLeft = math.ceil((totalItems.toDouble - limitPerRequest) / limitPerRequest).toInt
 
       // make a new set of offsets, incremented by the limit each time
-      val newOffsets: Seq[Int] = Array.iterate(limitPerRequest, numPagesLeft)(limitPerRequest.+)
+      val newOffsets: Seq[Int] = Array.iterate(limitPerRequest, numPagesLeft)(limitPerRequest.+).toSeq
 
       // call the paged function for each new offset
       val remainingPages: List[Future[R]] = newOffsets.map{offset =>

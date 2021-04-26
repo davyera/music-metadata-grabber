@@ -3,7 +3,7 @@ package service.data
 import com.mongodb.client.model.Indexes
 import com.mongodb.connection.ClusterSettings
 import com.typesafe.scalalogging.StrictLogging
-import models.db._
+import models.api.db.{Album, Artist, Playlist, Track}
 import org.bson.codecs.configuration.CodecRegistries._
 import org.mongodb.scala.{MongoClient, MongoClientSettings, MongoCollection, MongoCredential, MongoDatabase, ServerAddress}
 import org.mongodb.scala.bson.codecs.DEFAULT_CODEC_REGISTRY
@@ -24,7 +24,7 @@ class DB(dbName: String = "musicdb", config: Configuration = Configuration) exte
   // Client setup
   private val hosts = List(ServerAddress(config.mongoDbEndpoint)).asJava
   private val clusterSettings = ClusterSettings.builder.hosts(hosts).build
-  private val settings: MongoClientSettings = MongoClientSettings.builder
+  private val settings: MongoClientSettings = MongoClientSettings.builder()
     .credential(cred)
     .applyToClusterSettings(t => t.applySettings(clusterSettings))
     .build

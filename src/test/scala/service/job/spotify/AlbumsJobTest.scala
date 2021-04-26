@@ -1,6 +1,6 @@
 package service.job.spotify
 
-import models.db.Album
+import models.api.db.Album
 import org.mockito.{ArgumentCaptor, Mockito}
 import org.mockito.Mockito._
 import service.data.DataReceiver
