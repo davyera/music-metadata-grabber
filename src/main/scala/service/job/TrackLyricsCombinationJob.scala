@@ -1,6 +1,7 @@
 package service.job
 
 import models.api.db.Track
+import utils.MetadataNormalization.normalizeTitle
 
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
@@ -29,7 +30,7 @@ case class TrackLyricsCombinationJob(tracksFuture: Future[Seq[Track]],
         val finalTracks = tracks.map { track =>
           val trkTag = toTag(track.name, track._id)
           // first we handle whether or not the lyricsMap even has an entry for the track
-          val normalizedTrackName = normalizeTrackTitle(track.name)
+          val normalizedTrackName = normalizeTitle(track.name)
           (lyricsMap.get(normalizedTrackName) match {
             case Some(lyricResult) => lyricResult
             case None =>
@@ -57,21 +58,17 @@ case class TrackLyricsCombinationJob(tracksFuture: Future[Seq[Track]],
 
   /** Normalize the Lyrics map song titles */
   private[job] def normalizeLyricsMap[T](lyricsMap: Map[String, T]): Map[String, T] =
-    lyricsMap.map { case (key, value) => normalizeTrackTitle(key) -> value }
-
-  /** Normalize string -- all lower case & remove special characters */
-  private[job] def normalizeTrackTitle(name: String): String =
-    name.replaceAll("""[^a-zA-Z0-9]""", "").toLowerCase
+    lyricsMap.map { case (key, value) => normalizeTitle(key) -> value }
 
   private[job] def handleResultImbalance(sTracks: Seq[String], gTracks: Seq[String]): Unit = {
-    val sTracksNormalized = sTracks.map(normalizeTrackTitle)
-    val gTracksNormalized = gTracks.map(normalizeTrackTitle)
+    val sTracksNormalized = sTracks.map(normalizeTitle)
+    val gTracksNormalized = gTracks.map(normalizeTitle)
 
-    val uniqueSTracks = sTracks.filterNot(sTrack => gTracksNormalized.contains(normalizeTrackTitle(sTrack)))
+    val uniqueSTracks = sTracks.filterNot(sTrack => gTracksNormalized.contains(normalizeTitle(sTrack)))
     if (uniqueSTracks.nonEmpty)
       logWarn(s"Spotify tracks without Genius lyrics result: ${uniqueSTracks.mkString(", ")}")
 
-    val uniqueGTracks = gTracks.filterNot(gTrack => sTracksNormalized.contains(normalizeTrackTitle(gTrack)))
+    val uniqueGTracks = gTracks.filterNot(gTrack => sTracksNormalized.contains(normalizeTitle(gTrack)))
     if (uniqueGTracks.nonEmpty)
       logWarn(s"Genius lyrics result without Spotify track: ${uniqueGTracks.mkString(", ")}")
   }

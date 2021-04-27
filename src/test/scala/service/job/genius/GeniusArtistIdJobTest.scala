@@ -21,18 +21,32 @@ class GeniusArtistIdJobTest extends JobSpec {
   }
 
   "doWork" should "throw an exception when there were no search hits" in {
-    val artist = "XXX"
     val response = mkGeniusSearchResponse(Nil)
 
     val geniusRequester = mock[GeniusRequester]
-    when(geniusRequester.requestSearchPage(artist, 1)).thenReturn(Future.successful(response))
+    when(geniusRequester.requestSearchPage("XXX", 1)).thenReturn(Future.successful(response))
 
     implicit val jobEnv: JobEnvironment = env(gRequest = geniusRequester)
-    val result = GeniusArtistIdJob(artist).doWork()
+    val result = GeniusArtistIdJob("XXX").doWork()
 
     whenReady(result.failed) { error =>
       error shouldBe a [JobException]
       error.getMessage shouldEqual "No search results for artist name XXX"
+    }
+  }
+
+  "doWork" should "throw an exception when where was a search hit for a different artist" in {
+    val response = mkGeniusSearchResponse(Seq(gSrchHt2))
+
+    val geniusRequester = mock[GeniusRequester]
+    when(geniusRequester.requestSearchPage("artist1", 1)).thenReturn(Future.successful(response))
+
+    implicit val jobEnv: JobEnvironment = env(gRequest = geniusRequester)
+    val result = GeniusArtistIdJob("artist1").doWork()
+
+    whenReady(result.failed) { error =>
+      error shouldBe a [JobException]
+      error.getMessage shouldEqual "No valid ID for artist artist1"
     }
   }
 }

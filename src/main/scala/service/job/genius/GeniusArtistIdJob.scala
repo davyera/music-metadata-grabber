@@ -2,6 +2,7 @@ package service.job.genius
 
 import models.api.resources.genius.GeniusSearchResponse
 import service.job.{GeniusJob, JobEnvironment}
+import utils.MetadataNormalization.normalizeTitle
 
 import scala.concurrent.Future
 
@@ -18,7 +19,12 @@ case class GeniusArtistIdJob(artistName: String)(implicit jobEnvironment: JobEnv
       if (hits.isEmpty)
         throw exception(s"No search results for artist name $artistName")
       else {
-        val id = hits.head.result.primary_artist.id
+        val artist = hits.head.result.primary_artist
+        if (!normalizeTitle(artist.name).equals(artistName)) {
+          // we got a search result for a different artist -- no lyrics can be found
+          throw exception(s"No valid ID for artist $artistName")
+        }
+        val id = artist.id
         logInfo(s"Queried ID for artist $artistName: $id")
         id
       }

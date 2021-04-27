@@ -4,6 +4,7 @@ import models.api.db.Track
 import org.mockito.{ArgumentCaptor, Mockito}
 import org.mockito.Mockito._
 import service.data.DataReceiver
+import utils.MetadataNormalization
 
 import scala.concurrent.Future
 
@@ -13,7 +14,7 @@ class TrackLyricsCombinationJobTest extends JobSpec {
     TrackLyricsCombinationJob(Future(Nil), Future(Map()), pushData = false)(mock[JobEnvironment])
 
   "normalizeTrackTitle" should "remove special characters and uppercase from string" in {
-    emptyJob.normalizeTrackTitle(" It's Not Real?? (alt title!) _-* ") shouldEqual "itsnotrealalttitle"
+    MetadataNormalization.normalizeTitle(" It's Not Real?? (alt title!) _-* ") shouldEqual "itsnotrealalttitle"
   }
 
   "normalizeLyricsMap" should "replace the map keys with normalized versions" in {

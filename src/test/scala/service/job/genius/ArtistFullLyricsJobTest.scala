@@ -11,7 +11,7 @@ class ArtistFullLyricsJobTest extends JobSpec {
   "doWork" should "request songs for an artist then scrape their lyrics" in {
     val genius = mock[GeniusRequester]
     // mock artist ID search
-    when(genius.requestSearchPage("art1", 1))
+    when(genius.requestSearchPage("artist1", 1))
       .thenReturn(Future(mkGeniusSearchResponse(Seq(gSrchHt1))))
     // mock songs request for the artist
     when(genius.requestArtistSongs(0))
@@ -25,7 +25,7 @@ class ArtistFullLyricsJobTest extends JobSpec {
 
     implicit val jobEnv: JobEnvironment = env(gRequest = genius, gScraper = scraper)
 
-    val result = ArtistFullLyricsJob("art1").doWork()
+    val result = ArtistFullLyricsJob("artist1").doWork()
 
     // verify all 3 lyrics are returned
     whenReady(result) { lyricMap: Map[String, Future[String]] =>

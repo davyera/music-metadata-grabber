@@ -19,12 +19,17 @@ class MainController @Inject()(val controllerComponents: ControllerComponents) e
 
   def getJobs: Action[AnyContent] = jobsResponse(env.getJobs)
 
-  def requestArtistData: Action[AnyContent] = Action { implicit request =>
+  def pullFeaturedPlaylistsData: Action[AnyContent] = Action {
+    worker.launchPlaylistArtistJobs()
+    Ok(s"Orchestrating jobs for featured playlist artists...")
+  }
+
+  def pullArtistData: Action[AnyContent] = Action { implicit request =>
     request.body.asJson.flatMap(Json.fromJson[ArtistRequest](_).asOpt) match {
       case Some(artistRequest) =>
         val artistName = artistRequest.artist_name
         worker.launchArtistDataJobsForName(artistName)
-        Ok(s"Orchestrating jobs for artist $artistName")
+        Ok(s"Orchestrating jobs for artist $artistName...")
       case None =>
         BadRequest
     }
