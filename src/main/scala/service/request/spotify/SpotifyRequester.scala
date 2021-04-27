@@ -34,7 +34,7 @@ class SpotifyRequester(override val authProvider: AuthTokenProvider)
   /** Requests categories for Spotify's browse feature (ie. "Hip Hop", "Top Lists")
    *  @return future-wrapped paginated sequence of futures of categories
    */
-  def requestCategories(limitPerPage: Int = 25): Future[Seq[Future[SpotifyBrowseCategories]]] =
+  def requestCategories(limitPerPage: Int = 50): Future[Seq[Future[SpotifyBrowseCategories]]] =
     queryPages(limitPerPage, (limit, offset) =>
       requestCategoriesPage(limit, offset))
 

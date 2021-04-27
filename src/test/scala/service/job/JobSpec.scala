@@ -2,9 +2,8 @@ package service.job
 
 import models.Backend
 import models.api.db.{Album, Artist, Playlist, Track}
-import models.api.resources._
-import models.api.resources.genius.{GeniusArtistSongs, GeniusArtistSongsPage, GeniusSearchArtist, GeniusSearchHit, GeniusSearchHits, GeniusSearchResponse, GeniusSearchSong, GeniusSong}
-import models.api.resources.spotify.{SpotifyAlbum, SpotifyAlbumRef, SpotifyAlbumTrackRef, SpotifyAlbumTracksPage, SpotifyAlbums, SpotifyArtist, SpotifyArtistAlbumsPage, SpotifyArtistRef, SpotifyArtistsSearchPage, SpotifyAudioFeatures, SpotifyAudioFeaturesPage, SpotifyFeaturedPlaylists, SpotifyPlaylistInfo, SpotifyPlaylistPage, SpotifyPlaylistTrackRef, SpotifyPlaylistTracksPage, SpotifyTrack, SpotifyTracks}
+import models.api.resources.genius._
+import models.api.resources.spotify._
 import service.data.DataReceiver
 import service.request.genius.{GeniusLyricsScraper, GeniusRequester}
 import service.request.spotify.SpotifyRequester
@@ -117,6 +116,15 @@ class JobSpec extends UnitSpec {
 
   private[job] val fPlistPg1 = SpotifyFeaturedPlaylists("hi", SpotifyPlaylistPage(Seq(plist1, plist2), 3))
   private[job] val fPlistPg2 = SpotifyFeaturedPlaylists("hi", SpotifyPlaylistPage(Seq(plist3), 3))
+
+  private[job] val cat1 = SpotifyBrowseCategory("cat1", "category1")
+  private[job] val cat2 = SpotifyBrowseCategory("cat2", "category2")
+  private[job] val cat3 = SpotifyBrowseCategory("cat3", "category3")
+  private[job] val catPg1 = SpotifyBrowseCategories(SpotifyBrowseCategoriesPage(Seq(cat1, cat2), 3))
+  private[job] val catPg2 = SpotifyBrowseCategories(SpotifyBrowseCategoriesPage(Seq(cat3), 3))
+
+  private[job] val cPlistPg1 = SpotifyCategoryPlaylists(SpotifyCategoryPlaylistsPage(Seq(plist1), 2))
+  private[job] val cPlistPg2 = SpotifyCategoryPlaylists(SpotifyCategoryPlaylistsPage(Seq(plist2), 2))
 
   private[job] val p1TrksPg1 = SpotifyPlaylistTracksPage(Seq(SpotifyPlaylistTrackRef(trk1)), 2)
   private[job] val p1TrksPg2 = SpotifyPlaylistTracksPage(Seq(SpotifyPlaylistTrackRef(trk2)), 2)

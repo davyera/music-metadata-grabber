@@ -1,30 +1,21 @@
 package service.job.spotify
 
-import models.ModelTransform
+import models.{ModelTransform, PageableWithTotal}
 import models.api.db.{Playlist, Track}
-import models.api.resources.spotify.{SpotifyFeaturedPlaylists, SpotifyPlaylistInfo}
+import models.api.resources.spotify.{SpotifyCategoryPlaylists, SpotifyFeaturedPlaylists, SpotifyPlaylistInfo}
 import service.job.{JobEnvironment, SpotifyJob}
 
 import scala.concurrent.Future
 
-/** Requests track data for all Spotify featured playlists and pushes playlist data.
- *  Spawns PlaylistTracksJobs and returns a Seq of all tracks found.
- *  If [[pushTrackData]] is true, will push individual track data as well.
- */
-case class FeaturedPlaylistsJob(pushPlaylistData: Boolean,
-                                pushTrackData: Boolean)
-                               (implicit jobEnvironment: JobEnvironment)
+abstract class PlaylistsJob[P <: PageableWithTotal](pushPlaylistData: Boolean,
+                                                    pushTrackData: Boolean)
+                                                    (implicit jobEnvironment: JobEnvironment)
   extends SpotifyJob[Map[Playlist, Seq[Track]]] {
 
-  override private[job] val jobName = "FEATURED_PLAYLISTS"
-
   override private[job] def work: Future[Map[Playlist, Seq[Track]]] = {
-    // make request to Spotify to grab all featured playlists (returned as pages)
-    spotify.requestFeaturedPlaylists().map { playlistPages: Seq[Future[SpotifyFeaturedPlaylists]] =>
-      val playlistTrackMaps = workOnPages(playlistPages) { page: SpotifyFeaturedPlaylists =>
-        logInfo(s"Received page of featured playlists. Count: ${page.playlists.items.size}")
-
-        page.playlists.items.map { plistInfo: SpotifyPlaylistInfo =>
+    playlistPageRequest().map { playlistPages: Seq[Future[P]] =>
+      val playlistTrackMaps = workOnPages(playlistPages) { page: P =>
+        getPlaylistPageItems(page).map { plistInfo: SpotifyPlaylistInfo =>
           // launch new Job for this playlist to grab its tracks
           val tracksJob = PlaylistTracksJob(plistInfo, pushTrackData)
 
@@ -43,4 +34,44 @@ case class FeaturedPlaylistsJob(pushPlaylistData: Boolean,
       awaitPagedResults(playlistTrackMaps).map(awaitResult).toMap
     }
   }
+
+  def playlistPageRequest(): Future[Seq[Future[P]]]
+  def getPlaylistPageItems(page: P): Seq[SpotifyPlaylistInfo]
+}
+
+/** Requests track data for all Spotify featured playlists and pushes playlist data.
+ *  Spawns [[PlaylistTracksJob]] jobs and returns a Seq of all tracks found.
+ *  If [[pushTrackData]] is true, will push individual track data as well.
+ */
+case class FeaturedPlaylistsJob(pushPlaylistData: Boolean,
+                                pushTrackData: Boolean)
+                               (implicit jobEnvironment: JobEnvironment)
+  extends PlaylistsJob[SpotifyFeaturedPlaylists](pushPlaylistData, pushTrackData) {
+
+  override private[job] val jobName = "FEATURED_PLAYLISTS"
+
+  override def playlistPageRequest(): Future[Seq[Future[SpotifyFeaturedPlaylists]]] =
+    spotify.requestFeaturedPlaylists()
+
+  override def getPlaylistPageItems(page: SpotifyFeaturedPlaylists): Seq[SpotifyPlaylistInfo] =
+    page.playlists.items
+}
+
+/** Requests track data for all Spotify playlists for a given category. Pushes playlist data.
+ *  Spawns [[PlaylistTracksJob]] jobs and returns a Seq of all tracks found.
+ *  If [[pushTrackData]] is true, will push individual track data as well.
+ */
+case class CategoryPlaylistsJob(categoryId: String,
+                                pushPlaylistData: Boolean,
+                                pushTrackData: Boolean)
+                               (implicit jobEnvironment: JobEnvironment)
+  extends PlaylistsJob[SpotifyCategoryPlaylists](pushPlaylistData, pushTrackData) {
+
+  override private[job] val jobName = "CATEGORY_PLAYLISTS"
+
+  override def playlistPageRequest(): Future[Seq[Future[SpotifyCategoryPlaylists]]] =
+    spotify.requestCategoryPlaylists(categoryId)
+
+  override def getPlaylistPageItems(page: SpotifyCategoryPlaylists): Seq[SpotifyPlaylistInfo] =
+    page.playlists.items
 }
