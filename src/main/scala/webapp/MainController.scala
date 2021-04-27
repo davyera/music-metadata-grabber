@@ -35,6 +35,11 @@ class MainController @Inject()(val controllerComponents: ControllerComponents) e
     }
   }
 
+  def deleteData: Action[AnyContent] = Action {
+    env.deleteData()
+    Ok(s"Clearing database...")
+  }
+
   private def jobsResponse(jobs: Seq[DataJob[_]]): Action[AnyContent] = Action {
     if (jobs.isEmpty)
       NoContent

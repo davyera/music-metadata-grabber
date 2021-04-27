@@ -1,16 +1,17 @@
 package service.data
 
+import com.mongodb.BasicDBObject
 import com.typesafe.scalalogging.StrictLogging
 import models.api.db.{Album, Artist, Playlist, Track}
 import org.mongodb.scala.{Completed, MongoCollection}
-import service.SimpleScheduledTask
 
 import java.util
 import java.util.concurrent.{LinkedBlockingQueue, TimeUnit}
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 /** Receives data and pushes it to Mongo DB in batches */
-class DbPersistence(private[data] val db: DB = new DB) extends DataReceiver with StrictLogging {
+class DbPersistence(private[data] val db: DB = new DB)
+                   (implicit context: ExecutionContext) extends DataReceiver with StrictLogging {
 
   private val batchSize = 1000
   private val dbPushIntervalMs: Int = 200
@@ -30,6 +31,12 @@ class DbPersistence(private[data] val db: DB = new DB) extends DataReceiver with
   override def receive(artist: Artist): Unit = artistQueue.add(artist)
   override def receive(album: Album): Unit = albumQueue.add(album)
   override def receive(track: Track): Unit = trackQueue.add(track)
+
+  override def deleteData(): Future[Boolean] = {
+    Future.sequence(
+      db.collections.map(c => c.deleteMany(new BasicDBObject()).toFuture())
+    ).map(_.forall(_.wasAcknowledged())) // collapse DeleteResult acknowledgements into one boolean
+  }
 
   def getDbPushResults: Seq[Future[Completed]] = queues.flatMap(_.getResults)
 

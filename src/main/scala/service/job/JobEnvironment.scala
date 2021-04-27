@@ -32,6 +32,8 @@ class JobEnvironment(implicit val context: ExecutionContext) extends StrictLoggi
   def successfulJobs: Seq[DataJob[_]] = jobs.get.filter(job => job.isComplete && !job.isFailed)
   def failedJobs: Seq[DataJob[_]] = jobs.get.filter(_.isFailed)
 
+  def deleteData(): Unit = receiver.deleteData()
+
   // Periodically remove successful jobs from our cache
   // TODO: make a DB record of these results?
   private val cleanSuccessIntervalMin = 1
