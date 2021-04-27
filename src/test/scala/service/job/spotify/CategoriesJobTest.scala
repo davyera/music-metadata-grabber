@@ -21,6 +21,5 @@ class CategoriesJobTest extends JobSpec {
       categories.contains("cat2") shouldBe true
       categories.contains("cat3") shouldBe true
     }
-
   }
 }

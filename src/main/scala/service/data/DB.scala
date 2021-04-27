@@ -5,7 +5,7 @@ import com.mongodb.connection.ClusterSettings
 import com.typesafe.scalalogging.StrictLogging
 import models.api.db.{Album, Artist, Playlist, Track}
 import org.bson.codecs.configuration.CodecRegistries._
-import org.mongodb.scala.{MongoClient, MongoClientSettings, MongoCollection, MongoCredential, MongoDatabase, ServerAddress}
+import org.mongodb.scala._
 import org.mongodb.scala.bson.codecs.DEFAULT_CODEC_REGISTRY
 import org.mongodb.scala.bson.codecs.Macros._
 import org.mongodb.scala.model.{IndexModel, IndexOptions}

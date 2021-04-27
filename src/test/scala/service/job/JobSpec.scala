@@ -108,11 +108,13 @@ class JobSpec extends UnitSpec {
   private[job] val artAlbPg3 = SpotifyArtistAlbumsPage(Seq(alb3r, alb3r), 4) // duplicate here
 
   private[job] val plist1 = SpotifyPlaylistInfo("p1", "plist1", "good playlist")
-  private[job] val plist1d = Playlist("p1", "plist1", "good playlist", Seq("t1", "t2"))
+  private[job] val plist1d = Playlist("p1", "plist1", "good playlist", Seq("t1", "t2"), None)
+  private[job] val plist1cd = plist1d.copy(category = Some("cat1"))
   private[job] val plist2 = SpotifyPlaylistInfo("p2", "plist2", "bad playlist")
-  private[job] val plist2d = Playlist("p2", "plist2", "bad playlist", Seq("t3"))
+  private[job] val plist2d = Playlist("p2", "plist2", "bad playlist", Seq("t3"), None)
+  private[job] val plist2cd = plist2d.copy(category = Some("cat1"))
   private[job] val plist3 = SpotifyPlaylistInfo("p3", "plist3", "ok playlist")
-  private[job] val plist3d = Playlist("p3", "plist3", "ok playlist", Seq("t4"))
+  private[job] val plist3d = Playlist("p3", "plist3", "ok playlist", Seq("t4"), None)
 
   private[job] val fPlistPg1 = SpotifyFeaturedPlaylists("hi", SpotifyPlaylistPage(Seq(plist1, plist2), 3))
   private[job] val fPlistPg2 = SpotifyFeaturedPlaylists("hi", SpotifyPlaylistPage(Seq(plist3), 3))

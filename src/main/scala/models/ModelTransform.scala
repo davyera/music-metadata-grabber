@@ -1,8 +1,7 @@
 package models
 
 import models.api.db.{Album, Artist, Playlist, Track}
-import models.api.resources._
-import models.api.resources.spotify.{SpotifyAlbum, SpotifyArtist, SpotifyAudioFeatures, SpotifyPlaylistInfo, SpotifyTrack}
+import models.api.resources.spotify._
 
 /** Plumbing methods for converting various Spotify API JSON response objets to our DB schema */
 object ModelTransform {
@@ -14,8 +13,8 @@ object ModelTransform {
     Track(sTrk.id, sTrk.name, sTrk.popularity, sTrk.track_number, sTrk.album.id, sTrk.artists.map(_.id), featureMap)
   }
 
-  def playlist(sPlist: SpotifyPlaylistInfo, trackIds: Seq[String]): Playlist =
-    Playlist(sPlist.id, sPlist.name, sPlist.description, trackIds)
+  def playlist(sPlist: SpotifyPlaylistInfo, trackIds: Seq[String], category: Option[String]): Playlist =
+    Playlist(sPlist.id, sPlist.name, sPlist.description, trackIds, category)
 
   def album(sAlb: SpotifyAlbum): Album =
     Album(sAlb.id, sAlb.name, sAlb.popularity, sAlb.artists.map(_.id), sAlb.tracks.items.map(_.id))

@@ -21,7 +21,7 @@ abstract class PlaylistsJob[P <: PageableWithTotal](pushPlaylistData: Boolean,
 
           // once we have finished querying all tracks, we can send the full playlist data out
           tracksJob.doWork().map { tracks =>
-            val playlist = ModelTransform.playlist(plistInfo, tracks.map(_._id))
+            val playlist = ModelTransform.playlist(plistInfo, tracks.map(_._id), category)
             if (pushPlaylistData) receiver.receive(playlist)
 
             // return as a tuple so we can build the map afterwards
@@ -34,6 +34,8 @@ abstract class PlaylistsJob[P <: PageableWithTotal](pushPlaylistData: Boolean,
       awaitPagedResults(playlistTrackMaps).map(awaitResult).toMap
     }
   }
+
+  val category: Option[String] = None
 
   def playlistPageRequest(): Future[Seq[Future[P]]]
   def getPlaylistPageItems(page: P): Seq[SpotifyPlaylistInfo]
@@ -74,4 +76,6 @@ case class CategoryPlaylistsJob(categoryId: String,
 
   override def getPlaylistPageItems(page: SpotifyCategoryPlaylists): Seq[SpotifyPlaylistInfo] =
     page.playlists.items
+
+  override val category: Option[String] = Some(categoryId)
 }

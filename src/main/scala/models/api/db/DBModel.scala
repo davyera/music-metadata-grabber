@@ -4,14 +4,11 @@ private object DbModel {}
 
 abstract class DbEntry
 
-case class Category(_id: String,
-                    name: String,
-                    playlists: Seq[String]) extends DbEntry
-
 case class Playlist(_id: String,
                     name: String,
                     description: String,
-                    tracks: Seq[String]) extends DbEntry
+                    tracks: Seq[String],
+                    category: Option[String]) extends DbEntry
 
 case class Artist(_id: String,
                   name: String,

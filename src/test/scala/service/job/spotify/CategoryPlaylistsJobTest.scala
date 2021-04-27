@@ -35,8 +35,8 @@ class CategoryPlaylistsJobTest extends JobSpec {
     // want 5 invocations, 2 playlists, 3 tracks
     verify(receiver, Mockito.timeout(1000).times(2)).receive(plistCaptor.capture())
     val capturedPlists = plistCaptor.getAllValues
-    capturedPlists.contains(plist1d) shouldBe true
-    capturedPlists.contains(plist2d) shouldBe true
+    capturedPlists.contains(plist1cd) shouldBe true
+    capturedPlists.contains(plist2cd) shouldBe true
 
     verify(receiver, Mockito.timeout(1000).times(3)).receive(trkCaptor.capture())
     val capturedTracks = trkCaptor.getAllValues
@@ -47,9 +47,9 @@ class CategoryPlaylistsJobTest extends JobSpec {
     whenReady(result) { plistTrackMap: Map[Playlist, Seq[Track]] =>
       plistTrackMap.keySet.size shouldEqual 2
       plistTrackMap.values.flatten.size shouldEqual 3
-      plistTrackMap(plist1d).contains(trk1fd) shouldBe true
-      plistTrackMap(plist1d).contains(trk2fd) shouldBe true
-      plistTrackMap(plist2d).contains(trk3fd) shouldBe true
+      plistTrackMap(plist1cd).contains(trk1fd) shouldBe true
+      plistTrackMap(plist1cd).contains(trk2fd) shouldBe true
+      plistTrackMap(plist2cd).contains(trk3fd) shouldBe true
 
     }
   }

@@ -40,7 +40,7 @@ class DbPersistenceTest extends JobSpec {
   }
 
   "receive" should "push a Playlist to the DB" in {
-    val plist: Playlist = Playlist("plist1", "playlist hits", "the greatest hits", Seq("trk1", "trk2"))
+    val plist: Playlist = Playlist("plist1", "playlist hits", "the greatest hits", Seq("trk1", "trk2"), Some("cat"))
     dbp.receive(plist)
     dbFind(db.playlists, "_id", "plist1") shouldEqual plist
   }
