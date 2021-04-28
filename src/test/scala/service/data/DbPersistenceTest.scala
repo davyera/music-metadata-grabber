@@ -61,12 +61,15 @@ class DbPersistenceTest extends JobSpec {
     dbp.receive(album)
     dbp.receive(plist)
 
+    val logVerifier = getLogVerifier[DbPersistence]
+
     //wait, and then make sure each collection has at least 1 document
     Thread.sleep(250)
     assertDocCounts((count: Long) => count > 0 shouldEqual true)
 
     whenReady(dbp.deleteData()) { result =>
       result shouldBe true
+      logVerifier.assertLogged("Deleting music metadata from DB...", "Successfully deleted music metadata.")
       // after clearData call all counts should be 0
       assertDocCounts((count: Long) => count shouldEqual 0)
     }

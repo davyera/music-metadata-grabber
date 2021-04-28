@@ -8,6 +8,7 @@ import org.mongodb.scala.{Completed, MongoCollection}
 import java.util
 import java.util.concurrent.{LinkedBlockingQueue, TimeUnit}
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success}
 
 /** Receives data and pushes it to Mongo DB in batches */
 class DbPersistence(private[data] val db: DB = new DB)
@@ -33,9 +34,15 @@ class DbPersistence(private[data] val db: DB = new DB)
   override def receive(track: Track): Unit = trackQueue.add(track)
 
   override def deleteData(): Future[Boolean] = {
-    Future.sequence(
+    logger.info("Deleting music metadata from DB...")
+    val futureResult = Future.sequence(
       db.collections.map(c => c.deleteMany(new BasicDBObject()).toFuture())
     ).map(_.forall(_.wasAcknowledged())) // collapse DeleteResult acknowledgements into one boolean
+    futureResult.onComplete {
+        case Success(_) => logger.info("Successfully deleted music metadata.")
+        case Failure(error) => logger.error(s"Could not delete music metadata.\n$error")
+      }
+    futureResult
   }
 
   def getDbPushResults: Seq[Future[Completed]] = queues.flatMap(_.getResults)

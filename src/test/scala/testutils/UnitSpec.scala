@@ -41,12 +41,14 @@ class LogVerifier(private val logger: Logger) {
     assert(listAppender.list.get(logIndex).getFormattedMessage.equals(msg))
 
   /** Assert message was logged at all (ignore index) */
-  def assertLogged(msg: String): Unit = {
-    listAppender.list.forEach { logged =>
-      if (logged.getFormattedMessage.equals(msg))
-        return
+  def assertLogged(msgs: String*): Unit = {
+    msgs.foreach { msg =>
+      listAppender.list.forEach { logged =>
+        if (logged.getFormattedMessage.equals(msg))
+          return
+      }
+      fail(s"Expected log: $msg")
     }
-    fail(s"Expected log: $msg")
   }
 
   def assertLogCount(count: Int): Unit =

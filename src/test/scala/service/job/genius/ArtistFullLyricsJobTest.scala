@@ -1,5 +1,6 @@
 package service.job.genius
 
+import models.api.resources.genius._
 import org.mockito.Mockito._
 import service.job.{JobEnvironment, JobSpec}
 import service.request.genius.{GeniusLyricsScraper, GeniusRequester}
@@ -32,6 +33,20 @@ class ArtistFullLyricsJobTest extends JobSpec {
       whenReady(lyricMap("song1")) { _ shouldEqual "lyrics1" }
       whenReady(lyricMap("song2")) { _ shouldEqual "lyrics2" }
       whenReady(lyricMap("song3")) { _ shouldEqual "lyrics3" }
+    }
+  }
+
+  "doWork" should "return an empty Map if an error is thrown" in {
+    val genius = mock[GeniusRequester]
+    when(genius.requestSearchPage("artist1", 1))
+      .thenReturn(Future(GeniusSearchResponse(GeniusSearchHits(Nil, None)))) // return no search results
+
+    implicit val jobEnv: JobEnvironment = env(gRequest = genius)
+
+    val result = ArtistFullLyricsJob("artist1").doWork()
+
+    whenReady(result) { lyricMap: Map[String, Future[String]] =>
+      lyricMap shouldEqual Map()
     }
   }
 }
