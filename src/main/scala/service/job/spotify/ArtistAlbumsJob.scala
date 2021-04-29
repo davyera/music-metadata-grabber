@@ -38,4 +38,6 @@ case class ArtistAlbumsJob(artistId: String, pushData: Boolean)
       AlbumsJob(uniqueAlbumIds, pushData = pushData).doWork()
     }
   }
+
+  override private[job] def recovery: Seq[Album] = Nil
 }

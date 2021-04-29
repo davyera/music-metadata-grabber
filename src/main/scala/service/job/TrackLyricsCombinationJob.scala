@@ -72,4 +72,6 @@ case class TrackLyricsCombinationJob(tracksFuture: Future[Seq[Track]],
     if (uniqueGTracks.nonEmpty)
       logWarn(s"Genius lyrics result without Spotify track: ${uniqueGTracks.mkString(", ")}")
   }
+
+  override private[job] def recovery: Seq[Track] = Nil
 }

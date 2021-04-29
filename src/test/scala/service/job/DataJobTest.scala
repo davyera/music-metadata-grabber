@@ -9,7 +9,7 @@ import scala.concurrent.Future
 
 class DataJobTest extends UnitSpec {
 
-  def mkJob[T](workFn: => T): DataJob[T] = {
+  def mkJob[T](workFn: => T, recover: Boolean = false): DataJob[T] = {
     implicit val env: JobEnvironment = mock[JobEnvironment]
     when(env.context).thenReturn(context)
 
@@ -22,6 +22,8 @@ class DataJobTest extends UnitSpec {
       }
       override val serviceName: String = "TEST"
       override val jobName: String = "TEST"
+      override val canRecover: Boolean = recover
+      override def recovery: T = throw new Exception()
     }
 
     Mockito.doNothing().when(env).registerJob(job)

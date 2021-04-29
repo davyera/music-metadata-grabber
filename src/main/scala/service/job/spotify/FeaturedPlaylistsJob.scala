@@ -16,6 +16,8 @@ abstract class PlaylistsJob[P <: PageableWithTotal](pushPlaylistData: Boolean,
     playlistPageRequest().map { playlistPages: Seq[Future[P]] =>
       val playlistTrackMaps = workOnPages(playlistPages) { page: P =>
         getPlaylistPageItems(page).map { plistInfo: SpotifyPlaylistInfo =>
+          logInfo(s"Received Playlist metadata for ${toTag(plistInfo.name, plistInfo.id)}")
+
           // launch new Job for this playlist to grab its tracks
           val tracksJob = PlaylistTracksJob(plistInfo, pushTrackData)
 
@@ -34,6 +36,8 @@ abstract class PlaylistsJob[P <: PageableWithTotal](pushPlaylistData: Boolean,
       awaitPagedResults(playlistTrackMaps).map(awaitResult).toMap
     }
   }
+
+  override private[job] def recovery: Map[Playlist, Seq[Track]] = Map()
 
   val category: Option[String] = None
 

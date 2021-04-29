@@ -1,4 +1,5 @@
-GET         /jobs                           webapp.MainController.getJobs
-POST        /pull_artist_data               webapp.MainController.pullArtistData
-POST        /pull_featured_playlists_data   webapp.MainController.pullFeaturedPlaylistsData
-DELETE      /delete_data                    webapp.MainController.deleteData
+GET         /jobs                               webapp.MainController.getJobs
+POST        /pull_artist_data                   webapp.MainController.pullArtistData
+POST        /pull_featured_playlists_data       webapp.MainController.pullFeaturedPlaylistsData
+POST        /pull_category_playlists_data       webapp.MainController.pullCategoryPlaylistsData
+DELETE      /delete_data                        webapp.MainController.deleteData

@@ -19,4 +19,6 @@ case class CategoriesJob()(implicit jobEnvironment: JobEnvironment)
       awaitPagedResults(pageResults)
     }
   }
+
+  override private[job] def recovery: Seq[String] = Nil
 }

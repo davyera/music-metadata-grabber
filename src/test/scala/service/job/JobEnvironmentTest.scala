@@ -9,6 +9,7 @@ class JobEnvironmentTest extends UnitSpec {
     override private[job] def work: Future[Unit] = Future.successful(())
     override private[job] val serviceName = ""
     override private[job] val jobName = ""
+    override private[job] def recovery: Unit = ()
   }
 
   def mkJob(completed: Boolean, failed: Boolean)

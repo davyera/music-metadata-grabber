@@ -29,4 +29,7 @@ case class GeniusArtistIdJob(artistName: String)(implicit jobEnvironment: JobEnv
         id
       }
     }
+
+  override private[job] val canRecover: Boolean = false
+  override private[job] def recovery: Int = -1
 }

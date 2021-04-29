@@ -37,4 +37,6 @@ case class PlaylistTracksJob(playlist: SpotifyPlaylistInfo,
       tracks
     }
   }
+
+  override private[job] def recovery: Seq[Track] = Nil
 }

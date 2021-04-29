@@ -22,4 +22,6 @@ case class ArtistTracksJob(artistId: String)
       TracksJob(trackIds, pushData = false).doWork()
     }.flatten
   }
+
+  override private[job] def recovery: Seq[Track] = Nil
 }

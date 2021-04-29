@@ -31,4 +31,6 @@ case class TracksJob(trackIds: Seq[String],
     val tracks: Seq[SpotifyTrack] = awaitPagedResults(groupedTracks)
     AudioFeaturesJob(tracks, pushData, tracksRequestLimit).doWork()
   }
+
+  override private[job] def recovery: Seq[Track] = Nil
 }

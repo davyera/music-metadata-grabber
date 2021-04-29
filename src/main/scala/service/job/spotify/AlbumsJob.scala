@@ -29,4 +29,6 @@ case class AlbumsJob(albumIds: Seq[String], albumsRequestLimit: Int = 20, pushDa
     // flatten seq[future[seq[...]]] into future[seq[...]]
     Future.sequence(groupedAlbums).map(_.flatten)
   }
+
+  override private[job] def recovery: Seq[Album] = Nil
 }

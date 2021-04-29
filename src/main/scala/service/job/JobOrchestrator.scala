@@ -1,10 +1,10 @@
 package service.job
 
 import com.typesafe.scalalogging.StrictLogging
-import models.ArtistSummary
+import models.{ArtistSummary, PageableWithTotal}
 import models.api.db.{Album, Artist, Track}
 import service.job.genius.ArtistFullLyricsJob
-import service.job.spotify.{ArtistJob, FeaturedPlaylistsJob, SpotifyArtistIdJob, TracksJob}
+import service.job.spotify.{ArtistJob, CategoryPlaylistsJob, FeaturedPlaylistsJob, PlaylistsJob, SpotifyArtistIdJob, TracksJob}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -15,9 +15,20 @@ class JobOrchestrator(private implicit val context: ExecutionContext) extends St
   /** Requests all featured Spotify playlists and their tracks.
    *  For each track, will launch a full data job for its artists.
    */
-  def launchPlaylistArtistJobs(): Future[Seq[ArtistSummary]] = {
-    // pull featured playlists
-    val plistMap = FeaturedPlaylistsJob(pushPlaylistData = true, pushTrackData = false).doWork()
+  def launchFeaturedPlaylistsJobs(): Future[Seq[ArtistSummary]] =
+    launchPlaylistArtistJobs(FeaturedPlaylistsJob(pushPlaylistData = true, pushTrackData = false))
+
+  /** Requests Spotify playlists and their tracks for a specified category.
+   *  For each track, will launch a full data job for its artists.
+   */
+  def launchCategoryPlaylistsJob(categoryId: String): Future[Seq[ArtistSummary]] =
+    launchPlaylistArtistJobs(CategoryPlaylistsJob(categoryId, pushPlaylistData = true, pushTrackData = false))
+
+  private def launchPlaylistArtistJobs[P <: PageableWithTotal](playlistJob: PlaylistsJob[P])
+    : Future[Seq[ArtistSummary]] = {
+
+    // pull playlists -> track data
+    val plistMap = playlistJob.doWork()
 
     // pull artist IDs from the set of tracks
     val artistIdsFuture: Future[Seq[String]] = plistMap.map(_.values.flatten.flatMap(_.artists).toSeq)

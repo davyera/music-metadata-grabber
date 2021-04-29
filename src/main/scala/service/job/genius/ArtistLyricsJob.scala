@@ -24,4 +24,6 @@ case class ArtistLyricsJob(artistId: Int)(implicit jobEnvironment: JobEnvironmen
       awaitPagedResults(result).toMap
     }
   }
+
+  override private[job] def recovery: Map[String, Future[String]] = Map()
 }

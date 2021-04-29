@@ -13,7 +13,7 @@ import scala.util.{Failure, Success}
 
 abstract class DataJob[T](private implicit val jobEnvironment: JobEnvironment) extends StrictLogging {
 
-  private val MAX_JOB_TIMEOUT_MS: FiniteDuration = 2000.milliseconds
+  private val MAX_JOB_TIMEOUT: FiniteDuration = 1.minute
 
   private[job] val spotify:       SpotifyRequester    = jobEnvironment.spotify
   private[job] val genius:        GeniusRequester     = jobEnvironment.genius
@@ -34,15 +34,16 @@ abstract class DataJob[T](private implicit val jobEnvironment: JobEnvironment) e
     jobEnvironment.registerJob(this)
 
     futureResult.set {
-      val futureWorkResult = work
+      val futureWorkResult =
+        if (canRecover)
+          work.recover { error => handleFailure(error); recovery }
+        else
+          work
 
       // on completion, we want to record the end time and whether or not it failed (if we want to re-run later)
       futureWorkResult.onComplete {
         case Success(_)     => finish()
-        case Failure(error) => finish()
-          logError(error.getMessage)
-          failed.set(true)
-          failureMsg.set(error.getMessage)
+        case Failure(error) => finish(); handleFailure(error)
       }
       futureWorkResult
     }
@@ -50,8 +51,19 @@ abstract class DataJob[T](private implicit val jobEnvironment: JobEnvironment) e
     futureResult.get()
   }
 
+  private def handleFailure(error: Throwable): Unit = {
+    logError(error.getMessage)
+    failed.set(true)
+    failureMsg.set(error.getMessage)
+    error.printStackTrace()
+  }
+
   /** Override with service.job workload -- should not be called (use [[doWork()]]) */
   private[job] def work: Future[T]
+  /** Override with a default return if possible so we don't disrupt job chains. Throw exception if non-recoverable. */
+  private[job] def recovery: T
+  /** Override with value FALSE if the Job can't be recovered to a default value (ie. when searching for an ID) */
+  private[job] val canRecover: Boolean = true
   private[job] val _id: String = java.util.UUID.randomUUID.toString
   private[job] val serviceName: String
   private[job] val jobName: String
@@ -60,13 +72,15 @@ abstract class DataJob[T](private implicit val jobEnvironment: JobEnvironment) e
 
   private[job] def logInfo(msg: String): Unit = logger.info(s"$jobTag: $msg")
   private[job] def logWarn(msg: String): Unit = logger.warn(s"$jobTag: $msg")
-  private[job] def logError(msg: String): Unit = logger.error(s"ERROR IN $jobTag: $msg")
+  private[job] def logError(err: Throwable): Unit = { logError(err.getMessage); err.printStackTrace() }
+  private[job] def logError(msg: String): Unit =
+    logger.error(s"ERROR IN $jobTag: $msg")
   private[job] def exception(msg: String): JobException = JobException(msg)
 
   private[job] def toTag(name: String, id: String): String = s"$name ($id)"
 
   private[job] def awaitPagedResults[O](pagedResults: Seq[Future[Seq[O]]]): Seq[O] = pagedResults.flatten(awaitResult)
-  private[job] def awaitResult[O](future: Future[O]): O = Await.result(future, MAX_JOB_TIMEOUT_MS)
+  private[job] def awaitResult[O](future: Future[O]): O = Await.result(future, MAX_JOB_TIMEOUT)
 
   /** Apply a function to paged results from a paged API response.
    */

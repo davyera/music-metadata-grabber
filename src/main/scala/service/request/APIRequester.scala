@@ -15,7 +15,7 @@ abstract class APIRequester(val authProvider: AuthTokenProvider)
                            (implicit val backend: Backend,
                             implicit val context: ExecutionContext) extends StrictLogging with TimeTracked {
 
-  private val REQUEST_TIMEOUT_S = 2
+  private val REQUEST_TIMEOUT: FiniteDuration = 1.minute
   private val DEFAULT_RATE_LIMIT_WAIT_S = 5
 
   // functionality for rate limiting: thread-safe rate limit and methods for getting, setting, and waiting for it
@@ -39,7 +39,7 @@ abstract class APIRequester(val authProvider: AuthTokenProvider)
         try {
           // try request and await result (within surrounding future)
           result = Some(
-            Await.result(doGet(request), REQUEST_TIMEOUT_S.seconds)
+            Await.result(doGet(request), REQUEST_TIMEOUT)
           )
         } catch {
           case RateLimitException(duration) =>
@@ -86,7 +86,7 @@ abstract class APIRequester(val authProvider: AuthTokenProvider)
   protected[service] def queryPages[R <: PageableWithTotal](limitPerRequest: Int,
                                                             pagedFunction: (Int, Int) => Future[R])
   : Future[Seq[Future[R]]] = {
-    logger.info(s"Calling paged function... limit $limitPerRequest offset 0")
+    logger.debug(s"Calling paged function... limit $limitPerRequest offset 0")
     val firstResult: Future[R] = pagedFunction(limitPerRequest, 0)
     firstResult.map { firstPage: R =>
       // we only find total results after first page is returned
@@ -100,7 +100,7 @@ abstract class APIRequester(val authProvider: AuthTokenProvider)
 
       // call the paged function for each new offset
       val remainingPages: List[Future[R]] = newOffsets.map{offset =>
-        logger.info(s"Calling paged function... limit $limitPerRequest offset $offset")
+        logger.debug(s"Calling paged function... limit $limitPerRequest offset $offset")
         pagedFunction(limitPerRequest, offset)
       }.toList
 

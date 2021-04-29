@@ -20,4 +20,6 @@ case class ArtistFullLyricsJob(artistName: String)(implicit jobEnvironment: JobE
       ArtistLyricsJob(id).doWork()
     }.recover { case _ => Map() } // if we error out, make sure we recover with an empty map
   }
+
+  override private[job] def recovery: Map[String, Future[String]] = Map()
 }

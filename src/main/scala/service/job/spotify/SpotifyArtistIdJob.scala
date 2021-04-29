@@ -32,4 +32,6 @@ case class SpotifyArtistIdJob(artistName: String)
 
   private lazy val exception: JobException = exception(s"Could not find Artist ID for $artistName")
 
+  override private[job] val canRecover: Boolean = false
+  override private[job] def recovery: String = ""
 }

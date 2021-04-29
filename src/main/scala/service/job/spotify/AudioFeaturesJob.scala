@@ -62,4 +62,6 @@ case class AudioFeaturesJob(tracks: Seq[SpotifyTrack],
     if (pushData) allTracks.foreach(receiver.receive)
     Future.successful(allTracks)
   }
+
+  override private[job] def recovery: Seq[Track] = Nil
 }

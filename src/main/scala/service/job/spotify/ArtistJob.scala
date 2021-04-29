@@ -26,4 +26,7 @@ case class ArtistJob(artistId: String, pushData: Boolean)
       (artist, albums)
     }
   }
+
+  override private[job] val canRecover: Boolean = false
+  override private[job] def recovery: (Artist, Seq[Album]) = (null, Nil)
 }
