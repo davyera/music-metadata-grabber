@@ -3,8 +3,9 @@ package service.job
 import com.typesafe.scalalogging.StrictLogging
 import models.{ArtistSummary, PageableWithTotal}
 import models.api.db.{Album, Artist, Track}
+import models.api.resources.spotify.SpotifyPlaylistInfo
 import service.job.genius.ArtistFullLyricsJob
-import service.job.spotify.{ArtistJob, CategoryPlaylistsJob, FeaturedPlaylistsJob, PlaylistsJob, SpotifyArtistIdJob, TracksJob}
+import service.job.spotify.{ArtistJob, CategoryPlaylistsJob, FeaturedPlaylistsJob, PlaylistTracksJob, PlaylistsJob, SpotifyArtistIdJob, TracksJob}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -23,6 +24,10 @@ class JobOrchestrator(private implicit val context: ExecutionContext) extends St
    */
   def launchCategoryPlaylistsJob(categoryId: String): Future[Seq[ArtistSummary]] =
     launchPlaylistArtistJobs(CategoryPlaylistsJob(categoryId, pushPlaylistData = true, pushTrackData = false))
+
+  def launchPlaylistTracksJob(playlistId: String): Future[Seq[Track]] = {
+    PlaylistTracksJob(playlistId, false).doWork()
+  }
 
   private def launchPlaylistArtistJobs[P <: PageableWithTotal](playlistJob: PlaylistsJob[P])
     : Future[Seq[ArtistSummary]] = {

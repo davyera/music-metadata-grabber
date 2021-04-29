@@ -2,41 +2,33 @@ package service.job
 
 import org.mockito.Mockito
 import org.mockito.Mockito._
-import testutils.UnitSpec
+import testutils.{LogVerifier, UnitSpec}
 
 import java.util.concurrent.atomic.AtomicBoolean
 import scala.concurrent.Future
 
 class DataJobTest extends UnitSpec {
 
-  def mkJob[T](workFn: => T, recover: Boolean = false): DataJob[T] = {
-    implicit val env: JobEnvironment = mock[JobEnvironment]
-    when(env.context).thenReturn(context)
-
-    val job = new DataJob[T] {
-      override def work: Future[T] = Future {
-        while (!completeJob.get()) {
-          Thread.sleep(10)
-        }
-        workFn
-      }
-      override val serviceName: String = "TEST"
-      override val jobName: String = "TEST"
-      override val canRecover: Boolean = recover
-      override def recovery: T = throw new Exception()
-    }
-
-    Mockito.doNothing().when(env).registerJob(job)
-    job
-  }
+  implicit val env: JobEnvironment = mock[JobEnvironment]
+  when(env.context).thenReturn(context)
 
   val completeJob: AtomicBoolean = new AtomicBoolean(false)
-  before {
-    completeJob.set(false)
+  before { completeJob.set(false) }
+
+  case class TestJob[T]()(workFn: => T) extends DataJob[T] {
+    Mockito.doNothing().when(env).registerJob(this)
+    override def work: Future[T] = Future {
+      while (!completeJob.get()) { Thread.sleep(10) }
+      workFn
+    }
+    override val serviceName: String = "TEST"
+    override val jobName: String = "TEST"
+    override val canRecover: Boolean = false
+    override def recovery: T = throw new Exception()
   }
 
   "doWork" should "set endTime when complete" in {
-    val job = mkJob[Unit] {}
+    val job = TestJob[Unit](){}
 
     val futureResult = job.doWork()
     job.isComplete shouldEqual false
@@ -50,7 +42,7 @@ class DataJobTest extends UnitSpec {
   }
 
   "doWork" should "register failure when exception is thrown" in {
-    val job = mkJob[Unit] { throw new Exception("testError") }
+    val job = TestJob[Unit](){ throw new Exception("testError") }
 
     val futureResult = job.doWork()
     job.isFailed shouldEqual false
@@ -64,8 +56,28 @@ class DataJobTest extends UnitSpec {
     }
   }
 
+  "doWork" should "register failure but return default recovery value when it can recover" in {
+    val job = new TestJob[Int]()(throw new Exception("testError")) {
+      override val canRecover: Boolean = true
+      override def recovery: Int = 100
+    }
+
+    val logVerifier = getLogVerifier[DataJobTest]
+
+    val futureResult = job.doWork()
+    job.isFailed shouldEqual false
+
+    completeJob.set(true)
+
+    whenReady(futureResult) { result =>
+      result shouldEqual 100
+      logVerifier.assertLogged("ERROR IN TEST:TEST: testError")
+    }
+  }
+
+
   "doWork" should "report correct time elapsed" in {
-    val job = mkJob[Unit] {}
+    val job = TestJob[Unit](){}
 
     // time should be 0 before job starts
     job.timeElapsed shouldEqual 0

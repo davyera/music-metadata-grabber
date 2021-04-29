@@ -19,7 +19,7 @@ abstract class PlaylistsJob[P <: PageableWithTotal](pushPlaylistData: Boolean,
           logInfo(s"Received Playlist metadata for ${toTag(plistInfo.name, plistInfo.id)}")
 
           // launch new Job for this playlist to grab its tracks
-          val tracksJob = PlaylistTracksJob(plistInfo, pushTrackData)
+          val tracksJob = PlaylistTracksJob(plistInfo.id, pushTrackData)
 
           // once we have finished querying all tracks, we can send the full playlist data out
           tracksJob.doWork().map { tracks =>

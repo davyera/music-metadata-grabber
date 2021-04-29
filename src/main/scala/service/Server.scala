@@ -2,6 +2,7 @@ package service
 
 import com.typesafe.scalalogging.StrictLogging
 import models.ArtistSummary
+import models.api.db.Track
 import service.job.JobOrchestrator
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -14,16 +15,24 @@ object Server extends App with StrictLogging {
 
   val worker = new JobOrchestrator
 
-  val plistsFuture: Future[Seq[ArtistSummary]] = worker.launchFeaturedPlaylistsJobs()
-  plistsFuture.onComplete {
-    case Success(summaries) => logArtistSummaries(summaries)
-    case Failure(error) => throw error
-  }
-//  val summaryFuture = worker.launchArtistDataJobsForName("hazel english")
-//  summaryFuture.onComplete {
-//    case Success(summary) => logArtistSummary(summary)
-//    case Failure(error) => throw error
-//  }
+//  val hiphopPlist = "37i9dQZF1DWT5MrZnPU1zD"
+//  testPlaylist(hiphopPlist)
+  testFeaturedPlaylists()
+
+  private def testArtist(artistName: String): Unit =
+    handleJobFuture(worker.launchArtistDataJobsForName(artistName))(logArtistSummary)
+
+  private def testPlaylist(plist: String): Unit =
+    handleJobFuture(worker.launchPlaylistTracksJob(plist))(logTracks)
+
+  private def testFeaturedPlaylists(): Unit =
+    handleJobFuture(worker.launchFeaturedPlaylistsJobs())(logArtistSummaries)
+
+  private def handleJobFuture[T](future: Future[T])(fn: T => Unit): Unit =
+    future.onComplete {
+      case Success(result) => fn(result)
+      case Failure(error) => throw error
+    }
 
   private def logArtistSummaries(summaries: Seq[ArtistSummary]): Unit = summaries.foreach(logArtistSummary)
 
@@ -32,8 +41,12 @@ object Server extends App with StrictLogging {
     logger.info(summary.artist.toString)
     logger.info("ALBUMS")
     summary.albums.foreach(album => logger.info(album.toString))
+    logTracks(summary.tracks)
+  }
+
+  private def logTracks(tracks: Seq[Track]): Unit = {
     logger.info("TRACKS")
-    summary.tracks.foreach(track => logger.info(track.toString))
+    tracks.foreach(track => logger.info(track.toString))
   }
 
 }
