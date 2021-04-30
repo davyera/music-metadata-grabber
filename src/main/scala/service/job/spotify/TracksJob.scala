@@ -1,17 +1,17 @@
 package service.job.spotify
 
+import models.ModelTransform
 import models.api.db.Track
-import models.api.resources.spotify.{SpotifyTrack, SpotifyTracks}
+import models.api.resources.spotify.SpotifyTracks
 import service.job.{JobEnvironment, SpotifyJob}
 
 import scala.concurrent.Future
 
-/** Requests full track data for given Track IDs. Also launches sub-jobs for grabbing Spotify audio features for
- *  each track.
- *  @return completed seq of [[Track]] data, including Features
+/** Requests Spotify track metadata for given Track IDs.
+ *  @return completed seq of [[Track]] data without audio features
  */
 case class TracksJob(trackIds: Seq[String],
-                     pushData: Boolean,
+                     pushTrackData: Boolean,
                      tracksRequestLimit: Int = 50)
                     (implicit jobEnvironment: JobEnvironment)
   extends SpotifyJob[Seq[Track]] {
@@ -20,16 +20,16 @@ case class TracksJob(trackIds: Seq[String],
 
   override private[job] def work: Future[Seq[Track]] = {
     // we are bounded by Spotify's limit of tracks per request
-    val groupedTracks = trackIds.grouped(tracksRequestLimit).toSeq.map { chunkedTrackIds: Seq[String] =>
-      // simply return all track responses here
+    val chunkedResults = trackIds.grouped(tracksRequestLimit).toSeq.map { chunkedTrackIds: Seq[String] =>
       spotify.requestTracks(chunkedTrackIds).map { tracksResponse: SpotifyTracks =>
-        tracksResponse.tracks
+        tracksResponse.tracks.map { spotifyTrack =>
+          val track = ModelTransform.track(spotifyTrack)
+          if (pushTrackData) receiver.receive(track)
+          track
+        }
       }
     }
-
-    // block for completion of track requests so we can push the set into the features job for completion
-    val tracks: Seq[SpotifyTrack] = awaitPagedResults(groupedTracks)
-    AudioFeaturesJob(tracks, pushData, tracksRequestLimit).doWork()
+    flattenChunkedResults(chunkedResults)
   }
 
   override private[job] def recovery: Seq[Track] = Nil

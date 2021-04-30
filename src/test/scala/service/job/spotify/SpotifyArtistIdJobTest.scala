@@ -9,7 +9,7 @@ import scala.concurrent.Future
 
 class SpotifyArtistIdJobTest extends JobSpec {
 
-  "doWork" should "return id for artist" in {
+  "doWorkBlocking" should "return id for artist" in {
     val srchResponse = SpotifySearch(None, Some(sSrchArt))
     val spotify = mock[SpotifyRequester]
     when(spotify.searchPage("artist1", SpotifySearchType.Artists, 1)).thenReturn(Future(srchResponse))
@@ -17,11 +17,9 @@ class SpotifyArtistIdJobTest extends JobSpec {
     implicit val jobEnv: JobEnvironment = env(sRequest = spotify)
     val logVerifier = getLogVerifier[SpotifyArtistIdJob]
 
-    val response = SpotifyArtistIdJob("artist1").doWork()
-    whenReady(response) { id: String =>
-      id shouldEqual "art1"
-      logVerifier.assertLogged("SPOTIFY:ARTIST_ID: Queried ID for artist artist1: art1")
-    }
+    val response = SpotifyArtistIdJob("artist1").doWorkBlocking()
+    response shouldEqual "art1"
+    logVerifier.assertLogged("SPOTIFY:ARTIST_ID: Queried ID for artist artist1: art1")
   }
 
   "doWork" should "throw exception if no artist results were returned" in {

@@ -1,5 +1,6 @@
 package service.job
 
+import models.LyricsMap
 import models.api.db.Track
 import utils.MetadataNormalization.normalizeTitle
 
@@ -11,8 +12,8 @@ import scala.util.{Failure, Success}
  *  found than necessary.
  */
 case class TrackLyricsCombinationJob(tracksFuture: Future[Seq[Track]],
-                                     lyricsMapFuture: Future[Map[String, Future[String]]],
-                                     pushData: Boolean)
+                                     lyricsMapFuture: Future[LyricsMap],
+                                     pushTrackData: Boolean)
                                     (implicit jobEnvironment: JobEnvironment)
   extends DataJob[Seq[Track]] {
 
@@ -20,7 +21,7 @@ case class TrackLyricsCombinationJob(tracksFuture: Future[Seq[Track]],
   override private[job] val jobName = "TRACK_LYRICS"
 
   override private[job] def work: Future[Seq[Track]] = {
-    lyricsMapFuture.map { unNormalizedLyricsMap: Map[String, Future[String]] =>
+    lyricsMapFuture.map { unNormalizedLyricsMap: LyricsMap =>
       tracksFuture.map { tracks: Seq[Track] =>
         // log if we find an imbalance between Spotify and Genius results
         handleResultImbalance(tracks.map(_.name), unNormalizedLyricsMap.keys.toSeq)
@@ -47,7 +48,7 @@ case class TrackLyricsCombinationJob(tracksFuture: Future[Seq[Track]],
               Success(track)
           }.map { track: Track =>
           // finally, if we need to push the data, then push it.
-            if (pushData) receiver.receive(track)
+            if (pushTrackData) receiver.receive(track)
             track
           }
         }

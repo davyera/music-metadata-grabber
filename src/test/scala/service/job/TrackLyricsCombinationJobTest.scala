@@ -1,7 +1,7 @@
 package service.job
 
 import models.api.db.Track
-import org.mockito.{ArgumentCaptor, Mockito}
+import org.mockito.ArgumentCaptor
 import org.mockito.Mockito._
 import service.data.DataReceiver
 import utils.MetadataNormalization
@@ -11,7 +11,7 @@ import scala.concurrent.Future
 class TrackLyricsCombinationJobTest extends JobSpec {
 
   private def emptyJob =
-    TrackLyricsCombinationJob(Future(Nil), Future(Map()), pushData = false)(mock[JobEnvironment])
+    TrackLyricsCombinationJob(Future(Nil), Future(Map()), pushTrackData = false)(mock[JobEnvironment])
 
   "normalizeTrackTitle" should "remove special characters and uppercase from string" in {
     MetadataNormalization.normalizeTitle(" It's Not Real?? (alt title!) _-* ") shouldEqual "itsnotrealalttitle"
@@ -35,7 +35,7 @@ class TrackLyricsCombinationJobTest extends JobSpec {
       "FINALIZATION:TRACK_LYRICS: Genius lyrics result without Spotify track: genius song, genius song 2")
   }
 
-  "doWork" should "match Spotify Tracks to their Genius lyrics result counterpart" in {
+  "doWorkBlocking" should "match Spotify Tracks to their Genius lyrics result counterpart" in {
     val receiver = mock[DataReceiver]
     val argCaptor: ArgumentCaptor[Track] = ArgumentCaptor.forClass(classOf[Track])
 
@@ -49,23 +49,15 @@ class TrackLyricsCombinationJobTest extends JobSpec {
       "song2" -> Future("song2lyrics"),
       "song3" -> Future.failed(new Exception("oops"))))
 
-    val result = TrackLyricsCombinationJob(sTracks, lMap, pushData = true).doWork()
-    verify(receiver, Mockito.timeout(1000).times(4)).receive(argCaptor.capture())
-    val capturedArgs = argCaptor.getAllValues
-    capturedArgs.contains(trk1fld) shouldEqual true // trk 1 has lyrics
-    capturedArgs.contains(trk2fld) shouldEqual true // trk 2 has lyrics
-    capturedArgs.contains(trk3fd)  shouldEqual true // trk 3 has no lyrics
-    capturedArgs.contains(trk4fd)  shouldEqual true // trk 4 has no lyrics
-    whenReady(result) { tracks =>
-      tracks.size shouldEqual 4
-      tracks.contains(trk1fld) shouldEqual true
-      tracks.contains(trk2fld) shouldEqual true
-      tracks.contains(trk3fd)  shouldEqual true
-      tracks.contains(trk4fd)  shouldEqual true
-      logVerifier.assertLogged(
-        "ERROR IN FINALIZATION:TRACK_LYRICS: Could not load lyrics for track song3 (t3). Error:\noops")
-      logVerifier.assertLogged(
-        "ERROR IN FINALIZATION:TRACK_LYRICS: No lyrics found in Genius result map for track song4 (t4)")
-    }
+    val result = TrackLyricsCombinationJob(sTracks, lMap, pushTrackData = true).doWorkBlocking()
+
+    val expected = Seq(trk1fld, trk2fld, trk3fd, trk4fd) // trk 3&4 should have no lyrics
+    verify(receiver, times(4)).receive(argCaptor.capture())
+    assertMetadataSeqs(expected, argCaptor.getAllValues)
+    assertMetadataSeqs(expected, result)
+    logVerifier.assertLogged(
+      "ERROR IN FINALIZATION:TRACK_LYRICS: Could not load lyrics for track song3 (t3). Error:\noops")
+    logVerifier.assertLogged(
+      "ERROR IN FINALIZATION:TRACK_LYRICS: No lyrics found in Genius result map for track song4 (t4)")
   }
 }

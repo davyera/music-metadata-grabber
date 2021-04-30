@@ -8,16 +8,15 @@ import scala.concurrent.Future
 
 class GeniusArtistIdJobTest extends JobSpec {
 
-  "doWork" should "return a successful future of an ID when successful" in {
+  "doWorkBlocking" should "return a successful future of an ID when successful" in {
     val response = mkGeniusSearchResponse(Seq(gSrchHt1, gSrchHt2))
 
     val geniusRequester = mock[GeniusRequester]
     when(geniusRequester.requestSearchPage("artist1", 1)).thenReturn(Future.successful(response))
 
     implicit val jobEnv: JobEnvironment = env(gRequest = geniusRequester)
-    val result = GeniusArtistIdJob("artist1").doWork()
-
-    whenReady(result)(_ shouldEqual 0)
+    val result = GeniusArtistIdJob("artist1").doWorkBlocking()
+    result shouldEqual 0
   }
 
   "doWork" should "throw an exception when there were no search hits" in {

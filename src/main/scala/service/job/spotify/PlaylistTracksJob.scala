@@ -1,39 +1,49 @@
 package service.job.spotify
 
 import models.ModelTransform
-import models.api.db.Track
+import models.api.db.{Playlist, Track}
 import models.api.resources.spotify.SpotifyPlaylistTracksPage
 import service.job.{JobEnvironment, SpotifyJob}
 
 import scala.concurrent.Future
 
 /** For a given playlist, will request all tracks for that playlist from Spotify.
- *  Optionally pushes Track data, which requires launch of [[AudioFeaturesJob]]
- *  @return Concatenated list of all track IDs that were found once the service.job is finished.
+ *  Optionally pushes Track data (will be missing Lyrics & Audio Features)
+ *  Optionally pushes Playlist data once track data is pulled.
+ *  @return All track data that was found once the job is finished.
  */
-case class PlaylistTracksJob(playlistId: String, pushTrackData: Boolean)
+case class PlaylistTracksJob(playlist: Playlist,
+                             pushPlaylistData: Boolean,
+                             pushTrackData: Boolean)
                             (implicit jobEnvironment: JobEnvironment)
-  extends SpotifyJob[Seq[Track]] {
+  extends SpotifyJob[(Playlist, Seq[Track])] {
 
   override private[job] val jobName: String = "PLAYLIST_TRACKS"
 
-  override private[job] def work: Future[Seq[Track]] = {
-    spotify.requestPlaylistTracks(playlistId).map { playlistTracksPages: Seq[Future[SpotifyPlaylistTracksPage]] =>
+  override private[job] def work: Future[(Playlist, Seq[Track])] = {
+    val plistId = playlist._id
+    val plistTag = toTag(playlist.name, plistId)
+
+    spotify.requestPlaylistTracks(plistId).map { playlistTracksPages: Seq[Future[SpotifyPlaylistTracksPage]] =>
       val pagedTracks = workOnPages(playlistTracksPages) { page: SpotifyPlaylistTracksPage =>
-        logInfo(s"Received page of tracks for playlist $playlistId. Count: ${page.items.size}")
         val sTrks = page.items.map(_.track)
-        if (pushTrackData)
-          awaitResult(AudioFeaturesJob(sTrks, pushTrackData).doWork())
-        else
-          sTrks.map(ModelTransform.track(_, None)) // no features map, no worries
+        val tracks = sTrks.map(ModelTransform.track)
+        if (pushTrackData) tracks.foreach(receiver.receive)
+        tracks
       }
 
-      // Block for the jobs to finish so we can send track objects parent job
       val tracks = awaitPagedResults(pagedTracks)
-      logInfo(s"Gathered ${tracks.size} tracks for playlist $playlistId")
-      tracks
+
+      logInfo(s"Gathered ${tracks.size} tracks for playlist $plistTag")
+
+      // concatenate all Track IDs to finalize the playlist object.
+      val trackIds = tracks.map(_._id)
+      val finalPlist = playlist.copy(tracks = trackIds)
+      if(pushPlaylistData) receiver.receive(finalPlist)
+
+      (finalPlist, tracks)
     }
   }
 
-  override private[job] def recovery: Seq[Track] = Nil
+  override private[job] def recovery: (Playlist, Seq[Track]) = (playlist, Nil)
 }

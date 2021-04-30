@@ -2,8 +2,7 @@ package service.request.spotify
 
 import com.typesafe.scalalogging.StrictLogging
 import models._
-import models.api.resources._
-import models.api.resources.spotify.{SpotifyAlbums, SpotifyArtist, SpotifyArtistAlbumsPage, SpotifyAudioFeaturesPage, SpotifyBrowseCategories, SpotifyCategoryPlaylists, SpotifyFeaturedPlaylists, SpotifyPlaylistTracksPage, SpotifySearch, SpotifyTracks}
+import models.api.resources.spotify._
 import service.request.spotify.SpotifySearchType.SpotifySearchType
 import service.request.{APIRequester, AuthTokenProvider}
 
@@ -59,9 +58,9 @@ class SpotifyRequester(override val authProvider: AuthTokenProvider)
   def requestFeaturedPlaylists(limitPerRequest: Int = 25)
   : Future[Seq[Future[SpotifyFeaturedPlaylists]]] =
     queryPages(limitPerRequest, (limit, offset) =>
-      requestPlaylistsPage(limit, offset))
+      requestFeaturedPlaylistsPage(limit, offset))
 
-  private def requestPlaylistsPage(limit: Int, offset: Int)
+  private def requestFeaturedPlaylistsPage(limit: Int, offset: Int)
   : Future[SpotifyFeaturedPlaylists] =
     get(SpotifyFeaturedPlaylistsRequest(limit, offset))
 

@@ -29,6 +29,8 @@ abstract class DataJob[T](private implicit val jobEnvironment: JobEnvironment) e
   private val failed = new AtomicBoolean(false)
   private val failureMsg = new AtomicReference[String]("")
 
+  def doWorkBlocking(): T = awaitResult(doWork())
+
   def doWork(): Future[T] = {
     start()
     jobEnvironment.registerJob(this)
@@ -79,11 +81,15 @@ abstract class DataJob[T](private implicit val jobEnvironment: JobEnvironment) e
 
   private[job] def toTag(name: String, id: String): String = s"$name ($id)"
 
-  private[job] def awaitPagedResults[O](pagedResults: Seq[Future[Seq[O]]]): Seq[O] = pagedResults.flatten(awaitResult)
-  private[job] def awaitResult[O](future: Future[O]): O = Await.result(future, MAX_JOB_TIMEOUT)
+  // methods for simplifying / flattening / awaiting results
+  private[job] def flattenChunkedResults[O](results: Seq[Future[Seq[O]]]): Future[Seq[O]] =
+    Future.sequence(results).map(_.flatten)
+  private[job] def awaitPagedResults[O](pagedResults: Seq[Future[Seq[O]]]): Seq[O] =
+    pagedResults.flatten(awaitResult)
+  private[job] def awaitResult[O](future: Future[O]): O =
+    Await.result(future, MAX_JOB_TIMEOUT)
 
-  /** Apply a function to paged results from a paged API response.
-   */
+  /** Apply a function to paged results from a paged API response. */
   private[job] def workOnPages[P, O](pages: Seq[Future[P]])(pageWork: P => O): Seq[Future[O]] =
     pages.map { pageFuture: Future[P] =>
       pageFuture.map { page: P =>

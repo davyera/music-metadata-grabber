@@ -1,11 +1,10 @@
 package service.job
 
 import com.typesafe.scalalogging.StrictLogging
-import models.{ArtistSummary, PageableWithTotal}
-import models.api.db.{Album, Artist, Track}
-import models.api.resources.spotify.SpotifyPlaylistInfo
-import service.job.genius.ArtistFullLyricsJob
-import service.job.spotify.{ArtistJob, CategoryPlaylistsJob, FeaturedPlaylistsJob, PlaylistTracksJob, PlaylistsJob, SpotifyArtistIdJob, TracksJob}
+import models.{ArtistSummary, LyricsMap, PageableWithTotal}
+import models.api.db._
+import service.job.genius.{ArtistLyricsJob, GeniusArtistIdJob}
+import service.job.spotify._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -16,60 +15,70 @@ class JobOrchestrator(private implicit val context: ExecutionContext) extends St
   /** Requests all featured Spotify playlists and their tracks.
    *  For each track, will launch a full data job for its artists.
    */
-  def launchFeaturedPlaylistsJobs(): Future[Seq[ArtistSummary]] =
-    launchPlaylistArtistJobs(FeaturedPlaylistsJob(pushPlaylistData = true, pushTrackData = false))
+  def launchFeaturedPlaylistsJobs(): Seq[ArtistSummary] =
+    launchPlaylistArtistJobs(FeaturedPlaylistsJob(pushPlaylistData = false))
 
   /** Requests Spotify playlists and their tracks for a specified category.
    *  For each track, will launch a full data job for its artists.
    */
-  def launchCategoryPlaylistsJob(categoryId: String): Future[Seq[ArtistSummary]] =
-    launchPlaylistArtistJobs(CategoryPlaylistsJob(categoryId, pushPlaylistData = true, pushTrackData = false))
-
-  def launchPlaylistTracksJob(playlistId: String): Future[Seq[Track]] = {
-    PlaylistTracksJob(playlistId, false).doWork()
-  }
+  def launchCategoryPlaylistsJob(categoryId: String): Seq[ArtistSummary] =
+    launchPlaylistArtistJobs(CategoryPlaylistsJob(categoryId, pushPlaylistData = false))
 
   private def launchPlaylistArtistJobs[P <: PageableWithTotal](playlistJob: PlaylistsJob[P])
-    : Future[Seq[ArtistSummary]] = {
+    : Seq[ArtistSummary] = {
 
-    // pull playlists -> track data
-    val plistMap = playlistJob.doWork()
+    // pull playlist data
+    val playlists = playlistJob.doWorkBlocking()
 
-    // pull artist IDs from the set of tracks
-    val artistIdsFuture: Future[Seq[String]] = plistMap.map(_.values.flatten.flatMap(_.artists).toSeq)
+    // iterate over every track in each playlist
+    playlists.flatMap { playlist =>
+      // pull all track data for the playlist
+      val plistWTracks = PlaylistTracksJob(playlist, pushPlaylistData = true, pushTrackData = false).doWorkBlocking()
+      val tracks = plistWTracks._2
 
-    // for each artistId, we'll pull every album and its tracks
-    artistIdsFuture.map { artistIds: Seq[String] =>
-      val artistSummaries = artistIds.map { artistId =>
-        launchArtistDataJobs(artistId)
-      }
-      Future.sequence(artistSummaries)
-    }.flatten
+      // for each track, launch a full artist metadata job for its artists
+      tracks.flatMap(launchArtistDataJobsForTrack)
+    }
   }
 
+  private def launchArtistDataJobsForTrack(track: Track): Seq[ArtistSummary] =
+    track.artists.map { artistId => launchArtistDataJobs(artistId) }
+
   /** Requests all data (Artist, Album, Track) for a given artist, given their name. */
-  def launchArtistDataJobsForName(artistName: String): Future[ArtistSummary] = {
-    SpotifyArtistIdJob(artistName).doWork().map { artistId =>
-      launchArtistDataJobs(artistId)
-    }.flatten
+  def launchArtistDataJobsForName(artistName: String): ArtistSummary = {
+    // first, query spotify for artist ID
+    val artistId = SpotifyArtistIdJob(artistName).doWorkBlocking()
+    launchArtistDataJobs(artistId)
   }
 
   /** Requests all data (Artist, Album, Track) for a given artist, given their ID. */
-  private def launchArtistDataJobs(artistId: String): Future[ArtistSummary] = {
-    // ArtistJob will give us Artist and Album info
-    ArtistJob(artistId, pushData = true).doWork().map { case (artist: Artist, albums: Seq[Album]) =>
-      val trackIds = albums.flatMap(_.tracks)
+  private def launchArtistDataJobs(artistId: String): ArtistSummary = {
+    // get artist metadata
+    val artist = ArtistJob(artistId, pushArtistData = false).doWorkBlocking()
 
-      // TracksJob will give us detailed Track data (without lyrics)
-      val tracks = TracksJob(trackIds, pushData = false).doWork()
+    // async call to Genius to load all artist lyrics
+    val artistLyricsMap = launchArtistGeniusDataJobs(artist.name)
 
-      // Concurrently request lyrics from Genius
-      val lyricsMap = ArtistFullLyricsJob(artist.name).doWork()
+    // get album metadata (includes track refs)
+    val artistWithAlbums = ArtistAlbumsJob(artist, pushArtistData = true).doWorkBlocking()
+    val albums = AlbumsJob(artistWithAlbums.albums, pushAlbumData = true).doWorkBlocking()
 
-      // Combine the two results when they are ready
-      TrackLyricsCombinationJob(tracks, lyricsMap, pushData = true).doWork().map { finalizedTracks: Seq[Track] =>
-        ArtistSummary(artist, albums, finalizedTracks)
-      }
-    }.flatten
+    // get track metadata (and append audio features)
+    val tracks = albums.flatMap { album =>
+      val tracks = TracksJob(album.tracks, pushTrackData = false).doWorkBlocking()
+      AudioFeaturesJob(tracks, pushTrackData = false).doWorkBlocking()
+    }
+
+    // combine spotify and genius data as we wait for all requests to complete
+    val tracksWithLyrics = TrackLyricsCombinationJob(Future(tracks), artistLyricsMap, pushTrackData = true)
+      .doWorkBlocking()
+
+    ArtistSummary(artist, albums, tracksWithLyrics)
+  }
+
+  private def launchArtistGeniusDataJobs(artistName: String): Future[LyricsMap] = {
+    val artistId = GeniusArtistIdJob(artistName).doWorkBlocking()
+
+    ArtistLyricsJob(artistId).doWork()
   }
 }

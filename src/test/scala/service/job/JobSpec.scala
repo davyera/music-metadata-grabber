@@ -32,6 +32,14 @@ class JobSpec extends UnitSpec {
   def mkGeniusSearchResponse(hits: Seq[GeniusSearchHit]): GeniusSearchResponse =
     GeniusSearchResponse(GeniusSearchHits(hits, None))
 
+  def assertMetadataSeqs[T](expected: Seq[T], actual: Seq[T]): Unit =
+    expected.toSet shouldEqual actual.toSet
+
+  def assertMetadataSeqs[T](expected: Seq[T], actual: java.util.List[T]): Unit = {
+    import scala.jdk.CollectionConverters._
+    assertMetadataSeqs(expected, actual.asScala.toSeq)
+  }
+
   /** GENIUS TEST DATA */
 
   private[job] val gArt1 = GeniusSearchArtist(0, "artist1")
@@ -45,13 +53,15 @@ class JobSpec extends UnitSpec {
   private[job] val gTrk2Lyrics = "lyrics2"
   private[job] val gTrk3 = GeniusSong(3, "song3", "url3")
   private[job] val gTrk3Lyrics = "lyrics3"
+  private[job] val gTrk4 = GeniusSong(4, "song4", "url4")
 
   private[job] val gTrkPg1 = GeniusArtistSongsPage(GeniusArtistSongs(Seq(gTrk1, gTrk2), None))
-  private[job] val gTrkPg2 = GeniusArtistSongsPage(GeniusArtistSongs(Seq(gTrk3), None))
+  private[job] val gTrkPg2 = GeniusArtistSongsPage(GeniusArtistSongs(Seq(gTrk3, gTrk4), None))
 
   /** SPOTIFY TEST DATA */
   private[job] val art1 = SpotifyArtist("art1", "artist1", Seq("pop", "hiphop"), 100)
-  private[job] val art1d = Artist("art1", "artist1", Seq("pop", "hiphop"), 100, Seq("alb1", "alb2"))
+  private[job] val art1d = Artist("art1", "artist1", Seq("pop", "hiphop"), 100, Nil)
+  private[job] val art1ad = art1d.copy(albums = Seq("alb1", "alb2", "alb3"))
   private[job] val art1r = SpotifyArtistRef("art1", "artist1")
   private[job] val art2 = SpotifyArtist("art2", "artist2", Seq("jazz"), 50)
   private[job] val art2r = SpotifyArtistRef("art2", "artist2")
@@ -108,13 +118,14 @@ class JobSpec extends UnitSpec {
   private[job] val artAlbPg3 = SpotifyArtistAlbumsPage(Seq(alb3r, alb3r), 4) // duplicate here
 
   private[job] val plist1 = SpotifyPlaylistInfo("p1", "plist1", "good playlist")
-  private[job] val plist1d = Playlist("p1", "plist1", "good playlist", Seq("t1", "t2"), None)
-  private[job] val plist1cd = plist1d.copy(category = Some("cat1"))
+  private[job] val plist1d = Playlist("p1", "plist1", "good playlist", Nil, None)
+  private[job] val plist1td = plist1d.copy(tracks = Seq("t1", "t2"))
   private[job] val plist2 = SpotifyPlaylistInfo("p2", "plist2", "bad playlist")
-  private[job] val plist2d = Playlist("p2", "plist2", "bad playlist", Seq("t3"), None)
-  private[job] val plist2cd = plist2d.copy(category = Some("cat1"))
+  private[job] val plist2d = Playlist("p2", "plist2", "bad playlist", Nil, None)
+  private[job] val plist2td = plist2d.copy(tracks = Seq("t3"))
   private[job] val plist3 = SpotifyPlaylistInfo("p3", "plist3", "ok playlist")
-  private[job] val plist3d = Playlist("p3", "plist3", "ok playlist", Seq("t4"), None)
+  private[job] val plist3d = Playlist("p3", "plist3", "ok playlist", Nil, None)
+  private[job] val plist3td = plist3d.copy(tracks = Seq("t4"))
 
   private[job] val fPlistPg1 = SpotifyFeaturedPlaylists("hi", SpotifyPlaylistPage(Seq(plist1, plist2), 3))
   private[job] val fPlistPg2 = SpotifyFeaturedPlaylists("hi", SpotifyPlaylistPage(Seq(plist3), 3))
@@ -130,7 +141,4 @@ class JobSpec extends UnitSpec {
 
   private[job] val p1TrksPg1 = SpotifyPlaylistTracksPage(Seq(SpotifyPlaylistTrackRef(trk1)), 2)
   private[job] val p1TrksPg2 = SpotifyPlaylistTracksPage(Seq(SpotifyPlaylistTrackRef(trk2)), 2)
-  private[job] val p2TrksPg1 = SpotifyPlaylistTracksPage(Seq(SpotifyPlaylistTrackRef(trk3)), 1)
-  private[job] val p3TrksPg1 = SpotifyPlaylistTracksPage(Seq(SpotifyPlaylistTrackRef(trk4)), 1)
-
 }

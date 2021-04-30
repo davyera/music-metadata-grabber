@@ -14,6 +14,11 @@ package object models {
   type Response[R] = sttp.client.Response[Either[ResponseError[circe.Error], R]]
   type Backend = sttp.client.SttpBackend[Future, Nothing, NothingT]
 
+  type TrackName = String
+  type Lyrics = String
+  /** Holds a map from track name to a future lyrics result, as they will all be individual async scraping jobs */
+  type LyricsMap = Map[TrackName, Future[Lyrics]]
+
   implicit val decoder: Configuration = Configuration.default.withDefaults
 
   implicit val geniusAccessToken: Decoder[GeniusAccessToken] = deriveConfiguredDecoder
