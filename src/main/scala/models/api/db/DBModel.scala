@@ -18,6 +18,7 @@ case class Artist(_id: String,
 
 case class Album(_id: String,
                  name: String,
+                 release_date: String,
                  popularity: Int,
                  artists: Seq[String],
                  tracks: Seq[String]) extends DbEntry(_id, name)

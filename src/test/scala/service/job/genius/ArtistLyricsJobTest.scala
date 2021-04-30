@@ -24,8 +24,8 @@ class ArtistLyricsJobTest extends JobSpec {
 
     implicit val jobEnv: JobEnvironment = env(gRequest = genius, gScraper = scraper)
 
-    val result = ArtistLyricsJob(0).doWorkBlocking()
-    println(result)
+    val job = new ArtistLyricsJob("artist") { override def queryArtistId(): Future[Int] = Future(0) }
+    val result = job.doWorkBlocking()
 
     // verify all 3 lyrics are returned
     whenReady(result("song1")) { _ shouldEqual "lyrics1" }
@@ -34,6 +34,24 @@ class ArtistLyricsJobTest extends JobSpec {
     whenReady(result("song4")) { lyric =>
       lyric shouldEqual ""
       logVerifier.assertLogged("ERROR IN GENIUS:SONG_LYRICS: oops")
+    }
+  }
+
+  "doWork" should "return empty lyrics map if an error occurs" in {
+    val genius = mock[GeniusRequester]
+    when(genius.requestSearchPage("art1", 1)).thenReturn(Future.failed(new Exception("oops")))
+
+    val artistIdLogVerifier = getLogVerifier[GeniusArtistIdJob]
+    val artistLyricLogVerifier = getLogVerifier[ArtistLyricsJob]
+
+    implicit val jobEnv: JobEnvironment = env(gRequest = genius)
+
+    val result = ArtistLyricsJob("art1").doWork()
+
+    whenReady(result) { lyricsMap =>
+      lyricsMap shouldEqual Map()
+      artistIdLogVerifier.assertLogged("ERROR IN GENIUS:ARTIST_ID: oops")
+      artistLyricLogVerifier.assertLogged("GENIUS:ARTIST_LYRICS: Skipping lyrics for artist art1.")
     }
   }
 }

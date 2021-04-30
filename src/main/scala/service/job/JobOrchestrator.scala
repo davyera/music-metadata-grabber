@@ -1,9 +1,9 @@
 package service.job
 
 import com.typesafe.scalalogging.StrictLogging
-import models.{ArtistSummary, LyricsMap, PageableWithTotal}
+import models.{ArtistSummary, PageableWithTotal}
 import models.api.db._
-import service.job.genius.{ArtistLyricsJob, GeniusArtistIdJob}
+import service.job.genius.ArtistLyricsJob
 import service.job.spotify._
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -57,7 +57,7 @@ class JobOrchestrator(private implicit val context: ExecutionContext) extends St
     val artist = ArtistJob(artistId, pushArtistData = false).doWorkBlocking()
 
     // async call to Genius to load all artist lyrics
-    val artistLyricsMap = launchArtistGeniusDataJobs(artist.name)
+    val artistLyricsMapFuture = ArtistLyricsJob(artist.name).doWork()
 
     // get album metadata (includes track refs)
     val artistWithAlbums = ArtistAlbumsJob(artist, pushArtistData = true).doWorkBlocking()
@@ -70,15 +70,9 @@ class JobOrchestrator(private implicit val context: ExecutionContext) extends St
     }
 
     // combine spotify and genius data as we wait for all requests to complete
-    val tracksWithLyrics = TrackLyricsCombinationJob(Future(tracks), artistLyricsMap, pushTrackData = true)
-      .doWorkBlocking()
+    val tracksWithLyrics =
+      TrackLyricsCombinationJob(Future(tracks), artistLyricsMapFuture, pushTrackData = true).doWorkBlocking()
 
     ArtistSummary(artist, albums, tracksWithLyrics)
-  }
-
-  private def launchArtistGeniusDataJobs(artistName: String): Future[LyricsMap] = {
-    val artistId = GeniusArtistIdJob(artistName).doWorkBlocking()
-
-    ArtistLyricsJob(artistId).doWork()
   }
 }

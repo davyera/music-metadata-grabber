@@ -1,12 +1,16 @@
 package service.job.genius
 
+import models.api.resources.genius.{GeniusSearchHit, GeniusSearchHits, GeniusSearchResponse}
 import org.mockito.Mockito.when
-import service.job.{JobException, JobEnvironment, JobSpec}
+import service.job.{JobEnvironment, JobException, JobSpec}
 import service.request.genius.GeniusRequester
 
 import scala.concurrent.Future
 
 class GeniusArtistIdJobTest extends JobSpec {
+
+  def mkGeniusSearchResponse(hits: Seq[GeniusSearchHit]): GeniusSearchResponse =
+    GeniusSearchResponse(GeniusSearchHits(hits, None))
 
   "doWorkBlocking" should "return a successful future of an ID when successful" in {
     val response = mkGeniusSearchResponse(Seq(gSrchHt1, gSrchHt2))
@@ -16,6 +20,18 @@ class GeniusArtistIdJobTest extends JobSpec {
 
     implicit val jobEnv: JobEnvironment = env(gRequest = geniusRequester)
     val result = GeniusArtistIdJob("artist1").doWorkBlocking()
+    result shouldEqual 0
+  }
+
+  "doWorkBlocking" should "return a successful future of an ID with un-normalized artist name input" in {
+    val response = mkGeniusSearchResponse(Seq(gSrchHt1, gSrchHt2))
+
+    val geniusRequester = mock[GeniusRequester]
+    when(geniusRequester.requestSearchPage("Artist 1", 1))
+      .thenReturn(Future.successful(response))
+
+    implicit val jobEnv: JobEnvironment = env(gRequest = geniusRequester)
+    val result = GeniusArtistIdJob("Artist 1").doWorkBlocking()
     result shouldEqual 0
   }
 

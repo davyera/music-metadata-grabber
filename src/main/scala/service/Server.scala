@@ -17,6 +17,7 @@ object Server extends App with StrictLogging {
 //  val hiphopPlist = "37i9dQZF1DWT5MrZnPU1zD"
 //  testPlaylist(hiphopPlist)
 //  testFeaturedPlaylists()
+  worker.environment.deleteData()
   testArtist("hazel english")
 
   private def testArtist(artistName: String): Unit =

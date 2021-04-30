@@ -6,6 +6,7 @@ import service.data.{DataReceiver, DbPersistence}
 import service.request.genius.{GeniusAuthTokenProvider, GeniusLyricsScraper, GeniusRequester}
 import service.request.spotify.{SpotifyAuthTokenProvider, SpotifyRequester}
 import sttp.client.asynchttpclient.future.AsyncHttpClientFutureBackend
+import utils.Configuration
 
 import java.util.concurrent.TimeUnit
 import scala.concurrent.ExecutionContext
@@ -13,6 +14,7 @@ import scala.jdk.CollectionConverters._
 
 class JobEnvironment(implicit val context: ExecutionContext) extends StrictLogging {
   implicit val backend: Backend = AsyncHttpClientFutureBackend()(context)
+  private val config = Configuration
 
   private val spotifyAuth: SpotifyAuthTokenProvider = new SpotifyAuthTokenProvider()
   private[job] val spotify: SpotifyRequester = new SpotifyRequester(spotifyAuth)
@@ -24,6 +26,7 @@ class JobEnvironment(implicit val context: ExecutionContext) extends StrictLoggi
   private[job] val receiver: DataReceiver = new DbPersistence()
 
   private val jobs = new JobHistory()
+  private[job] val jobCoolDownMs = config.jobCoolDownMs
 
   def registerJob(job: DataJob[_]): Unit = jobs.add(job)
   def getJob(id: String): DataJob[_] = jobs.get(id)

@@ -21,40 +21,39 @@ case class TrackLyricsCombinationJob(tracksFuture: Future[Seq[Track]],
   override private[job] val jobName = "TRACK_LYRICS"
 
   override private[job] def work: Future[Seq[Track]] = {
-    lyricsMapFuture.map { unNormalizedLyricsMap: LyricsMap =>
-      tracksFuture.map { tracks: Seq[Track] =>
-        // log if we find an imbalance between Spotify and Genius results
-        handleResultImbalance(tracks.map(_.name), unNormalizedLyricsMap.keys.toSeq)
-
-        val lyricsMap = normalizeLyricsMap(unNormalizedLyricsMap)
-
-        val finalTracks = tracks.map { track =>
-          val trkTag = toTag(track.name, track._id)
-          // first we handle whether or not the lyricsMap even has an entry for the track
-          val normalizedTrackName = normalizeTitle(track.name)
-          (lyricsMap.get(normalizedTrackName) match {
-            case Some(lyricResult) => lyricResult
-            case None =>
-              logError(s"No lyrics found in Genius result map for track $trkTag")
-              Future("") // return empty String for lyrics in this case.
-          }).transform {
-          // then we handle the Future result
-            case Success(lyrics)  =>
-              // if we were able to find lyrics, add them
-              Success(track.copy(lyrics = lyrics))
-            case Failure(error)   =>
-              // otherwise, keep track as-is but log an error
-              logError(s"Could not load lyrics for track $trkTag. Error:\n${error.getMessage}")
-              Success(track)
-          }.map { track: Track =>
-          // finally, if we need to push the data, then push it.
-            if (pushTrackData) receiver.receive(track)
-            track
-          }
-        }
-        Future.sequence(finalTracks)
-      }.flatten
+    lyricsMapFuture.map { lyricsMap =>
+      if (lyricsMap.isEmpty)
+        tracksFuture // skip the job if no lyrics were found.
+      else
+        tracksFuture.flatMap { tracks => combineTrackLyrics(tracks, lyricsMap) }
     }.flatten
+  }
+
+  private def combineTrackLyrics(tracks: Seq[Track], lyricsMap: LyricsMap): Future[Seq[Track]] = {
+    // log if we find an imbalance between Spotify and Genius results
+    handleResultImbalance(tracks.map(_.name), lyricsMap.keys.toSeq)
+
+    // normalize Genius track titles so we can have some fuzziness when matching between Spotify and Genius
+    val normalizedLyricsMap = normalizeLyricsMap(lyricsMap)
+
+    val finalTrackFutures = tracks.map { track =>
+      // normalize Spotify track title
+      val normalizedTrackName = normalizeTitle(track.name)
+
+      // first we handle whether or not the lyricsMap even has an entry for the track
+      (normalizedLyricsMap.get(normalizedTrackName) match {
+        case Some(lyricResult)  => lyricResult
+        case None               => Future("") // return empty String for lyrics in this case.
+      }).transform {
+        // then we handle the Future result
+        case Success(lyrics)    => Success(track.copy(lyrics = lyrics))
+        case Failure(_)         => Success(track) // just return the same input track metadata (sans lyrics)
+      }.map { track =>
+        if (pushTrackData) receiver.receive(track)
+        track
+      }
+    }
+    Future.sequence(finalTrackFutures)
   }
 
   /** Normalize the Lyrics map song titles */

@@ -26,11 +26,9 @@ class JobSpec extends UnitSpec {
       override val genius: GeniusRequester = gRequest
       override val geniusScraper: GeniusLyricsScraper = gScraper
       override val receiver: DataReceiver = dReceiver
+      override val jobCoolDownMs: Int = 0
     }
   }
-
-  def mkGeniusSearchResponse(hits: Seq[GeniusSearchHit]): GeniusSearchResponse =
-    GeniusSearchResponse(GeniusSearchHits(hits, None))
 
   def assertMetadataSeqs[T](expected: Seq[T], actual: Seq[T]): Unit =
     expected.toSet shouldEqual actual.toSet
@@ -99,14 +97,14 @@ class JobSpec extends UnitSpec {
   private[job] lazy val trkfPg1 = SpotifyAudioFeaturesPage(Seq(trk2f, trk1f))
 
   private[job] lazy val alb1r = SpotifyAlbumRef("alb1", "album1")
-  private[job] lazy val alb1 = SpotifyAlbum("alb1", "album1", Seq(art1r, art2r), SpotifyAlbumTracksPage(Seq(trk1ar)), 10)
-  private[job] lazy val alb1d = Album("alb1", "album1", 10, Seq("art1", "art2"), Seq("t1"))
+  private[job] lazy val alb1 = SpotifyAlbum("alb1", "album1", "1990", Seq(art1r, art2r), SpotifyAlbumTracksPage(Seq(trk1ar)), 10)
+  private[job] lazy val alb1d = Album("alb1", "album1", "1990", 10, Seq("art1", "art2"), Seq("t1"))
   private[job] lazy val alb2r = SpotifyAlbumRef("alb2", "album2")
-  private[job] lazy val alb2 = SpotifyAlbum("alb2", "album2", Seq(art2r, art3r), SpotifyAlbumTracksPage(Seq(trk2ar, trk3ar)), 20)
-  private[job] lazy val alb2d = Album("alb2", "album2", 20, Seq("art2", "art3"), Seq("t2", "t3"))
+  private[job] lazy val alb2 = SpotifyAlbum("alb2", "album2", "1980", Seq(art2r, art3r), SpotifyAlbumTracksPage(Seq(trk2ar, trk3ar)), 20)
+  private[job] lazy val alb2d = Album("alb2", "album2", "1980", 20, Seq("art2", "art3"), Seq("t2", "t3"))
   private[job] lazy val alb3r = SpotifyAlbumRef("alb3", "album3")
-  private[job] lazy val alb3 = SpotifyAlbum("alb3", "album3", Seq(art1r), SpotifyAlbumTracksPage(Seq(trk4ar)), 30)
-  private[job] lazy val alb3d = Album("alb3", "album3", 30, Seq("art1"), Seq("t4"))
+  private[job] lazy val alb3 = SpotifyAlbum("alb3", "album3", "2000", Seq(art1r), SpotifyAlbumTracksPage(Seq(trk4ar)), 30)
+  private[job] lazy val alb3d = Album("alb3", "album3", "2000", 30, Seq("art1"), Seq("t4"))
 
   private[job] val albs1 = SpotifyAlbums(Seq(alb1, alb2))
   private[job] val albs2 = SpotifyAlbums(Seq(alb3))

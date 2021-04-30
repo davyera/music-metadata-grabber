@@ -13,7 +13,9 @@ import scala.util.{Failure, Success}
 
 abstract class DataJob[T](private implicit val jobEnvironment: JobEnvironment) extends StrictLogging {
 
-  private val MAX_JOB_TIMEOUT: FiniteDuration = 1.minute
+  private val maxJobTimeout: FiniteDuration = 1.minute
+  private val jobCoolDownMs: Int = jobEnvironment.jobCoolDownMs
+  private val logStackTrace: Boolean = false
 
   private[job] val spotify:       SpotifyRequester    = jobEnvironment.spotify
   private[job] val genius:        GeniusRequester     = jobEnvironment.genius
@@ -29,7 +31,12 @@ abstract class DataJob[T](private implicit val jobEnvironment: JobEnvironment) e
   private val failed = new AtomicBoolean(false)
   private val failureMsg = new AtomicReference[String]("")
 
-  def doWorkBlocking(): T = awaitResult(doWork())
+  /** Block for job completion and force waiting for cool-down. */
+  def doWorkBlocking(): T = {
+    val result = awaitResult(doWork())
+    Thread.sleep(jobCoolDownMs)
+    result
+  }
 
   def doWork(): Future[T] = {
     start()
@@ -45,7 +52,7 @@ abstract class DataJob[T](private implicit val jobEnvironment: JobEnvironment) e
       // on completion, we want to record the end time and whether or not it failed (if we want to re-run later)
       futureWorkResult.onComplete {
         case Success(_)     => finish()
-        case Failure(error) => finish(); handleFailure(error)
+        case Failure(error) => finish(); handleFailure(error);
       }
       futureWorkResult
     }
@@ -57,7 +64,7 @@ abstract class DataJob[T](private implicit val jobEnvironment: JobEnvironment) e
     logError(error.getMessage)
     failed.set(true)
     failureMsg.set(error.getMessage)
-    error.printStackTrace()
+    if (logStackTrace) error.printStackTrace()
   }
 
   /** Override with service.job workload -- should not be called (use [[doWork()]]) */
@@ -87,7 +94,7 @@ abstract class DataJob[T](private implicit val jobEnvironment: JobEnvironment) e
   private[job] def awaitPagedResults[O](pagedResults: Seq[Future[Seq[O]]]): Seq[O] =
     pagedResults.flatten(awaitResult)
   private[job] def awaitResult[O](future: Future[O]): O =
-    Await.result(future, MAX_JOB_TIMEOUT)
+    Await.result(future, maxJobTimeout)
 
   /** Apply a function to paged results from a paged API response. */
   private[job] def workOnPages[P, O](pages: Seq[Future[P]])(pageWork: P => O): Seq[Future[O]] =

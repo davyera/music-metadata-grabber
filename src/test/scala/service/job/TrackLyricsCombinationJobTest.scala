@@ -55,9 +55,6 @@ class TrackLyricsCombinationJobTest extends JobSpec {
     verify(receiver, times(4)).receive(argCaptor.capture())
     assertMetadataSeqs(expected, argCaptor.getAllValues)
     assertMetadataSeqs(expected, result)
-    logVerifier.assertLogged(
-      "ERROR IN FINALIZATION:TRACK_LYRICS: Could not load lyrics for track song3 (t3). Error:\noops")
-    logVerifier.assertLogged(
-      "ERROR IN FINALIZATION:TRACK_LYRICS: No lyrics found in Genius result map for track song4 (t4)")
+    logVerifier.assertLogged("FINALIZATION:TRACK_LYRICS: Spotify tracks without Genius lyrics result: song4")
   }
 }

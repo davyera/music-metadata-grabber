@@ -74,6 +74,7 @@ case class SpotifyArtistAlbumsPage(items: Seq[SpotifyAlbumRef], total: Int) exte
 case class SpotifyAlbums(albums: Seq[SpotifyAlbum])
 case class SpotifyAlbum(id: String,
                         name: String,
+                        release_date: String,
                         artists: Seq[SpotifyArtistRef],
                         tracks: SpotifyAlbumTracksPage,
                         popularity: Int)

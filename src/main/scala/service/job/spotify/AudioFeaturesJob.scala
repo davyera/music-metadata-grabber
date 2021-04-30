@@ -22,9 +22,10 @@ case class AudioFeaturesJob(tracks: Seq[Track],
     val tracksData = tracks.grouped(featuresRequestLimit).toSeq.map { chunkedTracks: Seq[Track] =>
       val ids = chunkedTracks.map(_._id)
       spotify.requestAudioFeatures(ids).map { featuresResponse: SpotifyAudioFeaturesPage =>
+        logInfo(s"Received page of audio features for ${featuresResponse.audio_features.size} tracks.")
         featuresResponse.audio_features.map { features: SpotifyAudioFeatures =>
           // match features with the input received
-          val trackData = chunkedTracks.find(_._id == features.id) match {
+          chunkedTracks.find(_._id == features.id) match {
 
             // create track data using features and input track
             case Some(trk) => trk.copy(features = features.toMap)
@@ -32,8 +33,6 @@ case class AudioFeaturesJob(tracks: Seq[Track],
             // if we can't back-reference the original input track, throw exception (this should be impossible)
             case None => throw JobException(s"Could not back-reference track with ID ${features.id}")
           }
-          logInfo(s"Received audio features for track ${toTag(trackData.name, trackData._id)}")
-          trackData
         }
       }
     }

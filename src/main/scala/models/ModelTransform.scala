@@ -13,7 +13,7 @@ object ModelTransform {
     Playlist(sPlist.id, sPlist.name, sPlist.description, trackIds, category)
 
   def album(sAlb: SpotifyAlbum): Album =
-    Album(sAlb.id, sAlb.name, sAlb.popularity, sAlb.artists.map(_.id), sAlb.tracks.items.map(_.id))
+    Album(sAlb.id, sAlb.name, sAlb.release_date, sAlb.popularity, sAlb.artists.map(_.id), sAlb.tracks.items.map(_.id))
 
   def artist(sArtist: SpotifyArtist): Artist =
     Artist(sArtist.id, sArtist.name, sArtist.genres, sArtist.popularity, Nil)

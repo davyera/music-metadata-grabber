@@ -31,7 +31,7 @@ class DbPersistenceTest extends JobSpec {
   private val track: Track = Track("trk1", "first track", 20, 5, "album1", Seq("artist1"),
     Map("danceability" -> 1, "tempo" -> 120), "la la la")
   private val artist: Artist = Artist("artist1", "artist_name", Seq("pop", "rock"), 50, Seq("album1", "album2"))
-  private val album: Album = Album("album1", "album name", 5, Seq("art1", "art2"), Seq("trk1", "trk2"))
+  private val album: Album = Album("album1", "album name", "1990", 5, Seq("art1", "art2"), Seq("trk1", "trk2"))
   private val plist: Playlist = Playlist("plist1", "playlist hits", "the greatest hits", Seq("trk1", "trk2"), Some("cat"))
 
 

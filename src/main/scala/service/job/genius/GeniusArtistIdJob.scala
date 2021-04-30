@@ -20,7 +20,7 @@ case class GeniusArtistIdJob(artistName: String)(implicit jobEnvironment: JobEnv
         throw exception(s"No search results for artist name $artistName")
       else {
         val artist = hits.head.result.primary_artist
-        if (!normalizeTitle(artist.name).equals(artistName)) {
+        if (!normalizeTitle(artist.name).equals(normalizeTitle(artistName))) {
           // we got a search result for a different artist -- no lyrics can be found
           throw exception(s"No valid ID for artist $artistName")
         }
