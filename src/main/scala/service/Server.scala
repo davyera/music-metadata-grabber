@@ -14,11 +14,11 @@ object Server extends App with StrictLogging {
 
   val worker = new JobOrchestrator
 
+  worker.environment.deleteData()
 //  val hiphopPlist = "37i9dQZF1DWT5MrZnPU1zD"
 //  testPlaylist(hiphopPlist)
-//  testFeaturedPlaylists()
-  worker.environment.deleteData()
-  testArtist("hazel english")
+  worker.launchFeaturedPlaylistsJobs()
+//  testArtist("hazel english")
 
   private def testArtist(artistName: String): Unit =
     logArtistSummary(worker.launchArtistDataJobsForName(artistName))

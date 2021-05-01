@@ -11,6 +11,10 @@ import scala.concurrent.duration.{DurationInt, FiniteDuration}
 import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
+/**
+ * A unit of async work. Tracks running time, completion, success, and failure.
+ * Should not do a huge amount of work -- try to aim for 1 async outbound request or so.
+ */
 abstract class DataJob[T](private implicit val jobEnvironment: JobEnvironment) extends StrictLogging {
 
   private val maxJobTimeout: FiniteDuration = 1.minute

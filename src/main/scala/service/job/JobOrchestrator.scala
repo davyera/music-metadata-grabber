@@ -2,7 +2,6 @@ package service.job
 
 import com.typesafe.scalalogging.StrictLogging
 import models.{ArtistSummary, PageableWithTotal}
-import models.api.db._
 import service.job.genius.ArtistLyricsJob
 import service.job.spotify._
 
@@ -15,34 +14,43 @@ class JobOrchestrator(private implicit val context: ExecutionContext) extends St
   /** Requests all featured Spotify playlists and their tracks.
    *  For each track, will launch a full data job for its artists.
    */
-  def launchFeaturedPlaylistsJobs(): Seq[ArtistSummary] =
+  def launchFeaturedPlaylistsJobs(): Set[ArtistSummary] = {
+    logger.info("Orchestrating Featured Playlist metadata jobs...")
     launchPlaylistArtistJobs(FeaturedPlaylistsJob(pushPlaylistData = false))
+  }
 
   /** Requests Spotify playlists and their tracks for a specified category.
    *  For each track, will launch a full data job for its artists.
    */
-  def launchCategoryPlaylistsJob(categoryId: String): Seq[ArtistSummary] =
+  def launchCategoryPlaylistsJob(categoryId: String): Set[ArtistSummary] = {
+    logger.info(s"Orchestrating Category Playlist metadata jobs for category '$categoryId'...")
     launchPlaylistArtistJobs(CategoryPlaylistsJob(categoryId, pushPlaylistData = false))
+  }
 
   private def launchPlaylistArtistJobs[P <: PageableWithTotal](playlistJob: PlaylistsJob[P])
-    : Seq[ArtistSummary] = {
+    : Set[ArtistSummary] = {
 
     // pull playlist data
     val playlists = playlistJob.doWorkBlocking()
 
-    // iterate over every track in each playlist
-    playlists.flatMap { playlist =>
+    // gather tracks from all playlists
+    val allPlaylistTracks = playlists.flatMap { playlist =>
       // pull all track data for the playlist
       val plistWTracks = PlaylistTracksJob(playlist, pushPlaylistData = true, pushTrackData = false).doWorkBlocking()
-      val tracks = plistWTracks._2
-
-      // for each track, launch a full artist metadata job for its artists
-      tracks.flatMap(launchArtistDataJobsForTrack)
+      plistWTracks._2
     }
-  }
 
-  private def launchArtistDataJobsForTrack(track: Track): Seq[ArtistSummary] =
-    track.artists.map { artistId => launchArtistDataJobs(artistId) }
+    // get all artistIds - and transform to Set to remove duplicates
+    val artistIds = allPlaylistTracks.flatMap(_.artists)
+    val uniqArtistIds = artistIds.toSet
+    val numDuplicates = artistIds.size - uniqArtistIds.size
+    val duplicateMsg = if (numDuplicates > 0) s" ($numDuplicates duplicates found)" else ""
+    logger.info(s"Found ${uniqArtistIds.size} unique artists across playlists. $duplicateMsg")
+
+    // launch full metadata job for each artist
+    // uniqArtistIds.map(launchArtistDataJobs)
+    Set.empty
+  }
 
   /** Requests all data (Artist, Album, Track) for a given artist, given their name. */
   def launchArtistDataJobsForName(artistName: String): ArtistSummary = {
@@ -61,7 +69,9 @@ class JobOrchestrator(private implicit val context: ExecutionContext) extends St
 
     // get album metadata (includes track refs)
     val artistWithAlbums = ArtistAlbumsJob(artist, pushArtistData = true).doWorkBlocking()
-    val albums = AlbumsJob(artistWithAlbums.albums, pushAlbumData = true).doWorkBlocking()
+    // if an album already exists in the DB we can skip it.
+    val unIndexedAlbumIds = filterIndexedAlbums(artistWithAlbums.albums)
+    val albums = AlbumsJob(unIndexedAlbumIds, pushAlbumData = true).doWorkBlocking()
 
     // get track metadata (and append audio features)
     val tracks = albums.flatMap { album =>
@@ -74,5 +84,10 @@ class JobOrchestrator(private implicit val context: ExecutionContext) extends St
       TrackLyricsCombinationJob(Future(tracks), artistLyricsMapFuture, pushTrackData = true).doWorkBlocking()
 
     ArtistSummary(artist, albums, tracksWithLyrics)
+  }
+
+  private def filterIndexedAlbums(albumIds: Seq[String]): Seq[String] = {
+    // TODO: check if Album has been indexed already, if so we can skip it.
+    albumIds
   }
 }
