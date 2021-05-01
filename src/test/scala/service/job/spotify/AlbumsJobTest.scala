@@ -24,7 +24,7 @@ class AlbumsJobTest extends JobSpec {
     val result = AlbumsJob(Seq("alb1", "alb2", "alb3"), pushAlbumData = true, 2).doWorkBlocking()
 
     val expected = Seq(alb1d, alb2d, alb3d)
-    verify(data, times(3)).receive(argCaptor.capture())
+    verify(data, times(3)).persist(argCaptor.capture())
     val capturedAlbums = argCaptor.getAllValues
     assertMetadataSeqs(expected, capturedAlbums)
     assertMetadataSeqs(expected, result)

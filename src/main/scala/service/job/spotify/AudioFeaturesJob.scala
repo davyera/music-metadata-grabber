@@ -55,7 +55,7 @@ case class AudioFeaturesJob(tracks: Seq[Track],
     val allTracks = tracksWithFeatures ++ tracksWithoutFeatures
 
     // finally, return and (optionally) push data
-    if (pushTrackData) allTracks.foreach(data.receive)
+    if (pushTrackData) allTracks.foreach(data.persist)
     Future.successful(allTracks)
   }
 

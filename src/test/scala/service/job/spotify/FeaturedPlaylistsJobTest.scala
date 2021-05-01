@@ -22,7 +22,7 @@ class FeaturedPlaylistsJobTest extends JobSpec {
     val result = FeaturedPlaylistsJob(pushPlaylistData = true).doWorkBlocking()
 
     val expected = Seq(plist1d, plist2d, plist3d)
-    verify(data, times(3)).receive(plistCaptor.capture())
+    verify(data, times(3)).persist(plistCaptor.capture())
     assertMetadataSeqs(expected, plistCaptor.getAllValues)
     assertMetadataSeqs(expected, result)
   }

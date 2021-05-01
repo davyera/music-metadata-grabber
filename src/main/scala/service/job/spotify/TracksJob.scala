@@ -24,7 +24,7 @@ case class TracksJob(trackIds: Seq[String],
       spotify.requestTracks(chunkedTrackIds).map { tracksResponse: SpotifyTracks =>
         tracksResponse.tracks.map { spotifyTrack =>
           val track = ModelTransform.track(spotifyTrack)
-          if (pushTrackData) data.receive(track)
+          if (pushTrackData) data.persist(track)
           track
         }
       }

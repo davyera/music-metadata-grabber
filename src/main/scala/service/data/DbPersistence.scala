@@ -28,10 +28,10 @@ class DbPersistence(private[data] val db: DB = new DB)
   private val trackQueue = CollectionQueue(db.tracks)
   private val queues = Seq(playlistQueue, artistQueue, albumQueue, trackQueue)
 
-  override def receive(playlist: Playlist): Unit = playlistQueue.add(playlist)
-  override def receive(artist: Artist): Unit = artistQueue.add(artist)
-  override def receive(album: Album): Unit = albumQueue.add(album)
-  override def receive(track: Track): Unit = trackQueue.add(track)
+  override def persist(playlist: Playlist): Unit = playlistQueue.add(playlist)
+  override def persist(artist: Artist): Unit = artistQueue.add(artist)
+  override def persist(album: Album): Unit = albumQueue.add(album)
+  override def persist(track: Track): Unit = trackQueue.add(track)
 
   override def deleteData(): Future[Boolean] = {
     logger.info("Deleting music metadata from DB...")

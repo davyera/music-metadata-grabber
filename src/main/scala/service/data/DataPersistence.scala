@@ -6,10 +6,10 @@ import models.api.db.{Album, Artist, Playlist, Track}
 import scala.concurrent.Future
 
 abstract class DataPersistence extends StrictLogging {
-  def receive(playlist: Playlist): Unit
-  def receive(artist: Artist): Unit
-  def receive(album: Album): Unit
-  def receive(track: Track): Unit
+  def persist(playlist: Playlist): Unit
+  def persist(artist: Artist): Unit
+  def persist(album: Album): Unit
+  def persist(track: Track): Unit
 
   def deleteData(): Future[Boolean]
 }

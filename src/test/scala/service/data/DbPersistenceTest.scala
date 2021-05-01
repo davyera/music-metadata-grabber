@@ -35,31 +35,31 @@ class DbPersistenceTest extends JobSpec {
   private val plist: Playlist = Playlist("plist1", "playlist hits", "the greatest hits", Seq("trk1", "trk2"), Some("cat"))
 
 
-  "receive" should "push an Artist object to the DB" in {
-    dbp.receive(artist)
+  "persist" should "push an Artist object to the DB" in {
+    dbp.persist(artist)
     dbFind(db.artists, "_id", "artist1") shouldEqual artist
   }
 
-  "receive" should "push an Album object to the DB" in {
-    dbp.receive(album)
+  "persist" should "push an Album object to the DB" in {
+    dbp.persist(album)
     dbFind(db.albums, "name", "album name") shouldEqual album
   }
 
-  "receive" should "push a Playlist to the DB" in {
-    dbp.receive(plist)
+  "persist" should "push a Playlist to the DB" in {
+    dbp.persist(plist)
     dbFind(db.playlists, "_id", "plist1") shouldEqual plist
   }
 
-  "receive" should "push a Track to the DB" in {
-    dbp.receive(track)
+  "persist" should "push a Track to the DB" in {
+    dbp.persist(track)
     dbFind(db.tracks, "name", "first track") shouldEqual track
   }
 
   "clearData" should "completely clear the DB collections" in {
-    dbp.receive(track)
-    dbp.receive(artist)
-    dbp.receive(album)
-    dbp.receive(plist)
+    dbp.persist(track)
+    dbp.persist(artist)
+    dbp.persist(album)
+    dbp.persist(plist)
 
     val logVerifier = getLogVerifier[DbPersistence]
 

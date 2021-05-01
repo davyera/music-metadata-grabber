@@ -25,12 +25,12 @@ class PlaylistTracksJobTest extends JobSpec {
     val result = PlaylistTracksJob(plist1d, pushPlaylistData = true, pushTrackData = true).doWorkBlocking()
 
     val expectedPlists = Seq(plist1td)
-    verify(data, times(1)).receive(plistCaptor.capture())
+    verify(data, times(1)).persist(plistCaptor.capture())
     assertMetadataSeqs(expectedPlists, plistCaptor.getAllValues)
     result._1 shouldEqual plist1td
 
     val expectedTrks = Seq(trk1d, trk2d)
-    verify(data, times(2)).receive(trkCaptor.capture())
+    verify(data, times(2)).persist(trkCaptor.capture())
     assertMetadataSeqs(expectedTrks, trkCaptor.getAllValues)
     assertMetadataSeqs(expectedTrks, result._2)
   }

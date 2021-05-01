@@ -23,7 +23,7 @@ class TracksJobTest extends JobSpec {
 
     val result = TracksJob(Seq("t1", "t2"), pushTrackData = true).doWorkBlocking()
 
-    verify(data, times(2)).receive(argCaptor.capture())
+    verify(data, times(2)).persist(argCaptor.capture())
     val capturedTracks: util.List[Track] = argCaptor.getAllValues
     capturedTracks.contains(trk1d) shouldBe true
     capturedTracks.contains(trk2d) shouldBe true

@@ -24,7 +24,7 @@ class ArtistAlbumsJobTest extends JobSpec {
     val result = ArtistAlbumsJob(art1d, pushArtistData = true).doWorkBlocking()
 
     val expected = Seq(art1ad)
-    verify(data, times(1)).receive(artCaptor.capture())
+    verify(data, times(1)).persist(artCaptor.capture())
     assertMetadataSeqs(expected, artCaptor.getAllValues)
     result shouldEqual art1ad
     logVerifier.assertLogged(

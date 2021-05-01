@@ -24,7 +24,7 @@ class AudioFeaturesJobTest extends JobSpec {
     val result = AudioFeaturesJob(Seq(trk1d, trk2d), pushTrackData = true).doWorkBlocking()
 
     val expected = Seq(trk1fd, trk2fd)
-    verify(data, times(2)).receive(argCaptor.capture())
+    verify(data, times(2)).persist(argCaptor.capture())
     assertMetadataSeqs(expected, argCaptor.getAllValues)
     assertMetadataSeqs(expected, result)
   }
@@ -43,7 +43,7 @@ class AudioFeaturesJobTest extends JobSpec {
     val result = AudioFeaturesJob(Seq(trk1d, trk2d), pushTrackData = true).doWorkBlocking()
 
     val expected = Seq(trk1fd, trk2d) // trk2d is not transformed
-    verify(data, times(2)).receive(argCaptor.capture())
+    verify(data, times(2)).persist(argCaptor.capture())
     assertMetadataSeqs(expected, argCaptor.getAllValues)
     assertMetadataSeqs(expected, result)
     logVerifier.assertLogged("SPOTIFY:AUDIO_FEATURES: Could not load audio features for tracks: t2")

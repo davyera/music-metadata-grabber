@@ -28,7 +28,7 @@ case class PlaylistTracksJob(playlist: Playlist,
       val pagedTracks = workOnPages(playlistTracksPages) { page: SpotifyPlaylistTracksPage =>
         val sTrks = page.items.map(_.track)
         val tracks = sTrks.map(ModelTransform.track)
-        if (pushTrackData) tracks.foreach(data.receive)
+        if (pushTrackData) tracks.foreach(data.persist)
         tracks
       }
 
@@ -39,7 +39,7 @@ case class PlaylistTracksJob(playlist: Playlist,
       // concatenate all Track IDs to finalize the playlist object.
       val trackIds = tracks.map(_._id)
       val finalPlist = playlist.copy(tracks = trackIds)
-      if(pushPlaylistData) data.receive(finalPlist)
+      if(pushPlaylistData) data.persist(finalPlist)
 
       (finalPlist, tracks)
     }

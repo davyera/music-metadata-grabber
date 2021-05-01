@@ -39,7 +39,7 @@ case class ArtistAlbumsJob(artist: Artist, pushArtistData: Boolean)
 
       // launch AlbumInfo jobs with the now-unique IDs
       val finalArtist = artist.copy(albums = uniqueAlbumIds)
-      if (pushArtistData) data.receive(finalArtist)
+      if (pushArtistData) data.persist(finalArtist)
       finalArtist
     }
   }

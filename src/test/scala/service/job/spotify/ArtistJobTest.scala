@@ -21,7 +21,7 @@ class ArtistJobTest extends JobSpec {
 
     val result = ArtistJob("art1", pushArtistData = true).doWorkBlocking()
 
-    verify(data, times(1)).receive(artCaptor.capture())
+    verify(data, times(1)).persist(artCaptor.capture())
     assertMetadataSeqs(Seq(art1d), artCaptor.getAllValues)
     result shouldEqual art1d
   }

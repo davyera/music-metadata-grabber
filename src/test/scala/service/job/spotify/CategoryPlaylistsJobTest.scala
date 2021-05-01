@@ -27,7 +27,7 @@ class CategoryPlaylistsJobTest extends JobSpec {
     val result = CategoryPlaylistsJob("cat1", pushPlaylistData = true).doWorkBlocking()
 
     val expected = Seq(plistResult1, plistResult2)
-    verify(data, times(2)).receive(plistCaptor.capture())
+    verify(data, times(2)).persist(plistCaptor.capture())
     assertMetadataSeqs(expected, plistCaptor.getAllValues)
     assertMetadataSeqs(expected, result)
   }

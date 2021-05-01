@@ -49,7 +49,7 @@ case class TrackLyricsCombinationJob(tracksFuture: Future[Seq[Track]],
         case Success(lyrics)    => Success(track.copy(lyrics = lyrics))
         case Failure(_)         => Success(track) // just return the same input track metadata (sans lyrics)
       }.map { track =>
-        if (pushTrackData) data.receive(track)
+        if (pushTrackData) data.persist(track)
         track
       }
     }

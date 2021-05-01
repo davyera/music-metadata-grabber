@@ -52,7 +52,7 @@ class TrackLyricsCombinationJobTest extends JobSpec {
     val result = TrackLyricsCombinationJob(sTracks, lMap, pushTrackData = true).doWorkBlocking()
 
     val expected = Seq(trk1fld, trk2fld, trk3fd, trk4fd) // trk 3&4 should have no lyrics
-    verify(data, times(4)).receive(argCaptor.capture())
+    verify(data, times(4)).persist(argCaptor.capture())
     assertMetadataSeqs(expected, argCaptor.getAllValues)
     assertMetadataSeqs(expected, result)
     logVerifier.assertLogged("FINALIZATION:TRACK_LYRICS: Spotify tracks without Genius lyrics result: song4")
