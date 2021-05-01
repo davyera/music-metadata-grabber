@@ -69,9 +69,9 @@ class JobOrchestrator(private implicit val context: ExecutionContext) extends St
 
     // get album metadata (includes track refs)
     val artistWithAlbums = ArtistAlbumsJob(artist, pushArtistData = true).doWorkBlocking()
-    // if an album already exists in the DB we can skip it.
-    val unIndexedAlbumIds = filterIndexedAlbums(artistWithAlbums.albums)
-    val albums = AlbumsJob(unIndexedAlbumIds, pushAlbumData = true).doWorkBlocking()
+    // filter out any albums that already exist in the DB.
+    val newAlbumIds = NewAlbumFilterJob(artistWithAlbums).doWorkBlocking()
+    val albums = AlbumsJob(newAlbumIds, pushAlbumData = true).doWorkBlocking()
 
     // get track metadata (and append audio features)
     val tracks = albums.flatMap { album =>
@@ -84,10 +84,5 @@ class JobOrchestrator(private implicit val context: ExecutionContext) extends St
       TrackLyricsCombinationJob(Future(tracks), artistLyricsMapFuture, pushTrackData = true).doWorkBlocking()
 
     ArtistSummary(artist, albums, tracksWithLyrics)
-  }
-
-  private def filterIndexedAlbums(albumIds: Seq[String]): Seq[String] = {
-    // TODO: check if Album has been indexed already, if so we can skip it.
-    albumIds
   }
 }

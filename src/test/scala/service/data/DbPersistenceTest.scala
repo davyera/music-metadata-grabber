@@ -18,7 +18,7 @@ class DbPersistenceTest extends JobSpec {
   private def cleanDb(): Unit = Await.result(dbp.deleteData(), 1.second)
 
   def dbFind[T: ClassTag](collection: MongoCollection[T], key: String, value: String): T = {
-    Thread.sleep(250)
+    waitForPersistence()
     val future: Future[T] = collection.find(org.mongodb.scala.model.Filters.equal(key, value)).first().toFuture()
     Await.result(future, 1.second)
   }
@@ -31,9 +31,10 @@ class DbPersistenceTest extends JobSpec {
   private val track: Track = Track("trk1", "first track", 20, 5, "album1", Seq("artist1"),
     Map("danceability" -> 1, "tempo" -> 120), "la la la")
   private val artist: Artist = Artist("artist1", "artist_name", Seq("pop", "rock"), 50, Seq("album1", "album2"))
-  private val album: Album = Album("album1", "album name", "1990", 5, Seq("art1", "art2"), Seq("trk1", "trk2"))
+  private val album1: Album = Album("album1", "album name", "1990", 5, Seq("art1", "art2"), Seq("trk1", "trk2"))
+  private val album2: Album = Album("album2", "album2name", "2000", 10, Seq("art1"), Seq("trk1", "trk5"))
+  private val album3: Album = Album("album3", "album3name", "2020", 15, Seq("art2"), Seq("trk3", "trk4"))
   private val plist: Playlist = Playlist("plist1", "playlist hits", "the greatest hits", Seq("trk1", "trk2"), Some("cat"))
-
 
   "persist" should "push an Artist object to the DB" in {
     dbp.persist(artist)
@@ -41,8 +42,8 @@ class DbPersistenceTest extends JobSpec {
   }
 
   "persist" should "push an Album object to the DB" in {
-    dbp.persist(album)
-    dbFind(db.albums, "name", "album name") shouldEqual album
+    dbp.persist(album1)
+    dbFind(db.albums, "name", "album name") shouldEqual album1
   }
 
   "persist" should "push a Playlist to the DB" in {
@@ -55,16 +56,28 @@ class DbPersistenceTest extends JobSpec {
     dbFind(db.tracks, "name", "first track") shouldEqual track
   }
 
-  "clearData" should "completely clear the DB collections" in {
+  "getAlbumsForArtist" should "return all albums that contain the artistId" in {
+    cleanDb()
+    dbp.persist(album1)
+    dbp.persist(album2)
+    dbp.persist(album3)
+    waitForPersistence()
+    // should return albums 1&2 but not 3
+    whenReady(dbp.getAlbumsForArtist("art1")) { albums =>
+      albums.toSet shouldEqual Set(album1, album2)
+    }
+  }
+
+  "deleteData" should "completely clear the DB collections" in {
     dbp.persist(track)
     dbp.persist(artist)
-    dbp.persist(album)
+    dbp.persist(album1)
     dbp.persist(plist)
 
     val logVerifier = getLogVerifier[DbPersistence]
 
     //wait, and then make sure each collection has at least 1 document
-    Thread.sleep(250)
+    waitForPersistence()
     assertDocCounts((count: Long) => count > 0 shouldEqual true)
 
     whenReady(dbp.deleteData()) { result =>
@@ -74,4 +87,6 @@ class DbPersistenceTest extends JobSpec {
       assertDocCounts((count: Long) => count shouldEqual 0)
     }
   }
+
+  private def waitForPersistence(): Unit = Thread.sleep(250)
 }

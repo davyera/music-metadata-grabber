@@ -3,6 +3,7 @@ package service.data
 import com.mongodb.BasicDBObject
 import com.typesafe.scalalogging.StrictLogging
 import models.api.db.{Album, Artist, Playlist, Track}
+import org.mongodb.scala.model.Filters
 import org.mongodb.scala.{Completed, MongoCollection}
 
 import java.util
@@ -33,13 +34,16 @@ class DbPersistence(private[data] val db: DB = new DB)
   override def persist(album: Album): Unit = albumQueue.add(album)
   override def persist(track: Track): Unit = trackQueue.add(track)
 
+  override def getAlbumsForArtist(artistId: String): Future[Seq[Album]] =
+    db.albums.find(Filters.equal("artists", artistId)).toFuture()
+
   override def deleteData(): Future[Boolean] = {
     logger.info("Deleting music metadata from DB...")
     val futureResult = Future.sequence(
       db.collections.map(c => c.deleteMany(new BasicDBObject()).toFuture())
     ).map(_.forall(_.wasAcknowledged())) // collapse DeleteResult acknowledgements into one boolean
     futureResult.onComplete {
-        case Success(_) => logger.info("Successfully deleted music metadata.")
+        case Success(_)     => logger.info("Successfully deleted music metadata.")
         case Failure(error) => logger.error(s"Could not delete music metadata.\n$error")
       }
     futureResult

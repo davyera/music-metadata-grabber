@@ -11,5 +11,7 @@ abstract class DataPersistence extends StrictLogging {
   def persist(album: Album): Unit
   def persist(track: Track): Unit
 
+  def getAlbumsForArtist(artistId: String): Future[Seq[Album]]
+
   def deleteData(): Future[Boolean]
 }

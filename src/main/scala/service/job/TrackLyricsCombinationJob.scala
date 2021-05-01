@@ -15,9 +15,8 @@ case class TrackLyricsCombinationJob(tracksFuture: Future[Seq[Track]],
                                      lyricsMapFuture: Future[LyricsMap],
                                      pushTrackData: Boolean)
                                     (implicit jobEnvironment: JobEnvironment)
-  extends DataJob[Seq[Track]] {
+  extends FinalizationJob[Seq[Track]] {
 
-  override private[job] val serviceName = "FINALIZATION"
   override private[job] val jobName = "TRACK_LYRICS"
 
   override private[job] def work: Future[Seq[Track]] = {

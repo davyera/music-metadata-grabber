@@ -135,4 +135,8 @@ abstract class GeniusJob[T](implicit jobEnvironment: JobEnvironment) extends Dat
   override val serviceName: String = "GENIUS"
 }
 
+abstract class FinalizationJob[T](implicit jobEnvironment: JobEnvironment) extends DataJob[T] {
+  override val serviceName: String = "FINALIZATION"
+}
+
 case class JobException(msg: String) extends Exception(msg)
