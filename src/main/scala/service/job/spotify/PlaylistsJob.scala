@@ -18,7 +18,7 @@ abstract class PlaylistsJob[P <: PageableWithTotal](pushPlaylistData: Boolean)
           logInfo(s"Received Playlist metadata for ${toTag(plistInfo.name, plistInfo.id)}")
 
           val playlist = ModelTransform.playlist(plistInfo, Nil, category)
-          if (pushPlaylistData) receiver.receive(playlist)
+          if (pushPlaylistData) data.receive(playlist)
           playlist
         }
       }

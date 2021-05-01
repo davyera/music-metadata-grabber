@@ -17,7 +17,7 @@ case class ArtistJob(artistId: String, pushArtistData: Boolean)
   override private[job] def work: Future[Artist] =
     spotify.requestArtist(artistId).map { sArtist: SpotifyArtist =>
       val artist = ModelTransform.artist(sArtist)
-      if (pushArtistData) receiver.receive(artist)
+      if (pushArtistData) data.receive(artist)
       artist
     }
 

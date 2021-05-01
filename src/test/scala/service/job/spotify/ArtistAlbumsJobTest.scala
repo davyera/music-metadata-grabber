@@ -3,7 +3,7 @@ package service.job.spotify
 import models.api.db.Artist
 import org.mockito.ArgumentCaptor
 import org.mockito.Mockito._
-import service.data.DataReceiver
+import service.data.DataPersistence
 import service.job.{JobEnvironment, JobSpec}
 import service.request.spotify.SpotifyRequester
 
@@ -16,15 +16,15 @@ class ArtistAlbumsJobTest extends JobSpec {
     when(spotify.requestArtistAlbums("art1", 20))
       .thenReturn(Future(Seq(Future(artAlbPg1), Future(artAlbPg2), Future(artAlbPg3))))
 
-    val receiver = mock[DataReceiver]
+    val data = mock[DataPersistence]
     val artCaptor: ArgumentCaptor[Artist] = ArgumentCaptor.forClass(classOf[Artist])
     val logVerifier = getLogVerifier[ArtistAlbumsJob]
-    implicit val jobEnv: JobEnvironment = env(sRequest = spotify, dReceiver = receiver)
+    implicit val jobEnv: JobEnvironment = env(sRequest = spotify, data = data)
 
     val result = ArtistAlbumsJob(art1d, pushArtistData = true).doWorkBlocking()
 
     val expected = Seq(art1ad)
-    verify(receiver, times(1)).receive(artCaptor.capture())
+    verify(data, times(1)).receive(artCaptor.capture())
     assertMetadataSeqs(expected, artCaptor.getAllValues)
     result shouldEqual art1ad
     logVerifier.assertLogged(

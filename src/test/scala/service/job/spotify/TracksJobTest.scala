@@ -3,7 +3,7 @@ package service.job.spotify
 import models.api.db.Track
 import org.mockito.ArgumentCaptor
 import org.mockito.Mockito._
-import service.data.DataReceiver
+import service.data.DataPersistence
 import service.job.{JobEnvironment, JobSpec}
 import service.request.spotify.SpotifyRequester
 
@@ -16,14 +16,14 @@ class TracksJobTest extends JobSpec {
     val spotify = mock[SpotifyRequester]
     when(spotify.requestTracks(Seq("t1", "t2"))).thenReturn(Future(trkPg1))
 
-    val receiver = mock[DataReceiver]
+    val data = mock[DataPersistence]
     val argCaptor: ArgumentCaptor[Track] = ArgumentCaptor.forClass(classOf[Track])
 
-    implicit val jobEnv: JobEnvironment = env(sRequest = spotify, dReceiver = receiver)
+    implicit val jobEnv: JobEnvironment = env(sRequest = spotify, data = data)
 
     val result = TracksJob(Seq("t1", "t2"), pushTrackData = true).doWorkBlocking()
 
-    verify(receiver, times(2)).receive(argCaptor.capture())
+    verify(data, times(2)).receive(argCaptor.capture())
     val capturedTracks: util.List[Track] = argCaptor.getAllValues
     capturedTracks.contains(trk1d) shouldBe true
     capturedTracks.contains(trk2d) shouldBe true

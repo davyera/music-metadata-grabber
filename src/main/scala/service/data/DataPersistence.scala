@@ -5,7 +5,7 @@ import models.api.db.{Album, Artist, Playlist, Track}
 
 import scala.concurrent.Future
 
-abstract class DataReceiver extends StrictLogging {
+abstract class DataPersistence extends StrictLogging {
   def receive(playlist: Playlist): Unit
   def receive(artist: Artist): Unit
   def receive(album: Album): Unit

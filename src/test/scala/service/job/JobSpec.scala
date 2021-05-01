@@ -4,7 +4,7 @@ import models.Backend
 import models.api.db.{Album, Artist, Playlist, Track}
 import models.api.resources.genius._
 import models.api.resources.spotify._
-import service.data.DataReceiver
+import service.data.DataPersistence
 import service.request.genius.{GeniusLyricsScraper, GeniusRequester}
 import service.request.spotify.SpotifyRequester
 import testutils.UnitSpec
@@ -18,14 +18,14 @@ class JobSpec extends UnitSpec {
   def env(sRequest: SpotifyRequester = mock[SpotifyRequester],
           gRequest: GeniusRequester = mock[GeniusRequester],
           gScraper: GeniusLyricsScraper = mock[GeniusLyricsScraper],
-          dReceiver: DataReceiver = mock[DataReceiver]): JobEnvironment = {
+          data: DataPersistence = mock[DataPersistence]): JobEnvironment = {
     new JobEnvironment {
       override val context: ExecutionContext = ctx
       override val backend: Backend = mock[Backend]
       override val spotify: SpotifyRequester = sRequest
       override val genius: GeniusRequester = gRequest
       override val geniusScraper: GeniusLyricsScraper = gScraper
-      override val receiver: DataReceiver = dReceiver
+      override val dataPersistence: DataPersistence = data
       override val jobCoolDownMs: Int = 0
     }
   }

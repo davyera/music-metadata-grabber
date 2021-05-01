@@ -3,7 +3,7 @@ package service.job
 import models.api.db.Track
 import org.mockito.ArgumentCaptor
 import org.mockito.Mockito._
-import service.data.DataReceiver
+import service.data.DataPersistence
 import utils.MetadataNormalization
 
 import scala.concurrent.Future
@@ -36,10 +36,10 @@ class TrackLyricsCombinationJobTest extends JobSpec {
   }
 
   "doWorkBlocking" should "match Spotify Tracks to their Genius lyrics result counterpart" in {
-    val receiver = mock[DataReceiver]
+    val data = mock[DataPersistence]
     val argCaptor: ArgumentCaptor[Track] = ArgumentCaptor.forClass(classOf[Track])
 
-    implicit val jobEnv: JobEnvironment = env(dReceiver = receiver)
+    implicit val jobEnv: JobEnvironment = env(data = data)
     val logVerifier = getLogVerifier[TrackLyricsCombinationJob]
 
     val sTracks = Future(Seq(trk1fd, trk2fd, trk3fd, trk4fd))
@@ -52,7 +52,7 @@ class TrackLyricsCombinationJobTest extends JobSpec {
     val result = TrackLyricsCombinationJob(sTracks, lMap, pushTrackData = true).doWorkBlocking()
 
     val expected = Seq(trk1fld, trk2fld, trk3fd, trk4fd) // trk 3&4 should have no lyrics
-    verify(receiver, times(4)).receive(argCaptor.capture())
+    verify(data, times(4)).receive(argCaptor.capture())
     assertMetadataSeqs(expected, argCaptor.getAllValues)
     assertMetadataSeqs(expected, result)
     logVerifier.assertLogged("FINALIZATION:TRACK_LYRICS: Spotify tracks without Genius lyrics result: song4")

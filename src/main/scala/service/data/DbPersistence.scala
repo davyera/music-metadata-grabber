@@ -12,7 +12,7 @@ import scala.util.{Failure, Success}
 
 /** Receives data and pushes it to Mongo DB in batches */
 class DbPersistence(private[data] val db: DB = new DB)
-                   (implicit context: ExecutionContext) extends DataReceiver with StrictLogging {
+                   (implicit context: ExecutionContext) extends DataPersistence with StrictLogging {
 
   private val batchSize = 1000
   private val dbPushIntervalMs: Int = 200

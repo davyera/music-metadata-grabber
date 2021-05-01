@@ -2,7 +2,7 @@ package service.job
 
 import com.typesafe.scalalogging.StrictLogging
 import models.api.webapp.JobSummary
-import service.data.DataReceiver
+import service.data.DataPersistence
 import service.request.genius.{GeniusLyricsScraper, GeniusRequester}
 import service.request.spotify.SpotifyRequester
 
@@ -24,7 +24,7 @@ abstract class DataJob[T](private implicit val jobEnvironment: JobEnvironment) e
   private[job] val spotify:       SpotifyRequester    = jobEnvironment.spotify
   private[job] val genius:        GeniusRequester     = jobEnvironment.genius
   private[job] val geniusScraper: GeniusLyricsScraper = jobEnvironment.geniusScraper
-  private[job] val receiver:      DataReceiver        = jobEnvironment.receiver
+  private[job] val data:      DataPersistence        = jobEnvironment.dataPersistence
 
   implicit private[job] val context: ExecutionContext = jobEnvironment.context
 

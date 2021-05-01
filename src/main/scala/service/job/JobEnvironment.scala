@@ -2,7 +2,7 @@ package service.job
 
 import com.typesafe.scalalogging.StrictLogging
 import models.Backend
-import service.data.{DataReceiver, DbPersistence}
+import service.data.{DataPersistence, DbPersistence}
 import service.request.genius.{GeniusAuthTokenProvider, GeniusLyricsScraper, GeniusRequester}
 import service.request.spotify.{SpotifyAuthTokenProvider, SpotifyRequester}
 import sttp.client.asynchttpclient.future.AsyncHttpClientFutureBackend
@@ -23,7 +23,7 @@ class JobEnvironment(implicit val context: ExecutionContext) extends StrictLoggi
   private[job] val genius: GeniusRequester = new GeniusRequester(geniusAuth)
   private[job] val geniusScraper: GeniusLyricsScraper = new GeniusLyricsScraper()
 
-  private[job] val receiver: DataReceiver = new DbPersistence()
+  private[job] val dataPersistence: DataPersistence = new DbPersistence()
 
   private val jobs = new JobHistory()
   private[job] val jobCoolDownMs = config.jobCoolDownMs
@@ -35,7 +35,7 @@ class JobEnvironment(implicit val context: ExecutionContext) extends StrictLoggi
   def successfulJobs: Seq[DataJob[_]] = jobs.get.filter(job => job.isComplete && !job.isFailed)
   def failedJobs: Seq[DataJob[_]] = jobs.get.filter(_.isFailed)
 
-  def deleteData(): Unit = receiver.deleteData()
+  def deleteData(): Unit = dataPersistence.deleteData()
 
   // Periodically remove successful jobs from our cache
   // TODO: make a DB record of these results?
