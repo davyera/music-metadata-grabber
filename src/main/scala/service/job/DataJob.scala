@@ -19,6 +19,7 @@ abstract class DataJob[T](private implicit val jobEnvironment: JobEnvironment) e
 
   private val maxJobTimeout: FiniteDuration = 10.seconds
   private val jobCoolDownMs: Int = jobEnvironment.jobCoolDownMs
+  private val pageCoolDownMs: Int = 500
   private val logStackTrace: Boolean = false
 
   // External data resource connections
@@ -98,22 +99,27 @@ abstract class DataJob[T](private implicit val jobEnvironment: JobEnvironment) e
   private[job] def flattenChunkedResults[O](results: Seq[Future[Seq[O]]]): Future[Seq[O]] =
     Future.sequence(results).map(_.flatten)
   private[job] def awaitPagedResults[O](pagedResults: Seq[Future[Seq[O]]]): Seq[O] =
-    pagedResults.flatten(awaitResult(_))
+    pagedResults.flatten(awaitResult(_, Nil))
   private[job] def awaitResult[O](future: Future[O], timeoutRecovery: O = null): O =
     try
       Await.result(future, maxJobTimeout)
     catch {
-      case _: TimeoutException =>
-        logError("Timeout reached waiting for job. Recovering...")
+      case te: TimeoutException =>
+        logError("Timeout reached waiting for job. Attempting recovery...")
+        te.printStackTrace()
         timeoutRecovery
       case t: Throwable => throw t
     }
 
   /** Apply a function to paged results from a paged API response. */
-  private[job] def workOnPages[P, O](pages: Seq[Future[P]])(pageWork: P => O): Seq[Future[O]] =
+  private[job] def workOnPages[P, O](pages: Seq[Future[P]],
+                                     pgCoolDownMs: Int = pageCoolDownMs)
+                                    (pageWork: P => O): Seq[Future[O]] =
     pages.map { pageFuture: Future[P] =>
       pageFuture.map { page: P =>
-        pageWork(page)
+        val result = pageWork(page)
+        if (pgCoolDownMs > 0) Thread.sleep(pgCoolDownMs)
+        result
       }
     }
 

@@ -11,6 +11,8 @@ object Server extends App with StrictLogging {
   implicit val context: ExecutionContext = ExecutionContext.Implicits.global
   implicit val master: OrchestrationMaster = new OrchestrationMaster
 
+  master.deleteData()
+
   master.enqueueFeaturedPlaylistsOrchestration(None, None)
 //  master.enqueueArtistOrchestration("hazel english")
 //  master.enqueueArtistOrchestration("day wave")
