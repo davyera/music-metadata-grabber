@@ -2,7 +2,7 @@ package service.job
 
 import com.typesafe.scalalogging.StrictLogging
 import models.Backend
-import service.data.{DataPersistence, DbPersistence}
+import service.data.DataPersistence
 import service.request.genius.{GeniusAuthTokenProvider, GeniusLyricsScraper, GeniusRequester}
 import service.request.spotify.{SpotifyAuthTokenProvider, SpotifyRequester}
 import sttp.client.asynchttpclient.future.AsyncHttpClientFutureBackend
@@ -12,7 +12,8 @@ import java.util.concurrent.TimeUnit
 import scala.concurrent.ExecutionContext
 import scala.jdk.CollectionConverters._
 
-class JobEnvironment(implicit val context: ExecutionContext) extends StrictLogging {
+class JobEnvironment(val dataPersistence: DataPersistence)
+                    (implicit val context: ExecutionContext) extends StrictLogging {
   implicit val backend: Backend = AsyncHttpClientFutureBackend()(context)
   private val config = Configuration
 
@@ -22,8 +23,6 @@ class JobEnvironment(implicit val context: ExecutionContext) extends StrictLoggi
   private val geniusAuth: GeniusAuthTokenProvider = new GeniusAuthTokenProvider()
   private[job] val genius: GeniusRequester = new GeniusRequester(geniusAuth)
   private[job] val geniusScraper: GeniusLyricsScraper = new GeniusLyricsScraper()
-
-  private[job] val dataPersistence: DataPersistence = new DbPersistence()
 
   private val jobs = new JobHistory()
   private[job] val jobCoolDownMs = config.jobCoolDownMs
@@ -35,10 +34,7 @@ class JobEnvironment(implicit val context: ExecutionContext) extends StrictLoggi
   def successfulJobs: Seq[DataJob[_]] = jobs.get.filter(job => job.isComplete && !job.isFailed)
   def failedJobs: Seq[DataJob[_]] = jobs.get.filter(_.isFailed)
 
-  def deleteData(): Unit = dataPersistence.deleteData()
-
   // Periodically remove successful jobs from our cache
-  // TODO: make a DB record of these results?
   private val cleanSuccessIntervalMin = 1
   service.SimpleScheduledTask(cleanSuccessIntervalMin, TimeUnit.MINUTES, () => clearSuccessfulJobs())
   private def clearSuccessfulJobs(): Unit = {

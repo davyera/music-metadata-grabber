@@ -39,7 +39,7 @@ abstract class PlaylistsJob[P <: PageableWithTotal](pushPlaylistData: Boolean)
 /** Requests playlist metadata for all Spotify featured playlists.
  *  Note: Will not have "tracks" data at this point.
  */
-case class FeaturedPlaylistsJob(pushPlaylistData: Boolean)
+case class FeaturedPlaylistsJob(pushPlaylistData: Boolean = false)
                                (implicit jobEnvironment: JobEnvironment)
   extends PlaylistsJob[SpotifyFeaturedPlaylists](pushPlaylistData) {
 
@@ -55,11 +55,13 @@ case class FeaturedPlaylistsJob(pushPlaylistData: Boolean)
 /** Requests playlist metadata for all Spotify playlists for given category.
  *  Note: Will not have "tracks" data at this point.
  */
-case class CategoryPlaylistsJob(categoryId: String, pushPlaylistData: Boolean)
+case class CategoryPlaylistsJob(categoryId: String, pushPlaylistData: Boolean = false)
                                (implicit jobEnvironment: JobEnvironment)
   extends PlaylistsJob[SpotifyCategoryPlaylists](pushPlaylistData) {
 
   override private[job] val jobName = "CATEGORY_PLAYLISTS"
+
+  override private[job] val jobIdentifier = categoryId
 
   override def playlistPageRequest(): Future[Seq[Future[SpotifyCategoryPlaylists]]] =
     spotify.requestCategoryPlaylists(categoryId)

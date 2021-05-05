@@ -1,66 +1,115 @@
 package webapp
 
-import models.api.webapp.{ArtistRequest, CategoryRequest, JobSummary}
 import play.api.mvc._
 import play.api.libs.json._
-import service.job.{DataJob, JobEnvironment, JobOrchestrator}
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
-
+import scala.concurrent.{Await, ExecutionContext, Future}
 import WebappFormat._
+import models.OrchestrationSummary
+import models.api.webapp._
+import service.job.orchestration.OrchestrationMaster
+
+import java.util.concurrent.TimeoutException
+import scala.concurrent.duration.{DurationInt, FiniteDuration}
 
 object WebappFormat {
   implicit val jobJson: OFormat[JobSummary] = Json.format[JobSummary]
-  implicit val artistRequestJson: OFormat[ArtistRequest] = Json.format[ArtistRequest]
-  implicit val categoryResultJson: OFormat[CategoryRequest] = Json.format[CategoryRequest]
+  implicit val orchestrationJson: OFormat[OrchestrationSummary] = Json.format[OrchestrationSummary]
+  implicit val artistRequestJson: OFormat[ArtistOrchestrationRequest] =
+    Json.format[ArtistOrchestrationRequest]
+  implicit val categoryPlaylistRequestJson: OFormat[CategoryPlaylistsOrchestrationRequest] =
+    Json.format[CategoryPlaylistsOrchestrationRequest]
+  implicit val featuredPlaylistRequestJson: OFormat[FeaturedPlaylistOrchestrationRequest] =
+    Json.format[FeaturedPlaylistOrchestrationRequest]
 }
 
 @Singleton
 class MainController @Inject()(val controllerComponents: ControllerComponents) extends BaseController {
 
-  private val worker: JobOrchestrator = new JobOrchestrator()(ExecutionContext.Implicits.global)
-  private val env: JobEnvironment = worker.environment
+  private val maxRequestTimeout: FiniteDuration = 10.seconds
 
-  def getJobs: Action[AnyContent] = jobsResponse(env.getJobs)
+  implicit val context: ExecutionContext = ExecutionContext.Implicits.global
+  implicit val master: OrchestrationMaster = new OrchestrationMaster()
 
-  private def jobsResponse(jobs: Seq[DataJob[_]]): Action[AnyContent] = Action {
-    if (jobs.isEmpty)
-      NoContent
+  def getJobs: Action[AnyContent] = Action {
+    val jobs = master.getJobSummaries
+    if (jobs.nonEmpty)
+      Ok(Json.toJson(jobs))
     else
-      Ok(Json.toJson(jobs.map(_.summarize)))
+      NoContent
   }
 
-  def pullFeaturedPlaylistsData: Action[AnyContent] = Action {
-    worker.launchFeaturedPlaylistsJobs()
-    Ok(s"Orchestrating jobs for featured playlist artists...")
+  def getCurrentOrchestration: Action[AnyContent] = Action {
+    master.getCurrentOrchestrationSummary match {
+      case Some(summary)  =>  Ok(Json.toJson(summary))
+      case None           =>  NoContent
+    }
+  }
+
+  def getQueuedOrchestrations: Action[AnyContent] = Action {
+    val summaries = master.getQueuedOrchestrationSummaries
+    if (summaries.nonEmpty)
+      Ok(Json.toJson(summaries))
+    else
+      NoContent
+  }
+
+  def pullFeaturedPlaylistsData: Action[AnyContent] =
+  handleRequest[FeaturedPlaylistOrchestrationRequest] { playlistRequest =>
+    val recurrence = playlistRequest.recurrence
+    master.enqueueFeaturedPlaylistsOrchestration(None, recurrence)
+    s"Orchestrating jobs for featured playlist artists..."
   }
 
   def pullCategoryPlaylistsData: Action[AnyContent] =
-    handleRequestBody[CategoryRequest] { categoryRequest =>
-      val category = categoryRequest.category
-      worker.launchCategoryPlaylistsJob(category)
+    handleRequest[CategoryPlaylistsOrchestrationRequest] { categoryRequest =>
+      val category = categoryRequest.category_id
+      val recurrence = categoryRequest.recurrence
+      master.enqueueCategoryPlaylistsOrchestration(category, None, recurrence)
       s"Orchestrating jobs for $category category playlists..."
     }
 
   def pullArtistData: Action[AnyContent] =
-    handleRequestBody[ArtistRequest] { artistRequest =>
+    handleRequest[ArtistOrchestrationRequest] { artistRequest =>
       val artistName = artistRequest.artist_name
-      worker.launchArtistDataJobsForName(artistName)
+      master.enqueueArtistOrchestration(artistName)
       s"Orchestrating jobs for artist $artistName..."
     }
 
-  private def handleRequestBody[T](onSuccessWithMsg: T => String)
-                                  (implicit fmt: OFormat[T]): Action[AnyContent] =
-    Action { implicit request =>
-      request.body.asJson.flatMap(Json.fromJson[T](_).asOpt) match {
-        case Some(requestObject) => Ok(onSuccessWithMsg(requestObject))
-        case None => BadRequest
-      }
-  }
+  private def getRequestBody[T <: OrchestrationRequest](request: Request[AnyContent])
+                                                       (implicit fmt: OFormat[T]): Option[T] =
+    request.body.asJson.flatMap(Json.fromJson[T](_).asOpt)
 
-  def deleteData: Action[AnyContent] = Action {
-    env.deleteData()
-    Ok(s"Clearing database...")
+  def deleteData(): Action[AnyContent] =
+    handleRequestAwaitResponse(master.deleteData()) { accepted =>
+      if (accepted)
+        Ok("Clearing data...")
+      else
+        InternalServerError("Could not clear data")
+    }
+
+  private def handleRequest[T <: OrchestrationRequest](onSuccessWithMsg: T => String)
+                                                      (implicit fmt: OFormat[T]): Action[AnyContent] =
+    Action { implicit request: Request[AnyContent] =>
+      getRequestBody[T](request) match {
+        case Some(requestObject)  =>
+          if (requestObject.isValid)
+            Ok(onSuccessWithMsg(requestObject))
+          else
+            BadRequest(s"Missing required arguments: ${requestObject.requiredArgNames.mkString(", ")}")
+        case None =>  BadRequest
+      }
+    }
+
+  private def handleRequestAwaitResponse[T](futureResult: Future[T])
+                                           (handleResult: T => Result): Action[AnyContent] = Action {
+    try {
+      val result = Await.result(futureResult, maxRequestTimeout)
+      handleResult(result)
+    } catch {
+      case _: InterruptedException => RequestTimeout
+      case t: Throwable => InternalServerError(t.getMessage)
+    }
   }
 }

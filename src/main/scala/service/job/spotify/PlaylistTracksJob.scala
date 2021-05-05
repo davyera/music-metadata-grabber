@@ -20,6 +20,8 @@ case class PlaylistTracksJob(playlist: Playlist,
 
   override private[job] val jobName: String = "PLAYLIST_TRACKS"
 
+  override private[job] val jobIdentifier: String = s"[${toTag(playlist.name, playlist._id)}]"
+
   override private[job] def work: Future[(Playlist, Seq[Track])] = {
     val plistId = playlist._id
     val plistTag = toTag(playlist.name, plistId)

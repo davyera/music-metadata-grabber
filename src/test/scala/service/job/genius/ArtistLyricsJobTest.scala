@@ -50,8 +50,8 @@ class ArtistLyricsJobTest extends JobSpec {
 
     whenReady(result) { lyricsMap =>
       lyricsMap shouldEqual Map()
-      artistIdLogVerifier.assertLogged("ERROR IN GENIUS:ARTIST_ID: oops")
-      artistLyricLogVerifier.assertLogged("GENIUS:ARTIST_LYRICS: Skipping lyrics for artist art1.")
+      artistIdLogVerifier.assertLogged("ERROR IN GENIUS:ARTIST_ID:[art1] oops")
+      artistLyricLogVerifier.assertLogged("GENIUS:ARTIST_LYRICS:[art1] Skipping lyrics for artist art1.")
     }
   }
 }

@@ -1,5 +1,6 @@
 package service.job
 
+import service.data.DataPersistence
 import testutils.UnitSpec
 
 import scala.concurrent.Future
@@ -21,7 +22,7 @@ class JobEnvironmentTest extends UnitSpec {
   }
 
   "unfinishedJobs" should "list all registered jobs that are not yet finished" in {
-    implicit val env: JobEnvironment = new JobEnvironment()
+    implicit val env: JobEnvironment = new JobEnvironment(mock[DataPersistence])
     val job1_finished = mkJob(completed = true, failed = false)
     val job2_unfinished = mkJob(completed = false, failed = false)
     val job3_unfinished = mkJob(completed = false, failed = true)
@@ -36,7 +37,7 @@ class JobEnvironmentTest extends UnitSpec {
   }
 
   "failedJobs" should "list all failed jobs whether or not they are finished" in {
-    implicit val env: JobEnvironment = new JobEnvironment()
+    implicit val env: JobEnvironment = new JobEnvironment(mock[DataPersistence])
     val job1_failed = mkJob(completed = true, failed = true)
     val job2_success= mkJob(completed = true, failed = false)
     val job3_failed = mkJob(completed = false, failed = true)

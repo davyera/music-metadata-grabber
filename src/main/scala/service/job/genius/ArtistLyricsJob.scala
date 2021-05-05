@@ -14,6 +14,8 @@ case class ArtistLyricsJob(artistName: String)(implicit jobEnvironment: JobEnvir
 
   override private[job] val jobName = "ARTIST_LYRICS"
 
+  override private[job] val jobIdentifier = s"[$artistName]"
+
   override private[job] def work: Future[LyricsMap] = {
     queryArtistId().flatMap { artistId =>
       genius.requestArtistSongs(artistId).map { songsResponsePages: Seq[Future[GeniusArtistSongsPage]] =>

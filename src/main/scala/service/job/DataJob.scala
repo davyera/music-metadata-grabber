@@ -8,7 +8,7 @@ import service.request.spotify.SpotifyRequester
 
 import java.util.concurrent.atomic.{AtomicBoolean, AtomicLong, AtomicReference}
 import scala.concurrent.duration.{DurationInt, FiniteDuration}
-import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.concurrent.{Await, ExecutionContext, Future, TimeoutException}
 import scala.util.{Failure, Success}
 
 /**
@@ -17,14 +17,16 @@ import scala.util.{Failure, Success}
  */
 abstract class DataJob[T](private implicit val jobEnvironment: JobEnvironment) extends StrictLogging {
 
-  private val maxJobTimeout: FiniteDuration = 1.minute
+  private val maxJobTimeout: FiniteDuration = 10.seconds
   private val jobCoolDownMs: Int = jobEnvironment.jobCoolDownMs
   private val logStackTrace: Boolean = false
 
+  // External data resource connections
   private[job] val spotify:       SpotifyRequester    = jobEnvironment.spotify
   private[job] val genius:        GeniusRequester     = jobEnvironment.genius
   private[job] val geniusScraper: GeniusLyricsScraper = jobEnvironment.geniusScraper
-  private[job] val data:      DataPersistence        = jobEnvironment.dataPersistence
+
+  private[job] val data:          DataPersistence     = jobEnvironment.dataPersistence
 
   implicit private[job] val context: ExecutionContext = jobEnvironment.context
 
@@ -37,7 +39,7 @@ abstract class DataJob[T](private implicit val jobEnvironment: JobEnvironment) e
 
   /** Block for job completion and force waiting for cool-down. */
   def doWorkBlocking(): T = {
-    val result = awaitResult(doWork())
+    val result = awaitResult(doWork(), recovery)
     Thread.sleep(jobCoolDownMs)
     result
   }
@@ -78,16 +80,16 @@ abstract class DataJob[T](private implicit val jobEnvironment: JobEnvironment) e
   /** Override with value FALSE if the Job can't be recovered to a default value (ie. when searching for an ID) */
   private[job] val canRecover: Boolean = true
   private[job] val _id: String = java.util.UUID.randomUUID.toString
+  private[job] val jobIdentifier: String = ""
   private[job] val serviceName: String
   private[job] val jobName: String
 
-  private lazy val jobTag = s"$serviceName:$jobName"
+  private lazy val jobTag = s"$serviceName:$jobName:$jobIdentifier"
 
-  private[job] def logInfo(msg: String): Unit = logger.info(s"$jobTag: $msg")
-  private[job] def logWarn(msg: String): Unit = logger.warn(s"$jobTag: $msg")
+  private[job] def logInfo(msg: String): Unit = logger.info(s"$jobTag $msg")
+  private[job] def logWarn(msg: String): Unit = logger.warn(s"$jobTag $msg")
   private[job] def logError(err: Throwable): Unit = { logError(err.getMessage); err.printStackTrace() }
-  private[job] def logError(msg: String): Unit =
-    logger.error(s"ERROR IN $jobTag: $msg")
+  private[job] def logError(msg: String): Unit = logger.error(s"ERROR IN $jobTag $msg")
   private[job] def exception(msg: String): JobException = JobException(msg)
 
   private[job] def toTag(name: String, id: String): String = s"$name ($id)"
@@ -96,9 +98,16 @@ abstract class DataJob[T](private implicit val jobEnvironment: JobEnvironment) e
   private[job] def flattenChunkedResults[O](results: Seq[Future[Seq[O]]]): Future[Seq[O]] =
     Future.sequence(results).map(_.flatten)
   private[job] def awaitPagedResults[O](pagedResults: Seq[Future[Seq[O]]]): Seq[O] =
-    pagedResults.flatten(awaitResult)
-  private[job] def awaitResult[O](future: Future[O]): O =
-    Await.result(future, maxJobTimeout)
+    pagedResults.flatten(awaitResult(_))
+  private[job] def awaitResult[O](future: Future[O], timeoutRecovery: O = null): O =
+    try
+      Await.result(future, maxJobTimeout)
+    catch {
+      case _: TimeoutException =>
+        logError("Timeout reached waiting for job. Recovering...")
+        timeoutRecovery
+      case t: Throwable => throw t
+    }
 
   /** Apply a function to paged results from a paged API response. */
   private[job] def workOnPages[P, O](pages: Seq[Future[P]])(pageWork: P => O): Seq[Future[O]] =

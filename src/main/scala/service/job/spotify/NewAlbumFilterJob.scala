@@ -16,6 +16,8 @@ case class NewAlbumFilterJob(artist: Artist)
 
   override private[job] val jobName = "NEW_ALBUM_FILTER"
 
+  override private[job] val jobIdentifier = s"[${toTag(artist.name, artist._id)}]"
+
   override private[job] def work: Future[Seq[String]] = {
     jobEnvironment.dataPersistence.getAlbumsForArtist(artist._id).map { albums =>
       val persistedAlbumIds = albums.map(_._id)

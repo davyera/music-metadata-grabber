@@ -1,9 +1,7 @@
 package service
 
 import com.typesafe.scalalogging.StrictLogging
-import models.ArtistSummary
-import models.api.db.Track
-import service.job.JobOrchestrator
+import service.job.orchestration.OrchestrationMaster
 
 import scala.concurrent.ExecutionContext
 import scala.language.postfixOps
@@ -11,29 +9,9 @@ import scala.language.postfixOps
 object Server extends App with StrictLogging {
 
   implicit val context: ExecutionContext = ExecutionContext.Implicits.global
+  implicit val master: OrchestrationMaster = new OrchestrationMaster
 
-  val worker = new JobOrchestrator
-
-  worker.environment.deleteData()
-//  val hiphopPlist = "37i9dQZF1DWT5MrZnPU1zD"
-//  testPlaylist(hiphopPlist)
-  worker.launchFeaturedPlaylistsJobs()
-//  testArtist("hazel english")
-
-  private def testArtist(artistName: String): Unit =
-    logArtistSummary(worker.launchArtistDataJobsForName(artistName))
-
-  private def logArtistSummary(summary: ArtistSummary): Unit = {
-    logger.info("ARTIST")
-    logger.info(summary.artist.toString)
-    logger.info("ALBUMS")
-    summary.albums.foreach(album => logger.info(album.toString))
-    logTracks(summary.tracks)
-  }
-
-  private def logTracks(tracks: Seq[Track]): Unit = {
-    logger.info("TRACKS")
-    tracks.foreach(track => logger.info(track.toString))
-  }
-
+  master.enqueueFeaturedPlaylistsOrchestration(None, None)
+//  master.enqueueArtistOrchestration("hazel english")
+//  master.enqueueArtistOrchestration("day wave")
 }

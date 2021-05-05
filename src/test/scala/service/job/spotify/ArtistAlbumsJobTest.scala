@@ -28,6 +28,6 @@ class ArtistAlbumsJobTest extends JobSpec {
     assertMetadataSeqs(expected, artCaptor.getAllValues)
     result shouldEqual art1ad
     logVerifier.assertLogged(
-      "SPOTIFY:ARTIST_ALBUMS: Filtered duplicate albums for artist artist1 (art1). Count: 1")
+      "SPOTIFY:ARTIST_ALBUMS:[artist1 (art1)] Filtered duplicate albums for artist artist1 (art1). Count: 1")
   }
 }

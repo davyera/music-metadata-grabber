@@ -13,6 +13,8 @@ case class GeniusArtistIdJob(artistName: String)(implicit jobEnvironment: JobEnv
 
   override private[job] val jobName = "ARTIST_ID"
 
+  override private[job] val jobIdentifier = s"[$artistName]"
+
   override private[job] def work: Future[Int] =
     genius.requestSearchPage(artistName, 1).map { searchResult: GeniusSearchResponse =>
       val hits = searchResult.response.hits

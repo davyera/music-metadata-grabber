@@ -37,7 +37,7 @@ class NewAlbumFilterJobTest extends JobSpec {
 
     result shouldEqual Seq("alb1", "alb3")
     logVerifier.assertLogged(
-      "SPOTIFY:NEW_ALBUM_FILTER: Skipping 2 albums already persisted for artist bowie (99)")
+      "SPOTIFY:NEW_ALBUM_FILTER:[bowie (99)] Skipping 2 albums already persisted for artist bowie (99)")
   }
 
   "doWork" should "return original set of album IDs if DB query fails" in {
@@ -53,7 +53,7 @@ class NewAlbumFilterJobTest extends JobSpec {
 
     whenReady(result) { albums =>
       albums shouldEqual Seq("alb1", "alb2")
-      logVerifier.assertLogged("ERROR IN SPOTIFY:NEW_ALBUM_FILTER: oops")
+      logVerifier.assertLogged("ERROR IN SPOTIFY:NEW_ALBUM_FILTER:[bowie (99)] oops")
     }
   }
 }

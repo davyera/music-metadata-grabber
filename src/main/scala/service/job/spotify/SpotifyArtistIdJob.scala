@@ -15,6 +15,8 @@ case class SpotifyArtistIdJob(artistName: String)
 
   override private[job] val jobName = "ARTIST_ID"
 
+  override private[job] val jobIdentifier = s"[$artistName]"
+
   override private[job] def work: Future[String] = {
     spotify.searchPage(artistName, SpotifySearchType.Artists, 1).map { searchResult: SpotifySearch =>
       searchResult.artists match {

@@ -19,13 +19,12 @@ class JobSpec extends UnitSpec {
           gRequest: GeniusRequester = mock[GeniusRequester],
           gScraper: GeniusLyricsScraper = mock[GeniusLyricsScraper],
           data: DataPersistence = mock[DataPersistence]): JobEnvironment = {
-    new JobEnvironment {
+    new JobEnvironment(data) {
       override val context: ExecutionContext = ctx
       override val backend: Backend = mock[Backend]
       override val spotify: SpotifyRequester = sRequest
       override val genius: GeniusRequester = gRequest
       override val geniusScraper: GeniusLyricsScraper = gScraper
-      override val dataPersistence: DataPersistence = data
       override val jobCoolDownMs: Int = 0
     }
   }

@@ -19,7 +19,7 @@ class SpotifyArtistIdJobTest extends JobSpec {
 
     val response = SpotifyArtistIdJob("artist1").doWorkBlocking()
     response shouldEqual "art1"
-    logVerifier.assertLogged("SPOTIFY:ARTIST_ID: Queried ID for artist artist1: art1")
+    logVerifier.assertLogged("SPOTIFY:ARTIST_ID:[artist1] Queried ID for artist artist1: art1")
   }
 
   "doWork" should "throw exception if no artist results were returned" in {

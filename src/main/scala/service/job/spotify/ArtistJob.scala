@@ -13,6 +13,7 @@ case class ArtistJob(artistId: String, pushArtistData: Boolean)
   extends SpotifyJob[Artist] {
 
   override private[job] val jobName = "ARTIST"
+  override private[job] val jobIdentifier = artistId
 
   override private[job] def work: Future[Artist] =
     spotify.requestArtist(artistId).map { sArtist: SpotifyArtist =>

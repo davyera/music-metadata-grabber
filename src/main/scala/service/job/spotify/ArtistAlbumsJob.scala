@@ -19,6 +19,8 @@ case class ArtistAlbumsJob(artist: Artist, pushArtistData: Boolean)
 
   override private[job] val jobName = "ARTIST_ALBUMS"
 
+  override private[job] val jobIdentifier = s"[${toTag(artist.name, artist._id)}]"
+
   override private[job] def work: Future[Artist] = {
     val artistId = artist._id
     val artistTag = toTag(artist.name, artist._id)
