@@ -24,7 +24,7 @@ class DbPersistenceTest extends JobSpec {
   }
 
   def assertDocCounts(assertion: Long => Unit): Unit = {
-    val future: Future[Seq[Long]] = Future.sequence(db.collections.map(_.countDocuments().toFuture()))
+    val future: Future[Seq[Long]] = Future.sequence(db.musicCollections.map(_.countDocuments().toFuture()))
     whenReady(future)(_.foreach (assertion(_)))
   }
 

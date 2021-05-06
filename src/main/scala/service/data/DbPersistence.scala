@@ -2,7 +2,8 @@ package service.data
 
 import com.mongodb.BasicDBObject
 import com.typesafe.scalalogging.StrictLogging
-import models.api.db.{Album, Artist, Playlist, Track}
+import models.OrchestrationSummary
+import models.api.db.{Album, Artist, MusicMetadata, Playlist, Track}
 import org.mongodb.scala.model.Filters
 import org.mongodb.scala.{Completed, MongoCollection}
 
@@ -34,17 +35,29 @@ class DbPersistence(private[data] val db: DB = new DB)
   override def persist(album: Album): Unit = albumQueue.add(album)
   override def persist(track: Track): Unit = trackQueue.add(track)
 
+  override def persistOrchestration(orchestration: OrchestrationSummary): Future[Boolean] =
+    db.orchestrations.insertOne(orchestration).toFuture()
+      .map(_ => true)
+      .recover(_ => false)
+
+  override def removeOrchestration(orchestration: OrchestrationSummary): Future[Boolean] =
+    db.orchestrations.deleteOne(Filters.equal("_id", orchestration._id)).toFuture()
+      .map(_.wasAcknowledged())
+
   override def getAlbumsForArtist(artistId: String): Future[Seq[Album]] =
     db.albums.find(Filters.equal("artists", artistId)).toFuture()
 
+  override def getOrchestrations: Future[Seq[OrchestrationSummary]] =
+    db.orchestrations.find().toFuture()
+
   override def deleteData(): Future[Boolean] = {
     logger.info("Deleting music metadata from DB...")
-    val futureResult = Future.sequence(
-      db.collections.map(c => c.deleteMany(new BasicDBObject()).toFuture())
-    ).map(_.forall(_.wasAcknowledged())) // collapse DeleteResult acknowledgements into one boolean
+    val futureResult = Future.sequence {
+      db.allCollections.map(c => c.deleteMany(new BasicDBObject()).toFuture())
+    }.map(_.forall(_.wasAcknowledged())) // collapse DeleteResult acknowledgements into one boolean
     futureResult.onComplete {
-        case Success(_)     => logger.info("Successfully deleted music metadata.")
-        case Failure(error) => logger.error(s"Could not delete music metadata.\n$error")
+        case Success(_)     => logger.info("Successfully deleted DB data.")
+        case Failure(error) => logger.error(s"Could not delete DB data.\n$error")
       }
     futureResult
   }

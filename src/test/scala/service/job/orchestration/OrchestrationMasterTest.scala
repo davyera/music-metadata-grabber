@@ -1,62 +1,68 @@
 package service.job.orchestration
 
 import akka.http.scaladsl.model.DateTime
-import testutils.UnitSpec
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito._
+import service.data.DataPersistence
+import service.job.JobEnvironment
 
-import java.util.concurrent.atomic.AtomicBoolean
+import scala.concurrent.Future
 
-class OrchestrationMasterTest extends UnitSpec {
-  case class TestOrc(schd: JobSchedule = ASAP)
-                    (implicit master: OrchestrationMaster) extends JobOrchestration[Unit](schd) {
+class OrchestrationMasterTest extends OrchestrationSpec {
 
-    private val isFinished: AtomicBoolean = new AtomicBoolean(false)
-    def finish(): Unit = isFinished.set(true)
-
-    override private[orchestration] def work: Unit = while (!isFinished.get()) { Thread.sleep(10) }
-    override private[orchestration] val orchestrationType = "TEST"
-    override private[orchestration] def getNextRecurrence: JobOrchestration[Unit] = TestOrc(schd.getNextSchedule.get)
+  private val data = {
+    val d = mock[DataPersistence]
+    when(d.getOrchestrations).thenReturn(Future(Nil))
+    when(d.persistOrchestration(any())).thenReturn(Future(true))
+    d
   }
+  private def jobEnv = env(data)
 
-  def getMaster: OrchestrationMaster = new OrchestrationMaster() {
+  private class TestOrchestrationMaster extends OrchestrationMaster() {
     override private[orchestration] lazy val pollTimeoutMs = 10
+    override implicit lazy val jobEnvironment: JobEnvironment = jobEnv
   }
+  def getMaster: OrchestrationMaster = new TestOrchestrationMaster
 
   def waitForPoll(): Unit = Thread.sleep(20)
 
-  "enqueue" should "add orchestration to the queue" in {
-    implicit val master: OrchestrationMaster = new OrchestrationMaster()
-    val orc = TestOrc()
+  "enqueueArtistOrchestration" should "add an ArtistOrchestration to the OrchestrationLoader" in {
+    val master = getMaster
+    master.enqueueArtistOrchestration("xxx")
+    master.getQueuedOrchestrations.toSet shouldEqual
+      Set(ArtistOrchestration.byName("xxx")(master.jobEnvironment))
+  }
+
+  "enqueueFeaturedPlaylistsOrchestration" should "add a FeaturedPlaylistsOrchestration to the OrchestrationLoader" in {
+    val master = getMaster
+    val time = DateTime.now
+    master.enqueueFeaturedPlaylistsOrchestration(Some(time), Some(JobRecurrence.Weekly))
+    master.getQueuedOrchestrations.toSet shouldEqual
+      Set(FeaturedPlaylistsOrchestration(JobSchedule(time, JobRecurrence.Weekly))(master.jobEnvironment))
+  }
+
+  "enqueueCategoryPlaylistsOrchestration" should "add a CategoryPlaylistsOrchestration to the OrchestrationLoader" in {
+    val master = getMaster
+    val time = DateTime.now
+    master.enqueueCategoryPlaylistsOrchestration("cat1", Some(time), Some(JobRecurrence.Monthly))
+    master.getQueuedOrchestrations.toSet shouldEqual
+      Set(CategoryPlaylistsOrchestration("cat1", JobSchedule(time, JobRecurrence.Monthly))(master.jobEnvironment))
+  }
+
+  "getCurrentOrchestrationSummary" should "return summary of the currently running orchestration" in {
+    val master = getMaster
+    val orc = TestOrc(JobSchedule(DateTime.now - 999, JobRecurrence.Once))
+
+    master.getCurrentOrchestrationSummary shouldEqual None
+
     master.enqueue(orc)
-    master.getQueuedOrchestrations.contains(orc) shouldEqual true
-  }
+    waitForPoll()
 
-  "nextInLine" should "choose the job orchestration with the earliest schedule" in {
-    implicit val master: OrchestrationMaster = getMaster
-    val orcEarly = TestOrc(JobSchedule(DateTime.now, JobRecurrence.Once))
-    val orcLater = TestOrc(JobSchedule(DateTime.now + 999, JobRecurrence.Once))
-    master.nextInLine(orcEarly, orcLater) shouldEqual orcEarly
-  }
-
-  "getNextReadyOrchestration" should "return no orchestrations if they are all in the future" in {
-    implicit val master: OrchestrationMaster = getMaster
-    val orc1 = TestOrc(JobSchedule(DateTime.now + 9999, JobRecurrence.Once))
-    val orc2 = TestOrc(JobSchedule(DateTime.now + 1000, JobRecurrence.Daily))
-    val orc3 = TestOrc(JobSchedule(DateTime.now + 99999, JobRecurrence.Monthly))
-    Seq(orc1, orc2, orc3).foreach(master.enqueue)
-    master.getNextReadyOrchestration shouldEqual None
-  }
-
-  "getNextReadyOrchestration" should "return the earliest orchestration that is ready" in {
-    implicit val master: OrchestrationMaster = getMaster
-    val orc1 = TestOrc(JobSchedule(DateTime.now - 1000, JobRecurrence.Once))
-    val orc2 = TestOrc(JobSchedule(DateTime.now - 10, JobRecurrence.Daily))
-    val orc3 = TestOrc(JobSchedule(DateTime.now - 99999, JobRecurrence.Monthly)) // should be earliest
-    Seq(orc1, orc2, orc3).foreach(master.enqueue)
-    master.getNextReadyOrchestration shouldEqual Some(orc3)
+    master.getCurrentOrchestrationSummary shouldEqual Some(orc.summarize)
   }
 
   "isWorking" should "report when an orchestration is working and when it is not" in {
-    implicit val master: OrchestrationMaster = getMaster
+    val master = getMaster
 
     val futureOrc = TestOrc(JobSchedule(DateTime.now + 99999, JobRecurrence.Once))
     master.enqueue(futureOrc)
@@ -77,7 +83,7 @@ class OrchestrationMasterTest extends UnitSpec {
   }
 
   "handleOrchestration" should "enqueue a recurring orchestration once the first one completes" in {
-    implicit val master: OrchestrationMaster = getMaster
+    val master = getMaster
 
     val time = DateTime.now - 9999
     val orc = TestOrc(JobSchedule(time, JobRecurrence.Daily))
@@ -93,5 +99,23 @@ class OrchestrationMasterTest extends UnitSpec {
     val nextOrc = TestOrc(JobSchedule(newTime, JobRecurrence.Daily))
     master.getQueuedOrchestrations shouldEqual Seq(nextOrc)
     master.isWorking shouldEqual false
+  }
+
+  "handleOrchestration" should "log when an orchestration throws an error" in {
+    val master = getMaster
+    val logVerifier = getLogVerifier[TestOrchestrationMaster]
+
+    val time = DateTime.now - 9999
+    val orc = TestOrc(JobSchedule(time, JobRecurrence.Once))
+
+    master.enqueue(orc)
+    waitForPoll()
+
+    orc.throwError("oops")
+    waitForPoll()
+
+    master.getQueuedOrchestrations shouldEqual Nil
+    master.isWorking shouldEqual false
+    logVerifier.assertLogged("Error when running orchestration TEST (Recurrence: once): oops")
   }
 }

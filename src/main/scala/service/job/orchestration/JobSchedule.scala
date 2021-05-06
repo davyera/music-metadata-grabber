@@ -11,6 +11,22 @@ object JobRecurrence extends Enumeration {
   val Monthly = "monthly"
 }
 
+object JobSchedule {
+
+  private[orchestration] def make(timeOpt: Option[DateTime],
+                                  recurrenceOpt: Option[JobRecurrence]): JobSchedule = {
+    val time = timeOpt match {
+      case Some(t)    => t
+      case None       => DateTime.now
+    }
+    val recurrence = recurrenceOpt match {
+      case Some(rec)  => rec
+      case None       => JobRecurrence.Once
+    }
+    JobSchedule(time, recurrence)
+  }
+}
+
 case class JobSchedule(time: DateTime = DateTime.now, recurrence: JobRecurrence = JobRecurrence.Once) {
   private val dayMillis = 1000 * 60 * 60 * 24
 

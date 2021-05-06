@@ -4,13 +4,12 @@ import play.api.mvc._
 import play.api.libs.json._
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.concurrent.{Await, ExecutionContext, Future, TimeoutException}
 import WebappFormat._
 import models.OrchestrationSummary
 import models.api.webapp._
 import service.job.orchestration.OrchestrationMaster
 
-import java.util.concurrent.TimeoutException
 import scala.concurrent.duration.{DurationInt, FiniteDuration}
 
 object WebappFormat {
@@ -108,7 +107,7 @@ class MainController @Inject()(val controllerComponents: ControllerComponents) e
       val result = Await.result(futureResult, maxRequestTimeout)
       handleResult(result)
     } catch {
-      case _: InterruptedException => RequestTimeout
+      case _: TimeoutException => RequestTimeout
       case t: Throwable => InternalServerError(t.getMessage)
     }
   }

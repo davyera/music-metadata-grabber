@@ -37,4 +37,17 @@ class JobScheduleTest extends UnitSpec {
     val schedule = JobSchedule(time, Monthly)
     schedule.getNextSchedule shouldEqual Some(JobSchedule(time + 1000*60*60*24*30, Monthly))
   }
+
+  "make" should "convert time and recurrence options into a JobSchedule" in {
+    val time = DateTime.now
+    JobSchedule.make(Option(time), Option(JobRecurrence.Weekly)) shouldEqual JobSchedule(time, JobRecurrence.Weekly)
+  }
+
+  "make" should "provide default values when no time or recurrence are provided" in {
+    val initTime = DateTime.now
+    val schedule = JobSchedule.make(None, None)
+    schedule.time should be >= initTime
+    schedule.recurrence shouldEqual JobRecurrence.Once
+  }
+
 }

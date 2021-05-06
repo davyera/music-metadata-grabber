@@ -1,21 +1,21 @@
 package service.job.orchestration
 
 import models.ArtistSummary
-import service.job.TrackLyricsCombinationJob
+import service.job.{JobEnvironment, TrackLyricsCombinationJob}
 import service.job.genius.ArtistLyricsJob
 import service.job.orchestration.OrchestrationType.OrchestrationType
 import service.job.spotify._
 
 object ArtistOrchestration {
-  def byId(artistId: String)(implicit master: OrchestrationMaster): ArtistOrchestration =
+  def byId(artistId: String)(implicit jobEnvironment: JobEnvironment): ArtistOrchestration =
     ById(artistId)
 
-  def byName(artistName: String)(implicit master: OrchestrationMaster): ArtistOrchestration =
+  def byName(artistName: String)(implicit jobEnvironment: JobEnvironment): ArtistOrchestration =
     ByName(artistName)
 }
 
 /** Orchestrates all necessary jobs for Artist metadata. */
-abstract class ArtistOrchestration(implicit master: OrchestrationMaster)
+abstract class ArtistOrchestration(implicit jobEnvironment: JobEnvironment)
   extends JobOrchestration[ArtistSummary] {
 
   protected def getArtistId: String
@@ -57,13 +57,13 @@ abstract class ArtistOrchestration(implicit master: OrchestrationMaster)
   }
 }
 
-private case class ById(artistId: String)(implicit master: OrchestrationMaster)
+private case class ById(artistId: String)(implicit jobEnvironment: JobEnvironment)
   extends ArtistOrchestration {
   override protected def getArtistId: String = artistId
   override protected val inputParameter: String = artistId
 }
 
-private case class ByName(artistName: String)(implicit master: OrchestrationMaster)
+private case class ByName(artistName: String)(implicit jobEnvironment: JobEnvironment)
   extends ArtistOrchestration {
   override protected def getArtistId: String = SpotifyArtistIdJob(artistName).doWorkBlocking()
   override protected val inputParameter: String = artistName

@@ -1,9 +1,10 @@
 package service.job.orchestration
 
 import models.api.db.{Playlist, Track}
+import service.job.JobEnvironment
 import service.job.spotify.{CategoryPlaylistsJob, FeaturedPlaylistsJob, PlaylistTracksJob, PlaylistsJob}
 
-abstract class PlaylistsOrchestration(schedule: JobSchedule = ASAP)(implicit master: OrchestrationMaster)
+abstract class PlaylistsOrchestration(schedule: JobSchedule = ASAP)(implicit jobEnvironment: JobEnvironment)
   extends JobOrchestration[Seq[Playlist]](schedule) {
 
   protected def initialPlaylistJob: PlaylistsJob[_]
@@ -29,7 +30,7 @@ abstract class PlaylistsOrchestration(schedule: JobSchedule = ASAP)(implicit mas
 
     uniqueArtistIds.foreach { artistId =>
       // enqueue a full artist orchestration for each artist found
-      master.enqueue(ArtistOrchestration.byId(artistId))
+      addSubOrchestration(ArtistOrchestration.byId(artistId))
     }
 
     playlistsWithTracks.map(_._1)
@@ -37,7 +38,7 @@ abstract class PlaylistsOrchestration(schedule: JobSchedule = ASAP)(implicit mas
 }
 
 case class FeaturedPlaylistsOrchestration(override val schedule: JobSchedule = ASAP)
-                                         (implicit master: OrchestrationMaster)
+                                         (implicit jobEnvironment: JobEnvironment)
   extends PlaylistsOrchestration(schedule) {
 
   override private[orchestration] val orchestrationType: String = "FEATURED_PLAYLISTS"
@@ -50,7 +51,7 @@ case class FeaturedPlaylistsOrchestration(override val schedule: JobSchedule = A
 
 case class CategoryPlaylistsOrchestration(categoryId: String,
                                           override val schedule: JobSchedule = ASAP)
-                                         (implicit master: OrchestrationMaster)
+                                         (implicit jobEnvironment: JobEnvironment)
   extends PlaylistsOrchestration(schedule) {
 
   override private[orchestration] val orchestrationType: String = "CATEGORY_PLAYLISTS"

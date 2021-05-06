@@ -8,7 +8,6 @@ import service.SimpleScheduledTask
 import service.data.{DataPersistence, DbPersistence}
 import service.job.JobEnvironment
 import service.job.orchestration.JobRecurrence.JobRecurrence
-import service.job.orchestration.OrchestrationType.OrchestrationType
 
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicReference
@@ -26,73 +25,46 @@ object OrchestrationType {
  *  Ensures only one [[JobOrchestration]] will be run at a time, selects the next one based on its [[JobSchedule]],
  *  and enqueues its next iteration if it can recur.
  */
-class OrchestrationMaster(private implicit val context: ExecutionContext) extends StrictLogging {
+class OrchestrationMaster()(private implicit val context: ExecutionContext) extends StrictLogging {
+
   val dataPersistence: DataPersistence = new DbPersistence()
-  val jobEnvironment: JobEnvironment = new JobEnvironment(dataPersistence)
 
-  private implicit val master: OrchestrationMaster = this
+  implicit lazy val jobEnvironment: JobEnvironment = new JobEnvironment(dataPersistence)
 
-  private val queuedOrchestrations = new QueuedOrchestrations()
+  private val orchestrationLoader = new OrchestrationLoader()
+
   private val orchestrationInProgress = new AtomicReference[Option[JobOrchestration[_]]](None)
 
-  private[orchestration] def getQueuedOrchestrations: Seq[JobOrchestration[_]] = queuedOrchestrations.get
+  private[orchestration] def getQueuedOrchestrations: Seq[JobOrchestration[_]] =
+    orchestrationLoader.getAll
 
-  // TODO: Also publish to DB
-  private[orchestration] def enqueue(jobOrchestration: JobOrchestration[_]): Unit =
-    queuedOrchestrations.put(jobOrchestration)
+  private[orchestration] def enqueue(orchestration: JobOrchestration[_]): Unit =
+    orchestrationLoader.enqueue(orchestration)
 
-  private def makeOrchestration(orchestrationType: OrchestrationType,
-                                parameter: String,
-                                time: DateTime,
-                                recurrence: JobRecurrence): Option[JobOrchestration[_]] = {
-    val schedule: JobSchedule = JobSchedule(time, recurrence)
-    Option(orchestrationType match {
-      case OrchestrationType.Artist             => ArtistOrchestration.byName(parameter)
-      case OrchestrationType.FeaturedPlaylists  => FeaturedPlaylistsOrchestration(schedule)
-      case OrchestrationType.CategoryPlaylists  => CategoryPlaylistsOrchestration(parameter, schedule)
-      case unknown                              =>
-        logger.error(s"Invalid Orchestration Type: $unknown")
-        null
-    })
-  }
+  /** Enqueues an [[ArtistOrchestration]] to be run with given artist name. */
+  def enqueueArtistOrchestration(artistName: String): Unit = enqueue(ArtistOrchestration.byName(artistName))
 
-  def enqueueArtistOrchestration(artistName: String): Unit =
-    enqueue(ArtistOrchestration.byName(artistName))
-
+  /** Enqueues a [[FeaturedPlaylistsOrchestration]] to be run at given time and recurrence. */
   def enqueueFeaturedPlaylistsOrchestration(time: Option[DateTime],
                                             recurrence: Option[JobRecurrence]): Unit = {
-    val schedule = makeSchedule(time, recurrence)
+    val schedule = JobSchedule.make(time, recurrence)
     enqueue(FeaturedPlaylistsOrchestration(schedule))
   }
 
+  /** Enqueues a [[CategoryPlaylistsOrchestration]] to be run at given time and recurrence. */
   def enqueueCategoryPlaylistsOrchestration(categoryId: String,
                                             time: Option[DateTime],
                                             recurrence: Option[JobRecurrence]): Unit = {
-    val schedule = makeSchedule(time, recurrence)
+    val schedule = JobSchedule.make(time, recurrence)
     enqueue(CategoryPlaylistsOrchestration(categoryId, schedule))
   }
-
-  private def makeSchedule(timeOpt: Option[DateTime], recurrenceOpt: Option[JobRecurrence]): JobSchedule = {
-    val time = timeOpt match {
-      case Some(t)    => t
-      case None       => DateTime.now
-    }
-    val recurrence = recurrenceOpt match {
-      case Some(rec)  => rec
-      case None       => JobRecurrence.Once
-    }
-    JobSchedule(time, recurrence)
-  }
-
-  // TODO: Also delete from DB
-  private def dequeue(jobOrchestration: JobOrchestration[_]): Unit = queuedOrchestrations.remove(jobOrchestration)
 
   /** Every 10 seconds we will try to run a new [[JobOrchestration]] if possible */
   private[orchestration] lazy val pollTimeoutMs: Int = 10000
   SimpleScheduledTask(pollTimeoutMs, TimeUnit.MILLISECONDS, () => poll())
   private def poll(): Unit = {
     if (!isWorking && getQueuedOrchestrations.nonEmpty) {
-      getNextReadyOrchestration match {
+      orchestrationLoader.getNextInLine match {
         case Some(orchestration) => handleOrchestration(orchestration)
         case _ => // do nothing
       }
@@ -109,7 +81,7 @@ class OrchestrationMaster(private implicit val context: ExecutionContext) extend
    */
   private def handleOrchestration(orchestration: JobOrchestration[_]): Future[Boolean] = {
     orchestrationInProgress.set(Some(orchestration))
-    dequeue(orchestration)
+    orchestrationLoader.dequeue(orchestration)
 
     val summary = orchestration.getSummaryMsg
     val futureResult = Future {
@@ -117,10 +89,19 @@ class OrchestrationMaster(private implicit val context: ExecutionContext) extend
       orchestration.work
       logger.info(s"Orchestration complete! $summary")
 
+      // enqueue any Sub-Orchestrations, if any were created
+      val subOrchestrations = orchestration.getSubOrchestrations
+      if (subOrchestrations.nonEmpty)
+        subOrchestrations.foreach { sub =>
+          logger.info(s"Enqueueing sub-orchestration: ${sub.getSummaryMsg}")
+          orchestrationLoader.enqueue(sub)
+        }
+
       orchestrationInProgress.set(None)
       true
     }.recover { error =>
-      logger.info(s"Error when running orchestration $summary:\n${error.getMessage}")
+      orchestrationInProgress.set(None)
+      logger.error(s"Error when running orchestration $summary: ${error.getMessage}")
       false
     }
 
@@ -128,7 +109,7 @@ class OrchestrationMaster(private implicit val context: ExecutionContext) extend
     if (orchestration.schedule.willRecur) {
       val nextRecurrence = orchestration.getNextRecurrence
       logger.info(s"Enqueueing recurring orchestration: ${nextRecurrence.getSummaryMsg}")
-      enqueue(orchestration.getNextRecurrence)
+      orchestrationLoader.enqueue(orchestration.getNextRecurrence)
     }
     else
       logger.info(s"No recurring orchestration found for $summary")
@@ -136,38 +117,19 @@ class OrchestrationMaster(private implicit val context: ExecutionContext) extend
     futureResult
   }
 
-  /** Returns the [[JobOrchestration]] with the earliest scheduled time that is ready to be run */
-  private[orchestration] def getNextReadyOrchestration: Option[JobOrchestration[_]] = {
-    val nextOrch = getQueuedOrchestrations.reduceLeft(nextInLine)
-    if (nextOrch.schedule.isReady)
-      Some(nextOrch)
-    else
-      None
-  }
-
-  /** Compares 2 [[JobOrchestration]] schedules and returns which one should be run first */
-  private[orchestration] def nextInLine(orch1: JobOrchestration[_], orch2: JobOrchestration[_]): JobOrchestration[_] =
-    if (orch1.schedule.time < orch2.schedule.time) orch1 else orch2
-
+  /** Returns all currently queued [[JobOrchestration]]s  */
   def getQueuedOrchestrationSummaries: Seq[OrchestrationSummary] = getQueuedOrchestrations.map(_.summarize)
 
+  /** Returns the summary of the currently-running [[JobOrchestration]], or None if there isn't one running. */
   def getCurrentOrchestrationSummary: Option[OrchestrationSummary] =
     orchestrationInProgress.get match {
       case Some(orchestration) => Some(orchestration.summarize)
       case None => None
     }
 
+  /** Provides [[JobSummary]] objects for all currently loaded jobs. */
   def getJobSummaries: Seq[JobSummary] = jobEnvironment.getJobs.map(_.summarize)
 
+  /** Deletes all data (metadata & persisted orchestrations) from the [[DataPersistence]] layer. */
   def deleteData(): Future[Boolean] = dataPersistence.deleteData()
-}
-
-private class QueuedOrchestrations {
-  import scala.jdk.CollectionConverters._
-
-  private val queuedOrchestrations = new java.util.concurrent.ConcurrentHashMap[JobOrchestration[_], Unit]()
-
-  def put(jobOrchestration: JobOrchestration[_]): Unit = queuedOrchestrations.put(jobOrchestration, ())
-  def remove(jobOrchestration: JobOrchestration[_]): Unit = queuedOrchestrations.remove(jobOrchestration)
-  def get: Seq[JobOrchestration[_]] = queuedOrchestrations.keys().asScala.toSeq
 }
