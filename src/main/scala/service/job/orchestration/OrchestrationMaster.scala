@@ -8,14 +8,17 @@ import service.SimpleScheduledTask
 import service.data.{DataPersistence, DbPersistence}
 import service.job.JobEnvironment
 import service.job.orchestration.JobRecurrence.JobRecurrence
+import service.job.spotify.CategoriesJob
 
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicReference
+import javax.inject.Singleton
 import scala.concurrent.{ExecutionContext, Future}
 
 object OrchestrationType {
   type OrchestrationType = String
-  val Artist            = "ARTIST"
+  val ArtistByName      = "ARTIST_BY_NAME"
+  val ArtistById        = "ARTIST_BY_ID"
   val FeaturedPlaylists = "FEATURED_PLAYLISTS"
   val CategoryPlaylists = "CATEGORY_PLAYLISTS"
 }
@@ -25,6 +28,7 @@ object OrchestrationType {
  *  Ensures only one [[JobOrchestration]] will be run at a time, selects the next one based on its [[JobSchedule]],
  *  and enqueues its next iteration if it can recur.
  */
+@Singleton
 class OrchestrationMaster()(private implicit val context: ExecutionContext) extends StrictLogging {
 
   val dataPersistence: DataPersistence = new DbPersistence()
@@ -129,6 +133,9 @@ class OrchestrationMaster()(private implicit val context: ExecutionContext) exte
 
   /** Provides [[JobSummary]] objects for all currently loaded jobs. */
   def getJobSummaries: Seq[JobSummary] = jobEnvironment.getJobs.map(_.summarize)
+
+  /** Runs a blocking job to return valid Spotify categories */
+  def getCategories: Seq[String] = CategoriesJob().doWorkBlocking()
 
   /** Deletes all data (metadata & persisted orchestrations) from the [[DataPersistence]] layer. */
   def deleteData(): Future[Boolean] = dataPersistence.deleteData()

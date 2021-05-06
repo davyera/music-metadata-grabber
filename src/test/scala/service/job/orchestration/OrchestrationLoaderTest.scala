@@ -81,7 +81,7 @@ class OrchestrationLoaderTest extends OrchestrationSpec {
   "initOrchestrationQueue" should "enqueue orchestrations from the data persistence layer" in {
     val time = DateTime.now
     val timeStr = time.toIsoDateString()
-    val sum1 = OrchestrationSummary("1", OrchestrationType.Artist, "a1", timeStr, JobRecurrence.Once)
+    val sum1 = OrchestrationSummary("1", OrchestrationType.ArtistByName, "a1", timeStr, JobRecurrence.Once)
     val sum2 = OrchestrationSummary("2", OrchestrationType.FeaturedPlaylists, "", timeStr, JobRecurrence.Weekly)
     val sum3 = OrchestrationSummary("3", "invalid", "", "", JobRecurrence.Once) // should not be enqueued
 
@@ -97,10 +97,17 @@ class OrchestrationLoaderTest extends OrchestrationSpec {
     loader.getAll.toSet shouldEqual Set(orc1, orc2)
   }
 
-  "makeOrchestration" should "create an ArtistOrchestration from the proper summary" in {
+  "makeOrchestration" should "create an ArtistOrchestration.ByName from the proper summary" in {
     implicit val jobEnv: JobEnvironment = env(getData())
-    val sum = OrchestrationSummary("1", OrchestrationType.Artist, "a1", "", JobRecurrence.Once)
+    val sum = OrchestrationSummary("1", OrchestrationType.ArtistByName, "a1", "", JobRecurrence.Once)
     val orc = ArtistOrchestration.byName("a1")
+    getLoader(jobEnv).makeOrchestration(sum) shouldEqual Some(orc)
+  }
+
+  "makeOrchestration" should "create an ArtistOrchestration.ById from the proper summary" in {
+    implicit val jobEnv: JobEnvironment = env(getData())
+    val sum = OrchestrationSummary("1", OrchestrationType.ArtistById, "0001", "1989", JobRecurrence.Once)
+    val orc = ArtistOrchestration.byId("0001")
     getLoader(jobEnv).makeOrchestration(sum) shouldEqual Some(orc)
   }
 

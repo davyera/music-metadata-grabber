@@ -27,7 +27,7 @@ object JobSchedule {
   }
 }
 
-case class JobSchedule(time: DateTime = DateTime.now, recurrence: JobRecurrence = JobRecurrence.Once) {
+case class JobSchedule(time: DateTime, recurrence: JobRecurrence) {
   private val dayMillis = 1000 * 60 * 60 * 24
 
   def isReady: Boolean = time < DateTime.now

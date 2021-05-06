@@ -1,4 +1,5 @@
 GET         /jobs                               webapp.MainController.getJobs
+GET         /categories                         webapp.MainController.getCategories
 GET         /current_orchestration              webapp.MainController.getCurrentOrchestration
 GET         /queued_orchestrations              webapp.MainController.getQueuedOrchestrations
 POST        /pull_artist_data                   webapp.MainController.pullArtistData

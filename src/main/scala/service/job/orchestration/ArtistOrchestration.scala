@@ -21,7 +21,6 @@ abstract class ArtistOrchestration(implicit jobEnvironment: JobEnvironment)
   protected def getArtistId: String
   override private[orchestration] def getNextRecurrence: ArtistOrchestration = null // artist jobs never recur
 
-  override private[orchestration] val orchestrationType: OrchestrationType = OrchestrationType.Artist
   override private[orchestration] def work: ArtistSummary = {
     val artistName = inputParameter
     logInfo(s"Orchestrating metadata jobs for artist $artistName")
@@ -61,10 +60,12 @@ private case class ById(artistId: String)(implicit jobEnvironment: JobEnvironmen
   extends ArtistOrchestration {
   override protected def getArtistId: String = artistId
   override protected val inputParameter: String = artistId
+  override private[orchestration] val orchestrationType = OrchestrationType.ArtistById
 }
 
 private case class ByName(artistName: String)(implicit jobEnvironment: JobEnvironment)
   extends ArtistOrchestration {
   override protected def getArtistId: String = SpotifyArtistIdJob(artistName).doWorkBlocking()
   override protected val inputParameter: String = artistName
+  override private[orchestration] val orchestrationType: OrchestrationType = OrchestrationType.ArtistByName
 }

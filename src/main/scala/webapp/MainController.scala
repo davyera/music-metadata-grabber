@@ -29,12 +29,20 @@ class MainController @Inject()(val controllerComponents: ControllerComponents) e
   private val maxRequestTimeout: FiniteDuration = 10.seconds
 
   implicit val context: ExecutionContext = ExecutionContext.Implicits.global
-  implicit val master: OrchestrationMaster = new OrchestrationMaster()
+  val master: OrchestrationMaster = new OrchestrationMaster()
 
   def getJobs: Action[AnyContent] = Action {
     val jobs = master.getJobSummaries
     if (jobs.nonEmpty)
       Ok(Json.toJson(jobs))
+    else
+      NoContent
+  }
+
+  def getCategories: Action[AnyContent] = Action {
+    val categories = master.getCategories
+    if (categories.nonEmpty)
+      Ok(Json.toJson(categories))
     else
       NoContent
   }

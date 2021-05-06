@@ -47,7 +47,8 @@ private[orchestration] class OrchestrationLoader(implicit val jobEnvironment: Jo
     val time = DateTime.fromIsoDateTimeString(summary.scheduled_for)
     val schedule = JobSchedule.make(time, Option(summary.recurrence))
     Option(summary.orchestration_type match {
-      case OrchestrationType.Artist             => ArtistOrchestration.byName(summary.parameter)
+      case OrchestrationType.ArtistByName       => ArtistOrchestration.byName(summary.parameter)
+      case OrchestrationType.ArtistById         => ArtistOrchestration.byId(summary.parameter)
       case OrchestrationType.FeaturedPlaylists  => FeaturedPlaylistsOrchestration(schedule)
       case OrchestrationType.CategoryPlaylists  => CategoryPlaylistsOrchestration(summary.parameter, schedule)
       case unknown                              =>
