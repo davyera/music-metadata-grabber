@@ -1,5 +1,6 @@
 package service.data
 
+import models.OrchestrationSummary
 import models.api.db.{Album, Artist, Playlist, Track}
 import org.mongodb.scala.MongoCollection
 import service.job.JobSpec
@@ -9,7 +10,7 @@ import scala.concurrent.duration._
 import scala.reflect.ClassTag
 
 class DbPersistenceTest extends JobSpec {
-  val db = new DB("testdb")
+  val db = new DB("testdb", "testorcdb")
   val dbp = new DbPersistence(db)
 
   override def beforeAll(): Unit = cleanDb()
@@ -17,10 +18,12 @@ class DbPersistenceTest extends JobSpec {
 
   private def cleanDb(): Unit = Await.result(dbp.deleteData(), 1.second)
 
-  def dbFind[T: ClassTag](collection: MongoCollection[T], key: String, value: String): T = {
+  def dbFindOne[T: ClassTag](collection: MongoCollection[T], key: String, value: String): T =
+    dbFind(collection, key, value).head
+
+  def dbFind[T: ClassTag](collection: MongoCollection[T], key: String, value: String): Seq[T] = {
     waitForPersistence()
-    val future: Future[T] = collection.find(org.mongodb.scala.model.Filters.equal(key, value)).first().toFuture()
-    Await.result(future, 1.second)
+    Await.result(collection.find(org.mongodb.scala.model.Filters.equal(key, value)).toFuture(), 1.second)
   }
 
   def assertDocCounts(assertion: Long => Unit): Unit = {
@@ -36,24 +39,54 @@ class DbPersistenceTest extends JobSpec {
   private val album3: Album = Album("album3", "album3name", "2020", 15, Seq("art2"), Seq("trk3", "trk4"))
   private val plist: Playlist = Playlist("plist1", "playlist hits", "the greatest hits", Seq("trk1", "trk2"), Some("cat"))
 
+  private val orc1: OrchestrationSummary = OrchestrationSummary("orc1", "Artist", "abc", "2020-11-05", "once")
+  private val orc2: OrchestrationSummary = OrchestrationSummary("orc2", "Plist", "xyz", "2019-11-19", "weekly")
+
   "persist" should "push an Artist object to the DB" in {
     dbp.persist(artist)
-    dbFind(db.artists, "_id", "artist1") shouldEqual artist
+    dbFindOne(db.artists, "_id", "artist1") shouldEqual artist
   }
 
   "persist" should "push an Album object to the DB" in {
     dbp.persist(album1)
-    dbFind(db.albums, "name", "album name") shouldEqual album1
+    dbFindOne(db.albums, "name", "album name") shouldEqual album1
   }
 
   "persist" should "push a Playlist to the DB" in {
     dbp.persist(plist)
-    dbFind(db.playlists, "_id", "plist1") shouldEqual plist
+    dbFindOne(db.playlists, "_id", "plist1") shouldEqual plist
   }
 
   "persist" should "push a Track to the DB" in {
     dbp.persist(track)
-    dbFind(db.tracks, "name", "first track") shouldEqual track
+    dbFindOne(db.tracks, "name", "first track") shouldEqual track
+  }
+
+  "persistOrchestration" should "push an Orchestration Summary to the DB" in {
+    whenReady(dbp.persistOrchestration(orc1)) { accepted =>
+      accepted shouldEqual true
+      dbFindOne(db.orchestrations, "_id", "orc1") shouldEqual orc1
+    }
+  }
+
+  "removeOrchestration" should "remove an Orchestration Summary from the DB" in {
+    whenReady(dbp.persistOrchestration(orc2)) { accepted1 =>
+      accepted1 shouldEqual true
+      dbFindOne(db.orchestrations, "_id", "orc2") shouldEqual orc2
+      whenReady(dbp.removeOrchestration(orc2)) { accepted2 =>
+        accepted2 shouldEqual true
+        dbFind(db.orchestrations, "_id", "orc2") shouldEqual Nil
+      }
+    }
+  }
+
+  "getOrchestrations" should "return all orchestrations in the DB" in {
+    dbp.persistOrchestration(orc1)
+    dbp.persistOrchestration(orc2)
+    waitForPersistence()
+    whenReady(dbp.getOrchestrations) { orcs =>
+      orcs.toSet shouldEqual Set(orc1, orc2)
+    }
   }
 
   "getAlbumsForArtist" should "return all albums that contain the artistId" in {
